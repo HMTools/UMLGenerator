@@ -37,27 +37,7 @@ namespace UMLGenerator.Models.CodeModels
         #endregion
 
         #region Methods
-        public void AssociateChilds(List<object> childs)
-        {
-            foreach (var child in childs)
-            {
-                switch (child)
-                {
-                    case ClassModel obj:
-                        Classes.Add(obj);
-                        break;
-                    case EnumModel obj:
-                        Enums.Add(obj);
-                        break;
-                    case InterfaceModel obj:
-                        Interfaces.Add(obj);
-                        break;
-                    case RecordModel obj:
-                        Records.Add(obj);
-                        break;
-                }
-            }
-        }
+        
 
         public string TransferToUML(int layer)
         {

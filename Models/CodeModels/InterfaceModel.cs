@@ -22,7 +22,7 @@ namespace UMLGenerator.Models.CodeModels
         {
             var accessMatch = Regex.Match(statement, @"(^| +)(?<AcessModifier>public|(protected internal)|protected|internal|private|(private protected)) +");
 
-            Name = Regex.Match(statement, @"(^| +)interface +(?<Name>\w+)").Groups["Name"].Value;
+            Name = Regex.Match(statement, @"(^| +)interface +(?<Name>((\w+ *<[^>]+>)|\w+))").Groups["Name"].Value;
             AccessModifier = accessMatch.Success ? accessMatch.Groups["AcessModifier"].Value : "";
         }
 

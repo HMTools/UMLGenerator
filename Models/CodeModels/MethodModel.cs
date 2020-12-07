@@ -17,7 +17,7 @@ namespace UMLGenerator.Models.CodeModels
         #endregion
 
         #region Static Fields
-        public static string BasePattern = @"\w+\(";
+        public static string BasePattern = @" ((\w+ *<.*>)|\w+)(?= *\()";
         #endregion
 
         #region Constructors
@@ -25,8 +25,10 @@ namespace UMLGenerator.Models.CodeModels
         {
             var accessMatch = Regex.Match(statement, @"(^| +)(?<AcessModifier>public|(protected internal)|protected|internal|private|(private protected)) +");
 
-            Name = Regex.Match(statement, @"(?<Name>\w+)\(").Groups["Name"].Value;
-            ReturnType = Regex.Match(statement, @"(?<ReturnType>\w+) +\w+\(").Groups["ReturnType"].Value;
+            Name = Regex.Match(statement, @"(?<Name>(\w+ *<[^>]+>)|\w+) *\(").Groups["Name"].Value;
+            ReturnType = "Temp";
+            //ReturnType = Regex.Match(statement, @"(?<ReturnType>(\w+ *<.*>)|\w+) +(\w+ *<.*>)|\w+ *\(").Groups["ReturnType"].Value;
+            //ReturnType =((\w+ *<[^>]+>)|\w+) +(\w+ *<[^>]+>)|\w+ *;
             Parameters = Regex.Match(statement, @"\w+\((?<Parameters>.*)\)").Groups["Parameters"].Value;
             AccessModifier = accessMatch.Success ? accessMatch.Groups["AcessModifier"].Value : "";
             IsAbstract = Regex.Match(statement, @"(^| +)(abstract) +").Success;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using UMLGenerator.Interfaces;
 
 namespace UMLGenerator.Models.CodeModels
@@ -13,6 +14,20 @@ namespace UMLGenerator.Models.CodeModels
         public string AccessModifier { get; set; }
         #endregion
 
+        #region Public Static Field
+        public static string BasePattern = @"\w+ *{";
+        #endregion
+
+        #region Constructors
+        public PropertyModel(string statement)
+        {
+            var accessMatch = Regex.Match(statement, @"(^| +)(?<AcessModifier>public|(protected internal)|protected|internal|private|(private protected)) +");
+
+            Name = Regex.Match(statement, @"(?<Name>\w+) *{").Groups["Name"].Value;
+            Type = Regex.Match(statement, @"(?<Type>(\w+ *<.+>)|\w+) +\w+ *{").Groups["Type"].Value;
+            AccessModifier = accessMatch.Success ? accessMatch.Groups["AcessModifier"].Value : "";
+        }
+        #endregion
         #region Methods
         public string TransferToUML(int layer)
         {

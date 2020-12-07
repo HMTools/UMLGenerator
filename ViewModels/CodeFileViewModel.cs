@@ -94,11 +94,17 @@ namespace UMLGenerator.ViewModels
                 #endregion
 
                 #region Property Model
-
+                if (Regex.IsMatch(header, PropertyModel.BasePattern))
+                {
+                    return GetPropertyModel(header);
+                }
                 #endregion
 
                 #region Field Model
-
+                if (Regex.IsMatch(header, FieldModel.BasePattern))
+                {
+                    return GetFieldModel(header);
+                }
                 #endregion
 
             }
@@ -118,7 +124,6 @@ namespace UMLGenerator.ViewModels
             }
             namespacesQueue.Enqueue(model);
             ScanSubObjects(false, "");
-            //model.AssociateChilds(ScanSubObjects(false));
             namespacesQueue.Dequeue();
             return model;
         }
@@ -127,7 +132,7 @@ namespace UMLGenerator.ViewModels
         {
             ClassModel model = new ClassModel(statement, path);
             namespacesQueue.Peek().Classes.Add(model);
-            model.AssociateChilds(ScanSubObjects(true, $"{path}{model.Name}."));
+            model.AssociateChilds(ScanSubObjects(true, $"{path}{model.Name}__"));
             return model;
         }
 
@@ -149,6 +154,50 @@ namespace UMLGenerator.ViewModels
             }
             currStart = currIndex;
             #endregion
+            return model;
+
+        }
+
+        private PropertyModel GetPropertyModel(string statement)
+        {
+
+            PropertyModel model = new PropertyModel(statement);
+
+            #region Skip Content
+
+            int countOpenBrackets = 1;
+            while (countOpenBrackets > 0 && currIndex < Model.Code.Length)
+            {
+                if (Model.Code[currIndex] == '{')
+                    countOpenBrackets++;
+                else if (Model.Code[currIndex] == '}')
+                    countOpenBrackets--;
+                currIndex++;
+            }
+            #region Default Value Checking
+            int checkIndex = currIndex;
+            while (checkIndex < Model.Code.Length && Model.Code[checkIndex] == ' ')
+                checkIndex++;
+            if (Model.Code[checkIndex] == '=')
+            {
+                while (checkIndex < Model.Code.Length && Model.Code[checkIndex] != ';')
+                {
+                    checkIndex++;
+                }
+                currIndex = checkIndex + 1;
+            }
+            #endregion
+            currStart = currIndex;
+            #endregion
+            return model;
+
+        }
+
+        private FieldModel GetFieldModel(string statement)
+        {
+
+            FieldModel model = new FieldModel(statement);
+            currStart = currIndex;
             return model;
 
         }
@@ -219,6 +268,7 @@ namespace UMLGenerator.ViewModels
         private string GetOnlyRelevantCode(string str)
         {
             string res = Libraries.CodeCleanupMethods.RemoveComments(str);
+            res = Libraries.CodeCleanupMethods.RemoveAllStrings(res);
             res = Libraries.CodeCleanupMethods.RemoveRegions(res);
             res = Libraries.CodeCleanupMethods.RemoveNewLinesNTab(res);
             return res;

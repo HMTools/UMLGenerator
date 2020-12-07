@@ -33,5 +33,10 @@ namespace UMLGenerator.Libraries
         {
             return Regex.Replace(str, @"\t|\n|\r", "");
         }
+
+        public static string RemoveAllStrings(string str)
+        {
+            return Regex.Replace(str, "((\".*\")|(\'.*\'))", "");
+        }
     }
 }
