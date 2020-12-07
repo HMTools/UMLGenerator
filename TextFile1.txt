@@ -1,0 +1,58 @@
+﻿Want To Show:
+1) NameSpace (Object -> Deep Dive[{) V2
+[
+	- namespace <path> {content}
+
+]
+2) Classes (Object -> Deep Dive[{) V1
+[
+	- <access modifier ???> class <name> {content}
+	- <access modifier ???> class <name> : <Base class name>{}
+	- <access modifier ???> class <name> : <Base class name>, <interface name1>, interface name2>{}
+]
+3) Properties (Statement [{) V1
+[
+	- <access modifier> <type> <name> { get; set; !!!content!!! }
+	- <access modifier> <type> <name> { get; set; !!!content!!! } = <default value>
+]
+4) Fields (Statement [;]) V1
+[
+	- <access modifier> <type> <name>;
+	- <access modifier> <type> <name> = <value>;
+]
+5) Methods (Object -> Shallow[{/;]) V1
+[
+	- <access modifier ???> <modifier ???> <return type> <name>(<params>){content}
+	- <access modifier ???> <modifier ???> <return type> <name>(<params>);
+]
+6) Constructors V2
+[
+	- public <class name> (<params>){}
+	- public <class name> (<params>) : base(<params>){}
+]
+8) Interfaces V2
+[
+	- <access modifier> interface <name> {}
+	- <access modifier> interface <name> : <base interface name> {}
+]
+9) Records
+[
+	!!!!! Need To Add
+]
+10) Enums
+[
+	<access modifier ???> Enum <name>{}
+]
+11) CodeFile(Name)
+
+!!!!!!!)))))) Need To Add Generics Support
+
+
+Remove (Just Dont Pay Attention):
+1) using
+
+obj = Recursive()
+switch(obj Type)
+{
+	
+}
