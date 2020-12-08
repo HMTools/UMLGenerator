@@ -11,6 +11,8 @@ namespace UMLGenerator.Models.CodeModels
         #region Properties
         public string Name { get; set; }
         public string AccessModifier { get; set; }
+        public string Path { get; set; }
+        public string Namespace { get; set; }
         #endregion
 
         #region Static Fields
@@ -18,8 +20,11 @@ namespace UMLGenerator.Models.CodeModels
         #endregion
 
         #region Constructors
-        public EnumModel(string statement)
+        public EnumModel(string statement, string path, string nameSpace)
         {
+            Path = path;
+            Namespace = nameSpace;
+
             var accessMatch = Regex.Match(statement, @"(^| +)(?<AcessModifier>public|(protected internal)|protected|internal|private|(private protected)) +");
 
             Name = Regex.Match(statement, @"(^| +)enum +(?<Name>\w+)").Groups["Name"].Value;

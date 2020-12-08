@@ -18,6 +18,7 @@ namespace UMLGenerator.Models.CodeModels
         public List<PropertyModel> Properties { get; set; }
         public List<FieldModel> Fields { get; set; }
         public string Path { get; set; }
+        public string Namespace { get; set; }
         #endregion
 
         #region Static Fields
@@ -25,9 +26,10 @@ namespace UMLGenerator.Models.CodeModels
         #endregion
 
         #region Constructors
-        public ClassModel(string statement, string path)
+        public ClassModel(string statement, string path, string nameSpace)
         {
             Path = path;
+            Namespace = nameSpace;
             var basesMatch = Regex.Match(statement, @":(?<Bases>.*){");
 
             Name = Regex.Match(statement, @"(^| +)class +(?<Name>((\w+ *<[^>]+>)|\w+))").Groups["Name"].Value;

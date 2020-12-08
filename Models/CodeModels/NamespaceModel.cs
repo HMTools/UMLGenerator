@@ -45,6 +45,10 @@ namespace UMLGenerator.Models.CodeModels
             string output = tab + "namespace " + Name + " {\n";
             foreach (var model in Classes)
             {
+                foreach(var Base in model.Bases)
+                {
+                    //output += $"\t{model.}" here adding the extend and implement
+                }
                 if(model.Path != "")
                     output += $"\t{model.Path.Substring(0, model.Path.Length-1)} +-- {model.Path}{model.Name}\n";
                 output += model.TransferToUML(layer+1);

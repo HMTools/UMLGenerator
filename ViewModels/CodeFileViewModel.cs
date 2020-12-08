@@ -130,7 +130,7 @@ namespace UMLGenerator.ViewModels
 
         private ClassModel GetClassModel(string statement, string path)
         {
-            ClassModel model = new ClassModel(statement, path);
+            ClassModel model = new ClassModel(statement, path, namespacesQueue.Peek().Name);
             namespacesQueue.Peek().Classes.Add(model);
             model.AssociateChilds(ScanSubObjects(true, $"{path}{model.Name}__"));
             return model;
@@ -205,7 +205,7 @@ namespace UMLGenerator.ViewModels
         private InterfaceModel GetInterfaceModel(string statement, string path)
         {
 
-            InterfaceModel model = new InterfaceModel(statement);
+            InterfaceModel model = new InterfaceModel(statement, path, namespacesQueue.Peek().Name);
             namespacesQueue.Peek().Interfaces.Add(model);
             #region Skip Content
 
@@ -227,7 +227,7 @@ namespace UMLGenerator.ViewModels
         private RecordModel GetRecordModel(string statement, string path)
         {
 
-            RecordModel model = new RecordModel(statement);
+            RecordModel model = new RecordModel(statement, path, namespacesQueue.Peek().Name);
             namespacesQueue.Peek().Records.Add(model);
             #region Skip Content
 
@@ -248,7 +248,7 @@ namespace UMLGenerator.ViewModels
 
         private EnumModel GetEnumModel(string statement, string path)
         {
-            EnumModel model = new EnumModel(statement);
+            EnumModel model = new EnumModel(statement, path, namespacesQueue.Peek().Name);
             namespacesQueue.Peek().Enums.Add(model);
             #region Skip Content
             int countOpenBrackets = 1;
