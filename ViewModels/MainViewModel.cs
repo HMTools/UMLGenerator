@@ -9,35 +9,33 @@ using UMLGenerator.Models.CodeModels;
 
 namespace UMLGenerator.ViewModels
 {
-    public class MainViewModel :INotifyPropertyChanged
+    public class MainViewModel : BaseViewModel
     {
-
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
         #region Properties
 
-        private string input;
+        //private string input;
 
-        public string Input
+        //public string Input
+        //{
+        //    get { return input; }
+        //    set { input = value; AnalyzeCode(); }
+        //}
+        //private string output;
+
+        //public string Output
+        //{
+        //    get { return output; }
+        //    set { output = value; NotifyPropertyChanged(); }
+        //}
+        private BaseViewModel selectedViewModel;
+
+        public BaseViewModel SelectedViewModel
         {
-            get { return input; }
-            set { input = value; AnalyzeCode(); }
-        }
-        private string output;
-
-        public string Output
-        {
-            get { return output; }
-            set { output = value; NotifyPropertyChanged(); }
+            get { return selectedViewModel; }
+            set { selectedViewModel = value; NotifyPropertyChanged(); }
         }
 
-        public Dictionary<string, NamespaceModel> Namespaces { get; set; }
+        //public Dictionary<string, NamespaceModel> Namespaces { get; set; }
         #endregion
         #region Public Static Fields
         public static Dictionary<string, char> AccessModifiersDict = new Dictionary<string, char>()
@@ -55,27 +53,28 @@ namespace UMLGenerator.ViewModels
         #region Constructors
         public MainViewModel()
         {
-            Namespaces = new Dictionary<string, NamespaceModel>();
+            SelectedViewModel = new SelectSourceViewModel();
+            //Namespaces = new Dictionary<string, NamespaceModel>();
         }
         #endregion
 
         #region Private Methods
-        private void AnalyzeCode()
-        {
-            CodeFileViewModel codeFile = new CodeFileViewModel("base.cs", Input, Namespaces);
+        //private void AnalyzeCode()
+        //{
+        //    CodeFileViewModel codeFile = new CodeFileViewModel("base.cs", Input, Namespaces);
             
-            Output = GenerateUML(Namespaces.Values);
-        }
+        //    Output = GenerateUML(Namespaces.Values);
+        //}
 
-        private string GenerateUML(IEnumerable<IUMLTransferable> source)
-        {
-            string res = "@startuml\n";
-            foreach(var obj in source)
-            {
-                res += obj.TransferToUML(0);
-            }
-            return res + "@enduml";
-        }
+        //private string GenerateUML(IEnumerable<IUMLTransferable> source)
+        //{
+        //    string res = "@startuml\n";
+        //    foreach(var obj in source)
+        //    {
+        //        res += obj.TransferToUML(0);
+        //    }
+        //    return res + "@enduml";
+        //}
         #endregion
     }
 }

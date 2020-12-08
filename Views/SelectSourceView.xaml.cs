@@ -15,23 +15,26 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using UMLGenerator.ViewModels;
 
-namespace UMLGenerator
+namespace UMLGenerator.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for SelectedSourceView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class SelectSourceView : UserControl
     {
-        public MainWindow()
+        public SelectSourceView()
         {
-            DataContext = new MainViewModel();
             InitializeComponent();
         }
 
-        //private void Button_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var dialog = new VistaFolderBrowserDialog();
-        //    dialog.ShowDialog();
-        //}
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new VistaFolderBrowserDialog();
+            dialog.ShowDialog();
+            if(dialog.SelectedPath != "")
+            {
+                (DataContext as SelectSourceViewModel).TargetPath = dialog.SelectedPath;
+            }
+        }
     }
 }

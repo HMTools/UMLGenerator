@@ -4,10 +4,18 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UMLGenerator"
+        xmlns:vm="clr-namespace:UMLGenerator.ViewModels"
+        xmlns:v="clr-namespace:UMLGenerator.Views"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Grid.RowDefinitions>
+        <Grid.Resources>
+            <DataTemplate DataType="{x:Type vm:SelectSourceViewModel}">
+                <v:SelectSourceView DataContext="{Binding }"/>
+            </DataTemplate>
+        </Grid.Resources>
+        <ContentControl Content="{Binding SelectedViewModel}"/>
+        <!--<Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
@@ -20,6 +28,6 @@
         <TextBox Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" AcceptsTab="True" Grid.Column="1"/>
         <Label Content="Output" Grid.Row="1"/>
         <TextBox Text="{Binding Output, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" AcceptsTab="True" Grid.Row="1" Grid.Column="1"/>
-        <Button Click="Button_Click"></Button>
+        <Button Click="Button_Click"></Button>-->
     </Grid>
 </Window>
