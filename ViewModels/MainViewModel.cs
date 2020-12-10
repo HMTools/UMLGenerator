@@ -53,7 +53,7 @@ namespace UMLGenerator.ViewModels
         #region Constructors
         public MainViewModel()
         {
-            SelectedViewModel = new SelectSourceViewModel();
+            SelectedViewModel = new SelectSourceViewModel(this);
             //Namespaces = new Dictionary<string, NamespaceModel>();
         }
         #endregion

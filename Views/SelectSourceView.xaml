@@ -33,12 +33,12 @@
         <!--#endregion-->
         
         <!--#region Source Declare (Row 2)-->
-        <Button Content="Select Folder" Click="Button_Click" Grid.Row="2"/>
+        <Button Content="Select Folder" Command="{Binding SelectFolderCommand}" Grid.Row="2"/>
         <TextBox Text="{Binding TargetPath}" IsEnabled="False" Grid.Row="2" Grid.Column="1"/>
         <!--#endregion-->
         
         <!--#region Next Button (Row 3)-->
-        <Button Content="Next" Click="Button_Click_1" Grid.Row="3"/>
+        <Button Content="Next" Command="{Binding NextCommand}" Grid.Row="3"/>
         <!--#endregion-->
     </Grid>
 </UserControl>
