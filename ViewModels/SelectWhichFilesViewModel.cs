@@ -19,7 +19,7 @@ namespace UMLGenerator.ViewModels
         #endregion
 
         #region Properties
-        public DirectoryModel rootDir { get; set; }
+        public DirectoryModel RootDir { get; set; }
         #endregion
 
         #region Fields
@@ -38,14 +38,21 @@ namespace UMLGenerator.ViewModels
         #region Methods
         private void AddCommands()
         {
-
+            NextCommand = new RelayCommand(o => 
+            {
+                mainVM.SelectedViewModel = new UMLScreenViewModel(mainVM, GetCheckedFileModels(RootDir));
+            });
+            BackCommand = new RelayCommand(o => 
+            {
+                mainVM.SelectedViewModel = new SelectSourceViewModel(mainVM);
+            });
         }
 
         private void GetRoot(string path)
         {
             if(Directory.Exists(path))
             {
-                rootDir = GetDirectory(path); 
+                RootDir = GetDirectory(path); 
             }
             else
             {
@@ -55,24 +62,35 @@ namespace UMLGenerator.ViewModels
         }
         private DirectoryModel GetDirectory(string path)
         {
-            var output = new DirectoryModel() { Name = Path.GetDirectoryName(path), FullName = path };
+            var output = new DirectoryModel() { Name = Path.GetFileName(path), FullName = path };
             foreach(var dir in Directory.GetDirectories(path))
             {
-                try
-                {
-                    var dirModel = GetDirectory(dir);
-                    output.Directories.Add(dirModel);
-                }
-                catch
-                {
-
-                }
+                output.Items.Add(GetDirectory(dir));
             }
             foreach(var file in Directory.GetFiles(path))
             {
-                if(Path.GetExtension(file) == "cs")
+                if(Path.GetExtension(file) == ".cs")
                 {
-                    output.Files.Add(new FileModel() { Name = Path.GetFileName(file), FullName = file });
+                    output.Items.Add(new FileModel() { Name = Path.GetFileName(file), FullName = file });
+                }
+            }
+            return output;
+        }
+
+        private List<FileModel> GetCheckedFileModels(DirectoryModel directory)
+        {
+            List<FileModel> output = new List<FileModel>();
+            foreach(var item in directory.Items)
+            {
+                switch(item)
+                {
+                    case FileModel file:
+                        if (file.IsChecked)
+                            output.Add(file);
+                        break;
+                    case DirectoryModel dir:
+                        output.AddRange(GetCheckedFileModels(dir));
+                        break;
                 }
             }
             return output;

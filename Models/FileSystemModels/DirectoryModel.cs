@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace UMLGenerator.Models.FileSystemModels
 {
-    public class DirectoryModel
+    public class DirectoryModel : FileSystemItemModel
     {
         #region Properties
-        public string Name { get; set; }
-        public string FullName { get; set; }
-        public List<DirectoryModel> Directories { get; set; }
-        public List<FileModel> Files { get; set; }
+        public List<FileSystemItemModel> Items { get; set; }
+        #endregion
+        #region Constructors
+        public DirectoryModel()
+        {
+            Items = new List<FileSystemItemModel>();
+        }
         #endregion
     }
 }

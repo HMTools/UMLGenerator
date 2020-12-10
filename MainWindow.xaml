@@ -16,6 +16,9 @@
             <DataTemplate DataType="{x:Type vm:SelectWhichFilesViewModel}">
                 <v:SelectWhichFilesView DataContext="{Binding }"/>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:UMLScreenViewModel}">
+                <v:UMLScreenView DataContext="{Binding }"/>
+            </DataTemplate>
         </Grid.Resources>
         <ContentControl Content="{Binding SelectedViewModel}"/>
         <!--<Grid.RowDefinitions>

@@ -12,21 +12,6 @@ namespace UMLGenerator.ViewModels
     public class MainViewModel : BaseViewModel
     {
         #region Properties
-
-        //private string input;
-
-        //public string Input
-        //{
-        //    get { return input; }
-        //    set { input = value; AnalyzeCode(); }
-        //}
-        //private string output;
-
-        //public string Output
-        //{
-        //    get { return output; }
-        //    set { output = value; NotifyPropertyChanged(); }
-        //}
         private BaseViewModel selectedViewModel;
 
         public BaseViewModel SelectedViewModel
@@ -34,37 +19,16 @@ namespace UMLGenerator.ViewModels
             get { return selectedViewModel; }
             set { selectedViewModel = value; NotifyPropertyChanged(); }
         }
-
-        //public Dictionary<string, NamespaceModel> Namespaces { get; set; }
-        #endregion
-        #region Public Static Fields
-        public static Dictionary<string, char> AccessModifiersDict = new Dictionary<string, char>()
-        {
-            { "", '-'},
-            { "private", '-'},
-            { "protected", '#'},
-            { "private protected", '#'},
-            { "protected internal", '#'},
-            { "internal", '#'},
-            { "public", '+'}
-        };
         #endregion
 
         #region Constructors
         public MainViewModel()
         {
             SelectedViewModel = new SelectSourceViewModel(this);
-            //Namespaces = new Dictionary<string, NamespaceModel>();
         }
         #endregion
 
         #region Private Methods
-        //private void AnalyzeCode()
-        //{
-        //    CodeFileViewModel codeFile = new CodeFileViewModel("base.cs", Input, Namespaces);
-            
-        //    Output = GenerateUML(Namespaces.Values);
-        //}
 
         //private string GenerateUML(IEnumerable<IUMLTransferable> source)
         //{

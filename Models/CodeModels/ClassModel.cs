@@ -40,6 +40,7 @@ namespace UMLGenerator.Models.CodeModels
             Methods = new List<MethodModel>();
             Properties = new List<PropertyModel>();
             Fields = new List<FieldModel>();
+            Bases = new List<string>();
         }
         #endregion
 
@@ -66,7 +67,7 @@ namespace UMLGenerator.Models.CodeModels
         public string TransferToUML(int layer)
         {
             string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
-            string output = $"{tab}{ViewModels.MainViewModel.AccessModifiersDict[AccessModifier]}class {Path}{Name} " + "{\n";
+            string output = $"{tab}{ViewModels.UMLScreenViewModel.AccessModifiersDict[AccessModifier]}class {Path}{Name} " + "{\n";
             if (Methods.Count > 0)
             {
                 output += $"{tab}.. Methods ..\n";

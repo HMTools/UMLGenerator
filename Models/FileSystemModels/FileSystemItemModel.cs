@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace UMLGenerator.Models.FileSystemModels
 {
-    public class FileModel : FileSystemItemModel
+    public class FileSystemItemModel
     {
         #region Properties
-        public bool IsChecked { get; set; }
+        public string Name { get; set; }
+        public string FullName { get; set; }
         #endregion
     }
 }
