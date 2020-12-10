@@ -12,31 +12,33 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition  Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <!--#region Source Type (Row 0)-->
-        <Label Content="Source :" />
-        <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="0,6,0,0">
+        <!--#region Source Language (Row 0)-->
+        <Label Content="Language :"/>
+        <ComboBox Grid.Column="2" ItemsSource="{Binding Source={convert:EnumBindingSource {x:Type vm:SourceLanguages}}}" SelectedItem="{Binding SourceLanguage}"/>
+        <!--#endregion-->
+        
+        <!--#region Source Type (Row 1)-->
+        <Label Content="Source :" Grid.Row="1"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0,6,0,0">
             <RadioButton Content="Folder" IsChecked="{Binding SourceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static vm:SourceTypes.Folder}}"/>
             <RadioButton Content="Github" IsChecked="{Binding SourceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static vm:SourceTypes.Github}}" Margin="10,0,0,0"/>
         </StackPanel>
         <!--#endregion-->
         
-        <!--#region Source Declare (Row 1)-->
-        <Button Content="Select Folder" Click="Button_Click" Grid.Row="1"/>
-        <TextBox Text="{Binding TargetPath}" IsEnabled="False" Grid.Row="1" Grid.Column="1"/>
+        <!--#region Source Declare (Row 2)-->
+        <Button Content="Select Folder" Click="Button_Click" Grid.Row="2"/>
+        <TextBox Text="{Binding TargetPath}" IsEnabled="False" Grid.Row="2" Grid.Column="1"/>
         <!--#endregion-->
         
-        <!--#region Source Language (Row 2)-->
-        <Label Content="Language :" Grid.Row="2"/>
-        <ComboBox Grid.Row="2" Grid.Column="2" ItemsSource="{Binding Source={convert:EnumBindingSource {x:Type vm:SourceLanguages}}}" SelectedItem="{Binding SourceLanguage}"/>
+        <!--#region Next Button (Row 3)-->
+        <Button Content="Next" Click="Button_Click_1" Grid.Row="3"/>
         <!--#endregion-->
-        
-        
     </Grid>
 </UserControl>

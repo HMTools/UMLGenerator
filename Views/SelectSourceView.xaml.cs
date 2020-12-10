@@ -36,5 +36,10 @@ namespace UMLGenerator.Views
                 (DataContext as SelectSourceViewModel).TargetPath = dialog.SelectedPath;
             }
         }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
