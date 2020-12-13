@@ -7,33 +7,16 @@
         xmlns:vm="clr-namespace:UMLGenerator.ViewModels"
         xmlns:v="clr-namespace:UMLGenerator.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="UML Generator" Height="640" Width="1024" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.Resources>
             <DataTemplate DataType="{x:Type vm:SelectSourceViewModel}">
                 <v:SelectSourceView DataContext="{Binding }"/>
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:SelectWhichFilesViewModel}">
-                <v:SelectWhichFilesView DataContext="{Binding }"/>
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:UMLScreenViewModel}">
                 <v:UMLScreenView DataContext="{Binding }"/>
             </DataTemplate>
         </Grid.Resources>
         <ContentControl Content="{Binding SelectedViewModel}"/>
-        <!--<Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-
-        <Label Content="Input"/>
-        <TextBox Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" AcceptsTab="True" Grid.Column="1"/>
-        <Label Content="Output" Grid.Row="1"/>
-        <TextBox Text="{Binding Output, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" AcceptsTab="True" Grid.Row="1" Grid.Column="1"/>
-        <Button Click="Button_Click"></Button>-->
     </Grid>
 </Window>

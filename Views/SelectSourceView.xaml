@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:UMLGenerator.Views"
              xmlns:vm="clr-namespace:UMLGenerator.ViewModels"
              xmlns:convert="clr-namespace:UMLGenerator.BindingConverters"
+             xmlns:m="clr-namespace:UMLGenerator.Models.FileSystemModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid d:Background="White">
@@ -15,26 +16,67 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
         <!--#region Source Language (Row 0)-->
-        <Label Content="Language :"/>
-        <ComboBox Grid.Column="2" ItemsSource="{Binding Source={convert:EnumBindingSource {x:Type vm:SourceLanguages}}}" SelectedItem="{Binding SourceLanguage}"/>
+        <StackPanel Orientation="Horizontal">
+            <Label Content="Language :"/>
+            <ComboBox ItemsSource="{Binding Source={convert:EnumBindingSource {x:Type vm:SourceLanguages}}}" SelectedItem="{Binding SourceLanguage}"/>
+        </StackPanel>
+        
         <!--#endregion-->
         
         <!--#region Source Type (Row 1)-->
-        <Label Content="Source :" Grid.Row="1"/>
-        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0,6,0,0">
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <Label Content="Source :" Grid.Row="1"/>
             <RadioButton Content="Folder" IsChecked="{Binding SourceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static vm:SourceTypes.Folder}}"/>
             <RadioButton Content="Github" IsChecked="{Binding SourceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static vm:SourceTypes.Github}}" Margin="10,0,0,0"/>
+            <ContentControl Margin="10,0,0,0">
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="Select Folder" Command="{Binding SelectFolderCommand}" Grid.Row="2"/>
+                                    <TextBox Text="{Binding FolderPath}" Margin="10,0,10,0" IsEnabled="False" Width="400" Grid.Row="2" Grid.Column="1"/>
+                                </StackPanel>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SourceType}" Value="1">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label Content="Repository Owner"/>
+                                            <TextBox Text="{Binding RepositoryOwner, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0" Width="200"/>
+                                            <Label Content="Repository Name"/>
+                                            <TextBox Text="{Binding RepositoryName, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0" Width="200"/>
+                                        </StackPanel>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+            <Button Content="Get" Command="{Binding GetDirectoryTree}"/>
         </StackPanel>
         <!--#endregion-->
-        
-        <!--#region Source Declare (Row 2)-->
-        <Button Content="Select Folder" Command="{Binding SelectFolderCommand}" Grid.Row="2"/>
-        <TextBox Text="{Binding TargetPath}" IsEnabled="False" Grid.Row="2" Grid.Column="1"/>
+
+        <!--#region Files Tree (Row 2)-->
+        <TreeView Grid.Row="2" ItemsSource="{Binding RootDir.Items}">
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type m:DirectoryModel}" ItemsSource="{Binding Items}">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{Binding Name}"/>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+                <DataTemplate DataType="{x:Type m:FileModel}">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
+                        <Label Content="{Binding Name}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </TreeView.Resources>
+        </TreeView>
         <!--#endregion-->
         
         <!--#region Next Button (Row 3)-->

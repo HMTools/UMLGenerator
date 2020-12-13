@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlantUml.Net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,12 +7,15 @@ using System.Threading.Tasks;
 using UMLGenerator.Interfaces;
 using UMLGenerator.Models.CodeModels;
 using UMLGenerator.Models.FileSystemModels;
+using UMLGenerator.WPFLibrary;
 
 namespace UMLGenerator.ViewModels
 {
     public class UMLScreenViewModel : BaseViewModel
     {
         #region Commands
+        public RelayCommand ShowPreviewCommand { get; private set; }
+        public RelayCommand BackCommand { get; private set; }
 
         #endregion
         #region Properties
@@ -43,10 +47,28 @@ namespace UMLGenerator.ViewModels
             Namespaces = new Dictionary<string, NamespaceModel>();
             RunOnFiles(fileModels);
             Results = GenerateUML(Namespaces.Values);
+            AddCommands();
         }
         #endregion
 
         #region Methods
+
+        private void AddCommands()
+        {
+            ShowPreviewCommand = new RelayCommand(o =>
+            {
+                var factory = new RendererFactory();
+
+                var renderer = factory.CreateRenderer(new PlantUmlSettings());
+
+                new Views.OpenFullWindowPNG(renderer.RenderAsync(Results, OutputFormat.Png).Result).ShowDialog();
+            });
+
+            BackCommand = new RelayCommand(o =>
+            {
+                mainVM.SelectedViewModel = new SelectSourceViewModel(mainVM);
+            });
+        }
         private void RunOnFiles(List<FileModel> fileModels)
         {
             foreach(var file in fileModels)
