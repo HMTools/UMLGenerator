@@ -92,7 +92,7 @@ namespace UMLGenerator.ViewModels
             if (isInObject)
             {
                 #region Method Model
-                if (Regex.IsMatch(header, MethodModel.BasePattern))
+                if (Regex.IsMatch(header, MethodModel.BasePattern) && !Regex.IsMatch(header, MethodModel.BaseFalsePattern))
                 {
                     return GetMethodModel(header);
                 }

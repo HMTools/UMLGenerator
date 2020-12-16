@@ -18,6 +18,7 @@ namespace UMLGenerator.Models.CodeModels
 
         #region Static Fields
         public static string BasePattern = @" ((\w+ *<.*>)|\w+)(?= *\()";
+        public static string BaseFalsePattern = @" new ";
         #endregion
 
         #region Constructors

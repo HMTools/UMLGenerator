@@ -27,8 +27,8 @@
         <!--#region Source Type (Row 1)-->
         <StackPanel Orientation="Horizontal" Grid.Row="1">
             <Label Content="Source :" Grid.Row="1"/>
-            <RadioButton Content="Folder" IsChecked="{Binding SourceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static vm:SourceTypes.Folder}}"/>
-            <RadioButton Content="Github" IsChecked="{Binding SourceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static vm:SourceTypes.Github}}" Margin="10,0,0,0"/>
+            <RadioButton Content="Folder" Margin="0,7,0,0" IsChecked="{Binding SourceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static vm:SourceTypes.Folder}}"/>
+            <RadioButton Content="Github" Margin="10,7,0,0" IsChecked="{Binding SourceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static vm:SourceTypes.Github}}"/>
             <ContentControl Margin="10,0,0,0">
                 <ContentControl.Style>
                     <Style TargetType="ContentControl">
@@ -80,7 +80,7 @@
         <!--#endregion-->
         
         <!--#region Next Button (Row 3)-->
-        <Button Content="Next" Command="{Binding NextCommand}" Grid.Row="3"/>
+        <Button Content="Next" Command="{Binding NextCommand}" Grid.Row="3" Height="40"/>
         <!--#endregion-->
     </Grid>
 </UserControl>
