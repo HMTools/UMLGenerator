@@ -34,13 +34,16 @@ namespace UMLGenerator.Models.CodeModels
 
             Name = Regex.Match(statement, @"(^| +)class +(?<Name>((\w+ *<[^>]+>)|\w+))").Groups["Name"].Value;
             AccessModifier = Libraries.RegexPatterns.GetAccessModifier(statement);
-            Bases = basesMatch.Success ? basesMatch.Groups["Bases"].Value.Split(',').ToList() :null;
+            Bases = basesMatch.Success ? basesMatch.Groups["Bases"].Value.Split(',').ToList() :new List<string>();
             IsAbstract = Regex.IsMatch(statement, @"(^| +)(abstract) +");
 
             Methods = new List<MethodModel>();
             Properties = new List<PropertyModel>();
             Fields = new List<FieldModel>();
-            Bases = new List<string>();
+            for(int i = 0; i < Bases.Count; i++)
+            {
+                Bases[i] = Bases[i].Trim();
+            }
         }
         #endregion
 
@@ -64,7 +67,7 @@ namespace UMLGenerator.Models.CodeModels
             }
         }
 
-        public string TransferToUML(int layer)
+        public string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
             string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
             string output = $"{tab}{ViewModels.UMLScreenViewModel.AccessModifiersDict[AccessModifier]}class {Path}{Name} " + "{\n";
@@ -73,7 +76,7 @@ namespace UMLGenerator.Models.CodeModels
                 output += $"{tab}.. Methods ..\n";
                 foreach (var model in Methods)
                 {
-                    output += model.TransferToUML(layer + 1);
+                    output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
                 }
             }
             if(Properties.Count > 0)
@@ -81,7 +84,7 @@ namespace UMLGenerator.Models.CodeModels
                 output += $"{tab}.. Properties ..\n";
                 foreach (var model in Properties)
                 {
-                    output += model.TransferToUML(layer + 1);
+                    output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
                 }
             }
             if(Fields.Count > 0)
@@ -89,7 +92,7 @@ namespace UMLGenerator.Models.CodeModels
                 output += $"{tab}.. Fields ..\n";
                 foreach (var model in Fields)
                 {
-                    output += model.TransferToUML(layer + 1);
+                    output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
                 }
             }       
             return output + tab + "}\n\n";

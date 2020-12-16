@@ -31,7 +31,7 @@ namespace UMLGenerator.Models.CodeModels
             AccessModifier = accessMatch.Success ? accessMatch.Groups["AcessModifier"].Value : "";
         }
 
-        public string TransferToUML(int layer)
+        public string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
             string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
             string output = tab + "enum " + Name + " {\n";

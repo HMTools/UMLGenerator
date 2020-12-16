@@ -35,7 +35,7 @@ namespace UMLGenerator.Models.CodeModels
         #endregion
 
         #region Methods
-        public string TransferToUML(int layer)
+        public string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
             string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
             return $"{tab}{ViewModels.UMLScreenViewModel.AccessModifiersDict[AccessModifier]}{ReturnType} {Name}({Parameters})\n\n";

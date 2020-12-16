@@ -15,13 +15,18 @@ namespace UMLGenerator.ViewModels
         private int currStart = 0;
         private int currIndex = 0;
         private Dictionary<string, NamespaceModel> namespacesDict;
+        private Dictionary<string, List<string>> classesDict;
+        private Dictionary<string, List<string>> interfacesDict;
         private Queue<NamespaceModel> namespacesQueue;
         #endregion
 
         #region Constructors
-        public CodeFileViewModel(string fileName, string code, Dictionary<string, NamespaceModel> namespacesDict)
+        public CodeFileViewModel(string fileName, string code, Dictionary<string, NamespaceModel> namespacesDict,
+            Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
             this.namespacesDict = namespacesDict;
+            this.classesDict = classesDict;
+            this.interfacesDict = interfacesDict;
             namespacesQueue = new Queue<NamespaceModel>();
 
             Model = new CodeFileModel() { Name = fileName , Code = code};
@@ -131,81 +136,31 @@ namespace UMLGenerator.ViewModels
         private ClassModel GetClassModel(string statement, string path)
         {
             ClassModel model = new ClassModel(statement, path, namespacesQueue.Peek().Name);
+            if (classesDict.ContainsKey(model.Name))
+            {
+                classesDict[model.Name].Add($"{namespacesQueue.Peek().Name}.{path}");
+            }
+            else
+            {
+                classesDict.Add(model.Name, new List<string>() { $"{namespacesQueue.Peek().Name}.{path}" });
+            }
             namespacesQueue.Peek().Classes.Add(model);
             model.AssociateChilds(ScanSubObjects(true, $"{path}{model.Name}__"));
             return model;
-        }
-
-        private MethodModel GetMethodModel(string statement)
-        {
-
-            MethodModel model = new MethodModel(statement);
-
-            #region Skip Content
-
-            int countOpenBrackets = 1;
-            while (countOpenBrackets > 0 && currIndex < Model.Code.Length)
-            {
-                if (Model.Code[currIndex] == '{')
-                    countOpenBrackets++;
-                else if (Model.Code[currIndex] == '}')
-                    countOpenBrackets--;
-                currIndex++;
-            }
-            currStart = currIndex;
-            #endregion
-            return model;
-
-        }
-
-        private PropertyModel GetPropertyModel(string statement)
-        {
-
-            PropertyModel model = new PropertyModel(statement);
-
-            #region Skip Content
-
-            int countOpenBrackets = 1;
-            while (countOpenBrackets > 0 && currIndex < Model.Code.Length)
-            {
-                if (Model.Code[currIndex] == '{')
-                    countOpenBrackets++;
-                else if (Model.Code[currIndex] == '}')
-                    countOpenBrackets--;
-                currIndex++;
-            }
-            #region Default Value Checking
-            int checkIndex = currIndex;
-            while (checkIndex < Model.Code.Length && Model.Code[checkIndex] == ' ')
-                checkIndex++;
-            if (Model.Code[checkIndex] == '=')
-            {
-                while (checkIndex < Model.Code.Length && Model.Code[checkIndex] != ';')
-                {
-                    checkIndex++;
-                }
-                currIndex = checkIndex + 1;
-            }
-            #endregion
-            currStart = currIndex;
-            #endregion
-            return model;
-
-        }
-
-        private FieldModel GetFieldModel(string statement)
-        {
-
-            FieldModel model = new FieldModel(statement);
-            currStart = currIndex;
-            return model;
-
         }
 
         private InterfaceModel GetInterfaceModel(string statement, string path)
         {
 
             InterfaceModel model = new InterfaceModel(statement, path, namespacesQueue.Peek().Name);
+            if (classesDict.ContainsKey(model.Name))
+            {
+                interfacesDict[model.Name].Add($"{namespacesQueue.Peek().Name}.{path}");
+            }
+            else
+            {
+                interfacesDict.Add(model.Name, new List<string>() { $"{namespacesQueue.Peek().Name}.{path}" });
+            }
             namespacesQueue.Peek().Interfaces.Add(model);
             #region Skip Content
 
@@ -264,6 +219,74 @@ namespace UMLGenerator.ViewModels
             #endregion
             return model;
         }
+
+        private MethodModel GetMethodModel(string statement)
+        {
+
+            MethodModel model = new MethodModel(statement);
+
+            #region Skip Content
+
+            int countOpenBrackets = 1;
+            while (countOpenBrackets > 0 && currIndex < Model.Code.Length)
+            {
+                if (Model.Code[currIndex] == '{')
+                    countOpenBrackets++;
+                else if (Model.Code[currIndex] == '}')
+                    countOpenBrackets--;
+                currIndex++;
+            }
+            currStart = currIndex;
+            #endregion
+            return model;
+
+        }
+
+        private PropertyModel GetPropertyModel(string statement)
+        {
+
+            PropertyModel model = new PropertyModel(statement);
+
+            #region Skip Content
+
+            int countOpenBrackets = 1;
+            while (countOpenBrackets > 0 && currIndex < Model.Code.Length)
+            {
+                if (Model.Code[currIndex] == '{')
+                    countOpenBrackets++;
+                else if (Model.Code[currIndex] == '}')
+                    countOpenBrackets--;
+        
+                currIndex++;
+            }
+            #region Default Value Checking
+            int checkIndex = currIndex;
+            while (checkIndex < Model.Code.Length && Model.Code[checkIndex] == ' ')
+                checkIndex++;
+            if (Model.Code[checkIndex] == '=')
+            {
+                while (checkIndex < Model.Code.Length && Model.Code[checkIndex] != ';')
+                {
+                    checkIndex++;
+                }
+                currIndex = checkIndex + 1;
+            }
+            #endregion
+            currStart = currIndex;
+            #endregion
+            return model;
+
+        }
+
+        private FieldModel GetFieldModel(string statement)
+        {
+
+            FieldModel model = new FieldModel(statement);
+            currStart = currIndex;
+            return model;
+
+        }
+
 
         private string GetOnlyRelevantCode(string str)
         {

@@ -20,6 +20,8 @@ namespace UMLGenerator.ViewModels
         #endregion
         #region Properties
         public Dictionary<string, NamespaceModel> Namespaces { get; set; }
+        public Dictionary<string, List<string>> Classes { get; set; }
+        public Dictionary<string, List<string>> Interfaces { get; set; }
         public string Results { get; set; }
         #endregion
 
@@ -45,6 +47,8 @@ namespace UMLGenerator.ViewModels
         {
             this.mainVM = mainVM;
             Namespaces = new Dictionary<string, NamespaceModel>();
+            Classes = new Dictionary<string, List<string>>();
+            Interfaces = new Dictionary<string, List<string>>();
             RunOnFiles(fileModels);
             Results = GenerateUML(Namespaces.Values);
             AddCommands();
@@ -73,7 +77,7 @@ namespace UMLGenerator.ViewModels
         {
             foreach(var file in fileModels)
             {
-                new CodeFileViewModel(file.Name, System.IO.File.ReadAllText(file.FullName), Namespaces);
+                new CodeFileViewModel(file.Name, System.IO.File.ReadAllText(file.FullName), Namespaces, Classes, Interfaces);
             }
         }
 
@@ -82,7 +86,7 @@ namespace UMLGenerator.ViewModels
             string res = "@startuml\n";
             foreach (var obj in source)
             {
-                res += obj.TransferToUML(0);
+                res += obj.TransferToUML(0, Classes, Interfaces);
             }
             return res + "@enduml";
         }
