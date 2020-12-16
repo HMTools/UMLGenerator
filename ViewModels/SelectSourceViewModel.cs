@@ -74,6 +74,8 @@ namespace UMLGenerator.ViewModels
         #endregion
         #region Fields
         private MainViewModel mainVM;
+        private GitHubClient githubClient;
+        private long repoId;
         #endregion
 
         #region Constructors
@@ -103,11 +105,12 @@ namespace UMLGenerator.ViewModels
                 RootDir = SourceType == SourceTypes.Folder ? GetRootFromFolder() : GetRootFromRepository().GetAwaiter().GetResult();
             });
 
-            NextCommand = new RelayCommand(o => 
+            NextCommand = new RelayCommand(o =>
             {
-                mainVM.SelectedViewModel = new UMLScreenViewModel(mainVM, GetCheckedFileModels(RootDir));
-                //mainVM.SelectedViewModel = new SelectWhichFilesViewModel(mainVM, FolderPath);
-            }, (o) => !string.IsNullOrEmpty(FolderPath));
+                mainVM.SelectedViewModel = sourceType == SourceTypes.Folder ?
+                new UMLScreenViewModel(mainVM, GetCheckedFileModels(RootDir)) : new UMLScreenViewModel(mainVM, GetCheckedFileModels(RootDir), githubClient, repoId);
+            });
+            //}, (o) => !string.IsNullOrEmpty(FolderPath));
         }
 
 
@@ -125,17 +128,19 @@ namespace UMLGenerator.ViewModels
 
         private async Task<DirectoryModel> GetRootFromRepository()
         {
-            var client = new GitHubClient(new ProductHeaderValue("UMLGenerator"));
-
-            //try
-            //{
-                Repository repository = client.Repository.Get("octokit", "octokit.net").Result;
-                return await GetRepositoryDirectory(client, repository.Id, "");
-            //}
-            //catch
-            //{
-            //    return null;
-            //}
+            var productInformation = new ProductHeaderValue("UMLGenerator");
+            var credentials = new Credentials("4f7c55c94fcccc3ca26f1f59b5b80a7ff00c3ad6");
+            githubClient = new GitHubClient(productInformation) { Credentials = credentials };
+            try
+            {
+                repoId = githubClient.Repository.Get(RepositoryOwner, RepositoryName).GetAwaiter().GetResult().Id;
+                return GetRepositoryDirectory(githubClient, repoId, "");
+            }
+            catch
+            {
+                MessageBox.Show("The selected repository private or doesn't exist.");
+                return null;
+            }
         }
 
         private DirectoryModel GetFolderDirectory(string path)
@@ -155,17 +160,17 @@ namespace UMLGenerator.ViewModels
             return output;
         }
 
-        private async Task<DirectoryModel> GetRepositoryDirectory(GitHubClient client, long repoId, string path)
+        private DirectoryModel GetRepositoryDirectory(GitHubClient client, long repoId, string path)
         {
             var output = new DirectoryModel() { Name = Path.GetFileName(path), FullName = path };
-            var contents = client.Repository.Content.GetAllContents(repoId).Result;
+            var contents = path == "" ? client.Repository.Content.GetAllContents(repoId).GetAwaiter().GetResult():  client.Repository.Content.GetAllContents(repoId, path).GetAwaiter().GetResult();
             foreach (var content in contents)
             {
                 if(content.Type == "dir")
                 {
-                    output.Items.Add(GetRepositoryDirectory(client, repoId, content.Path).Result);
+                    output.Items.Add(GetRepositoryDirectory(client, repoId, content.Path));
                 }
-                else if(content.Type == "file")
+                else if(content.Type == "file" && Path.GetExtension(content.Name) == ".cs")
                 {
                     output.Items.Add(new FileModel() { Name = content.Name, FullName = content.Path });
                 }

@@ -1,4 +1,5 @@
-﻿using PlantUml.Net;
+﻿using Octokit;
+using PlantUml.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +54,17 @@ namespace UMLGenerator.ViewModels
             Results = GenerateUML(Namespaces.Values);
             AddCommands();
         }
+
+        public UMLScreenViewModel(MainViewModel mainVM, List<FileModel> fileModels, GitHubClient client, long repositoryId)
+        {
+            this.mainVM = mainVM;
+            Namespaces = new Dictionary<string, NamespaceModel>();
+            Classes = new Dictionary<string, List<string>>();
+            Interfaces = new Dictionary<string, List<string>>();
+            RunOnFiles(fileModels, client, repositoryId);
+            Results = GenerateUML(Namespaces.Values);
+            AddCommands();
+        }
         #endregion
 
         #region Methods
@@ -73,11 +85,27 @@ namespace UMLGenerator.ViewModels
                 mainVM.SelectedViewModel = new SelectSourceViewModel(mainVM);
             });
         }
-        private void RunOnFiles(List<FileModel> fileModels)
+        private void RunOnFiles(List<FileModel> fileModels) //local files
         {
             foreach(var file in fileModels)
             {
                 new CodeFileViewModel(file.Name, System.IO.File.ReadAllText(file.FullName), Namespaces, Classes, Interfaces);
+            }
+        }
+
+        private void RunOnFiles(List<FileModel> fileModels, GitHubClient client, long repositoryId) // github files
+        {
+            foreach (var file in fileModels)
+            {
+                try
+                {
+                    var code = client.Repository.Content.GetAllContents(repositoryId, file.FullName).GetAwaiter().GetResult()[0].Content;
+                    new CodeFileViewModel(file.Name, code, Namespaces, Classes, Interfaces);
+                }
+                catch
+                {
+                    //failed getting this file
+                }
             }
         }
 
