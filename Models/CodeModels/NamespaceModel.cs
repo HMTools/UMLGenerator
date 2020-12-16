@@ -76,6 +76,19 @@ namespace UMLGenerator.Models.CodeModels
             }
             foreach (var model in Interfaces)
             {
+                for (int i = 0; i < model.Bases.Count; i++)
+                {
+                    if (interfacesDict.ContainsKey(model.Bases[i]))
+                    {
+                        output += $"\tinterface {model.Name} implements {interfacesDict[model.Bases[i]][0]}{model.Bases[i]}\n"; // need to handle ambiguity!!!
+                    }
+                    else
+                    {
+                        output += $"\tinterface {model.Name} implements ___Common___.{model.Bases[i]}\n";
+                    }
+                }
+                if (model.Path != "")
+                    output += $"\t{model.Path.Substring(0, model.Path.Length - 1)} +-- {model.Path}{model.Name}\n";
                 output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
             }
             foreach (var model in Records)

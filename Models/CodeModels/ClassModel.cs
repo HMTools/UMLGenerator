@@ -7,7 +7,7 @@ using UMLGenerator.Interfaces;
 
 namespace UMLGenerator.Models.CodeModels
 {
-    public class ClassModel : IUMLTransferable
+    public class ClassModel : IUMLTransferable, ICodeObject
     {
         #region Properties
         public string Name { get; set; }
@@ -22,7 +22,7 @@ namespace UMLGenerator.Models.CodeModels
         #endregion
 
         #region Static Fields
-        public static string BasePattern = @"(^|\w* +)class ";
+        public static string BasePattern = @"(^| +)class ";
         #endregion
 
         #region Constructors
@@ -30,16 +30,17 @@ namespace UMLGenerator.Models.CodeModels
         {
             Path = path;
             Namespace = nameSpace;
-            var basesMatch = Regex.Match(statement, @":(?<Bases>.*){");
 
             Name = Regex.Match(statement, @"(^| +)class +(?<Name>((\w+ *<[^>]+>)|\w+))").Groups["Name"].Value;
             AccessModifier = Libraries.RegexPatterns.GetAccessModifier(statement);
-            Bases = basesMatch.Success ? basesMatch.Groups["Bases"].Value.Split(',').ToList() :new List<string>();
             IsAbstract = Regex.IsMatch(statement, @"(^| +)(abstract) +");
 
             Methods = new List<MethodModel>();
             Properties = new List<PropertyModel>();
             Fields = new List<FieldModel>();
+
+            var basesMatch = Regex.Match(statement, @":(?<Bases>.*){");
+            Bases = basesMatch.Success ? basesMatch.Groups["Bases"].Value.Split(',').ToList() :new List<string>();
             for(int i = 0; i < Bases.Count; i++)
             {
                 Bases[i] = Bases[i].Trim();

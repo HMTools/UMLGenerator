@@ -37,21 +37,21 @@ namespace UMLGenerator.ViewModels
 
         #region Methods
 
-        private List<object> ScanSubObjects(bool isInClass, string path)
+        private List<object> ScanSubObjects(bool isInObject, string path)
         {
             List<object> output = new List<object>();
             while (currIndex < Model.Code.Length && Model.Code[currIndex] != '}')
             {
                 if (";{".Contains(Model.Code[currIndex++]))
                 {
-                    output.Add(GetObject(Model.Code.Substring(currStart, currIndex - currStart), isInClass, path));
+                    output.Add(GetObject(Model.Code.Substring(currStart, currIndex - currStart), isInObject, path));
                 }
             }
             currIndex++;
             return output;
         }
 
-        private object GetObject(string header ,bool isInClass, string path)
+        private object GetObject(string header ,bool isInObject, string path)
         {
             currStart = currIndex;
             #region NameSpace Model
@@ -89,7 +89,7 @@ namespace UMLGenerator.ViewModels
             }
             #endregion
 
-            if (isInClass)
+            if (isInObject)
             {
                 #region Method Model
                 if (Regex.IsMatch(header, MethodModel.BasePattern))
@@ -162,19 +162,7 @@ namespace UMLGenerator.ViewModels
                 interfacesDict.Add(model.Name, new List<string>() { $"{namespacesQueue.Peek().Name}.{path}" });
             }
             namespacesQueue.Peek().Interfaces.Add(model);
-            #region Skip Content
-
-            int countOpenBrackets = 1;
-            while (countOpenBrackets > 0 && currIndex < Model.Code.Length)
-            {
-                if (Model.Code[currIndex] == '{')
-                    countOpenBrackets++;
-                else if (Model.Code[currIndex] == '}')
-                    countOpenBrackets--;
-                currIndex++;
-            }
-            currStart = currIndex;
-            #endregion
+            model.AssociateChilds(ScanSubObjects(true, $"{path}{model.Name}__"));
             return model;
 
         }
