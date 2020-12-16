@@ -206,15 +206,17 @@ namespace UMLGenerator.ViewModels
             EnumModel model = new EnumModel(statement, path, namespacesQueue.Peek().Name);
             namespacesQueue.Peek().Enums.Add(model);
             #region Skip Content
-            int countOpenBrackets = 1;
-            while (countOpenBrackets > 0 && currIndex < Model.Code.Length)
+            currStart = currIndex;
+            while (Model.Code[currIndex] != '}' && currIndex < Model.Code.Length)
             {
-                if (Model.Code[currIndex] == '{')
-                    countOpenBrackets++;
-                else if (Model.Code[currIndex] == '}')
-                    countOpenBrackets--;
+                if (Model.Code[currIndex] == ',')
+                {
+                    model.Members.Add(Regex.Match(Model.Code.Substring(currStart, currIndex - currStart), @"^ *(?<Member>\w+)").Value);
+                    currStart = currIndex + 1;
+                }
                 currIndex++;
             }
+            model.Members.Add(Regex.Match(Model.Code.Substring(currStart, currIndex - currStart), @"^ *(?<Member>\w+)").Value);
             currStart = currIndex;
             #endregion
             return model;

@@ -13,6 +13,7 @@ namespace UMLGenerator.Models.CodeModels
         public string AccessModifier { get; set; }
         public string Path { get; set; }
         public string Namespace { get; set; }
+        public List<string> Members { get; set; }
         #endregion
 
         #region Static Fields
@@ -22,6 +23,8 @@ namespace UMLGenerator.Models.CodeModels
         #region Constructors
         public EnumModel(string statement, string path, string nameSpace)
         {
+            Members = new List<string>();
+
             Path = path;
             Namespace = nameSpace;
 
@@ -35,6 +38,10 @@ namespace UMLGenerator.Models.CodeModels
         {
             string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
             string output = tab + "enum " + Name + " {\n";
+            foreach(var member in Members)
+            {
+                output += $"{tab}\t{member}\n";
+            }
             return output + tab + "}\n\n";
         }
         #endregion
