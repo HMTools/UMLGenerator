@@ -77,7 +77,7 @@ namespace UMLGenerator.ViewModels
 
                 var renderer = factory.CreateRenderer(new PlantUmlSettings());
 
-                new Views.OpenFullWindowPNG(renderer.RenderAsync(Results, OutputFormat.Png).Result).ShowDialog();
+                new Views.OpenFullWindowPNG(renderer.RenderAsync(Results, OutputFormat.Png).GetAwaiter().GetResult()).ShowDialog();
             });
 
             BackCommand = new RelayCommand(o =>

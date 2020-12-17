@@ -66,6 +66,7 @@
             <TreeView.Resources>
                 <HierarchicalDataTemplate DataType="{x:Type m:DirectoryModel}" ItemsSource="{Binding Items}">
                     <StackPanel Orientation="Horizontal">
+                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
                         <Label Content="{Binding Name}"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>

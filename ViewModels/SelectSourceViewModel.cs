@@ -188,7 +188,7 @@ namespace UMLGenerator.ViewModels
                 switch (item)
                 {
                     case FileModel file:
-                        if (file.IsChecked)
+                        if (file.IsChecked == true)
                             output.Add(file);
                         break;
                     case DirectoryModel dir:

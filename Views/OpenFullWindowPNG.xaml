@@ -6,8 +6,11 @@
         xmlns:local="clr-namespace:UMLGenerator.Views"
         xmlns:zoom="clr-namespace:UMLGenerator.Libraries"
         mc:Ignorable="d"
-        Title="UML Result PNG" WindowState="Maximized" Height="Auto" Width="Auto">
-    <zoom:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray">
-        <Image Name="PreviewImage"/>
-    </zoom:ZoomBorder>
+        Title="UML Result PNG" WindowState="Maximized">
+    <Grid>
+        <zoom:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray">
+            <Image Name="PreviewImage" Width="1920" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        </zoom:ZoomBorder>
+    </Grid>
+    
 </Window>

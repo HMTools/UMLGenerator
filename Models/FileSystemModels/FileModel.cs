@@ -8,8 +8,5 @@ namespace UMLGenerator.Models.FileSystemModels
 {
     public class FileModel : FileSystemItemModel
     {
-        #region Properties
-        public bool IsChecked { get; set; }
-        #endregion
     }
 }
