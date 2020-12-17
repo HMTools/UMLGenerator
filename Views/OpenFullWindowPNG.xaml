@@ -9,7 +9,7 @@
         Title="UML Result PNG" WindowState="Maximized">
     <Grid>
         <zoom:ZoomBorder x:Name="border" ClipToBounds="True" Background="Gray">
-            <Image Name="PreviewImage" Width="1920" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Image Name="PreviewImage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto"/>
         </zoom:ZoomBorder>
     </Grid>
     

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,10 +26,12 @@ namespace UMLGenerator.Views
             PreviewImage.Source = LoadImage(imageData);
         }
 
+
         private static BitmapImage LoadImage(byte[] imageData)
         {
             if (imageData == null || imageData.Length == 0) return null;
             var image = new BitmapImage();
+            File.WriteAllBytes("out.png", imageData);
             using (var mem = new System.IO.MemoryStream(imageData))
             {
                 mem.Position = 0;
