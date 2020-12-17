@@ -7,18 +7,18 @@ using UMLGenerator.Interfaces;
 
 namespace UMLGenerator.Models.CodeModels
 {
-    public class ClassModel : IUMLTransferable, ICodeObject
+    public class ClassModel : BaseObjectCodeModel, ICodeAbstractable, ICodeHasBases
     {
         #region Properties
-        public string Name { get; set; }
-        public string AccessModifier { get; set; }
         public bool IsAbstract { get; set; }
         public List<string> Bases { get; set; }
+        public List<ClassModel> Classes { get; set; }
+        public List<InterfaceModel> Interfaces { get; set; }
         public List<MethodModel> Methods { get; set; }
         public List<PropertyModel> Properties { get; set; }
         public List<FieldModel> Fields { get; set; }
-        public string Path { get; set; }
-        public string Namespace { get; set; }
+
+        public override string NamePattern => @"(^| +)class +(?<Name>((\w+ *<[^>]+>)|\w+))";
         #endregion
 
         #region Static Fields
@@ -26,35 +26,29 @@ namespace UMLGenerator.Models.CodeModels
         #endregion
 
         #region Constructors
-        public ClassModel(string statement, string path, string nameSpace)
+        public ClassModel(string statement, string path, string nameSpace) : base(statement, path, nameSpace)
         {
-            Path = path;
-            Namespace = nameSpace;
-
-            Name = Regex.Match(statement, @"(^| +)class +(?<Name>((\w+ *<[^>]+>)|\w+))").Groups["Name"].Value;
-            AccessModifier = Libraries.RegexPatterns.GetAccessModifier(statement);
-            IsAbstract = Regex.IsMatch(statement, @"(^| +)(abstract) +");
-
+            Classes = new List<ClassModel>();
+            Interfaces = new List<InterfaceModel>();
             Methods = new List<MethodModel>();
             Properties = new List<PropertyModel>();
             Fields = new List<FieldModel>();
-
-            var basesMatch = Regex.Match(statement, @":(?<Bases>.*){");
-            Bases = basesMatch.Success ? basesMatch.Groups["Bases"].Value.Split(',').ToList() :new List<string>();
-            for(int i = 0; i < Bases.Count; i++)
-            {
-                Bases[i] = Bases[i].Trim();
-            }
         }
         #endregion
 
         #region Methods
-        public void AssociateChilds(List<object> childs)
+        public override void AssociateChilds(List<object> childs)
         {
             foreach (var child in childs)
             {
                 switch (child)
                 {
+                    case ClassModel obj:
+                        Classes.Add(obj);
+                        break;
+                    case InterfaceModel obj:
+                        Interfaces.Add(obj);
+                        break;
                     case MethodModel obj:
                         Methods.Add(obj);
                         break;
@@ -68,7 +62,7 @@ namespace UMLGenerator.Models.CodeModels
             }
         }
 
-        public string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
+        public override string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
             string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
             string output = $"{tab}{ViewModels.UMLScreenViewModel.AccessModifiersDict[AccessModifier]}class {Path}{Name} " + "{\n";

@@ -6,14 +6,15 @@ using UMLGenerator.Interfaces;
 
 namespace UMLGenerator.Models.CodeModels
 {
-    public class NamespaceModel : IUMLTransferable
+    public class NamespaceModel : BaseCodeModel
     {
         #region Properties
-        public string Name { get; set; }
         public List<ClassModel> Classes { get; set; }
         public List<EnumModel> Enums { get; set; }
         public List<InterfaceModel> Interfaces { get; set; }
         public List<RecordModel> Records { get; set; }
+
+        public override string NamePattern => @"(^| +)namespace +(?<Name>[\w.]+) *{";
 
         #endregion
 
@@ -26,9 +27,8 @@ namespace UMLGenerator.Models.CodeModels
         #endregion
 
         #region Constructors
-        public NamespaceModel(string statement)
+        public NamespaceModel(string statement) : base(statement)
         {
-            Name = Regex.Match(statement, @"(^| +)namespace +(?<Name>[\w.]+) *{").Groups["Name"].Value;
             Classes = new List<ClassModel>();
             Enums = new List<EnumModel>();
             Interfaces = new List<InterfaceModel>();
@@ -39,7 +39,7 @@ namespace UMLGenerator.Models.CodeModels
         #region Methods
         
 
-        public string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
+        public override string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
             string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
             string output = tab + "namespace " + Name + " {\n";

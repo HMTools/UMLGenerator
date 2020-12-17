@@ -6,14 +6,15 @@ using UMLGenerator.Interfaces;
 
 namespace UMLGenerator.Models.CodeModels
 {
-    public class MethodModel : IUMLTransferable
+    public class MethodModel : BaseCodeModel, ICodeAccessDeclared, ICodeAbstractable
     {
         #region Properties
-        public string Name { get; set; }
         public string ReturnType { get; set; }
         public string Parameters { get; set; }
         public string AccessModifier { get; set; }
         public bool IsAbstract { get; set; }
+
+        public override string NamePattern => @"(?<Name>(\w+ *<[^>]+>)|\w+) *\(";
         #endregion
 
         #region Static Fields
@@ -22,21 +23,17 @@ namespace UMLGenerator.Models.CodeModels
         #endregion
 
         #region Constructors
-        public MethodModel(string statement)
+        public MethodModel(string statement) : base(statement)
         {
-            var accessMatch = Regex.Match(statement, @"(^| +)(?<AcessModifier>public|(protected internal)|protected|internal|private|(private protected)) +");
 
-            Name = Regex.Match(statement, @"(?<Name>(\w+ *<[^>]+>)|\w+) *\(").Groups["Name"].Value;
             ReturnType = Regex.Match(statement, @"(?<ReturnType>(\w+ *<.+>)|\w+) +((\w+ *<[^>]+>)|\w+) *\(").Groups["ReturnType"].Value;
             Parameters = Regex.Match(statement, @"\w+\((?<Parameters>.*)\)").Groups["Parameters"].Value;
-            AccessModifier = accessMatch.Success ? accessMatch.Groups["AcessModifier"].Value : "";
-            IsAbstract = Regex.Match(statement, @"(^| +)(abstract) +").Success;
         }
 
         #endregion
 
         #region Methods
-        public string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
+        public override string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
             string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
             return $"{tab}{ViewModels.UMLScreenViewModel.AccessModifiersDict[AccessModifier]}{ReturnType} {Name}({Parameters})\n\n";

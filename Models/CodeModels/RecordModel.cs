@@ -6,13 +6,11 @@ using UMLGenerator.Interfaces;
 
 namespace UMLGenerator.Models.CodeModels
 {
-    public class RecordModel : IUMLTransferable
+    public class RecordModel : BaseObjectCodeModel
     {
         #region Properties
-        public string Name { get; set; }
-        public string AccessModifier { get; set; }
-        public string Path { get; set; }
-        public string Namespace { get; set; }
+        public override string NamePattern => @"(^| +)record +(?<Name>\w+)";
+
         #endregion
 
         #region Static Fields
@@ -20,18 +18,18 @@ namespace UMLGenerator.Models.CodeModels
         #endregion
 
         #region Constructors
-        public RecordModel(string statement, string path, string nameSpace)
+        public RecordModel(string statement, string path, string nameSpace) : base(statement, path, nameSpace)
         {
-            Path = path;
-            Namespace = nameSpace;
+        }
+        #endregion
 
-            var accessMatch = Regex.Match(statement, @"(^| +)(?<AcessModifier>public|(protected internal)|protected|internal|private|(private protected)) +");
-
-            Name = Regex.Match(statement, @"(^| +)record +(?<Name>\w+)").Groups["Name"].Value;
-            AccessModifier = accessMatch.Success ? accessMatch.Groups["AcessModifier"].Value : "";
+        #region Methods
+        public override void AssociateChilds(List<object> childs)
+        {
+            throw new NotImplementedException();
         }
 
-        public string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
+        public override string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
             throw new NotImplementedException();
         }

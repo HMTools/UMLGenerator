@@ -6,14 +6,12 @@ using UMLGenerator.Interfaces;
 
 namespace UMLGenerator.Models.CodeModels
 {
-    public class EnumModel : IUMLTransferable
+    public class EnumModel : BaseObjectCodeModel
     {
         #region Properties
-        public string Name { get; set; }
-        public string AccessModifier { get; set; }
-        public string Path { get; set; }
-        public string Namespace { get; set; }
-        public List<string> Members { get; set; }
+        public List<EnumMemberModel> Members { get; set; }
+
+        public override string NamePattern => @"(^| +)enum +(?<Name>\w+)";
         #endregion
 
         #region Static Fields
@@ -21,28 +19,25 @@ namespace UMLGenerator.Models.CodeModels
         #endregion
 
         #region Constructors
-        public EnumModel(string statement, string path, string nameSpace)
+        public EnumModel(string statement, string path, string nameSpace) : base(statement, path, nameSpace)
         {
-            Members = new List<string>();
-
-            Path = path;
-            Namespace = nameSpace;
-
-            var accessMatch = Regex.Match(statement, @"(^| +)(?<AcessModifier>public|(protected internal)|protected|internal|private|(private protected)) +");
-
-            Name = Regex.Match(statement, @"(^| +)enum +(?<Name>\w+)").Groups["Name"].Value;
-            AccessModifier = accessMatch.Success ? accessMatch.Groups["AcessModifier"].Value : "";
+            Members = new List<EnumMemberModel>();
         }
 
-        public string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
+        public override string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
             string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
             string output = tab + "enum " + Name + " {\n";
             foreach(var member in Members)
             {
-                output += $"{tab}\t{member}\n";
+                output += member.TransferToUML(layer+1, classesDict, interfacesDict);
             }
             return output + tab + "}\n\n";
+        }
+
+        public override void AssociateChilds(List<object> childs)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

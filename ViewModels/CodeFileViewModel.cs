@@ -199,12 +199,12 @@ namespace UMLGenerator.ViewModels
             {
                 if (Model.Code[currIndex] == ',')
                 {
-                    model.Members.Add(Regex.Match(Model.Code.Substring(currStart, currIndex - currStart), @"^ *(?<Member>\w+)").Value);
+                    model.Members.Add(new EnumMemberModel(Model.Code.Substring(currStart, currIndex - currStart)));
                     currStart = currIndex + 1;
                 }
                 currIndex++;
             }
-            model.Members.Add(Regex.Match(Model.Code.Substring(currStart, currIndex - currStart), @"^ *(?<Member>\w+)").Value);
+            model.Members.Add(new EnumMemberModel(Model.Code.Substring(currStart, currIndex - currStart)));
             currStart = currIndex;
             #endregion
             return model;
