@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UMLGenerator.Interfaces;
@@ -9,10 +10,7 @@ namespace UMLGenerator.Models.CodeModels
     public class NamespaceModel : BaseCodeModel
     {
         #region Properties
-        public List<ClassModel> Classes { get; set; }
-        public List<EnumModel> Enums { get; set; }
-        public List<InterfaceModel> Interfaces { get; set; }
-        public List<RecordModel> Records { get; set; }
+        public List<BaseCodeModel> Children { get; set; }
 
         public override string NamePattern => @"(^| +)namespace +(?<Name>[\w.]+) *{";
 
@@ -29,10 +27,7 @@ namespace UMLGenerator.Models.CodeModels
         #region Constructors
         public NamespaceModel(string statement) : base(statement)
         {
-            Classes = new List<ClassModel>();
-            Enums = new List<EnumModel>();
-            Interfaces = new List<InterfaceModel>();
-            Records = new List<RecordModel>();
+            Children = new List<BaseCodeModel>();
         }
         #endregion
 
@@ -43,7 +38,9 @@ namespace UMLGenerator.Models.CodeModels
         {
             string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
             string output = tab + "namespace " + Name + " {\n";
-            foreach (var model in Classes)
+
+            var classes = Children.OfType<ClassModel>();
+            foreach (var model in classes)
             {
                 for(int i = 0; i < model.Bases.Count; i++)
                 {
@@ -70,11 +67,15 @@ namespace UMLGenerator.Models.CodeModels
                     output += $"\t{model.Path.Substring(0, model.Path.Length-1)} +-- {model.Path}{model.Name}\n";
                 output += model.TransferToUML(layer+1, classesDict, interfacesDict);
             }
-            foreach (var model in Enums)
+
+            var enums = Children.OfType<EnumModel>();
+            foreach (var model in enums)
             {
                 output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
             }
-            foreach (var model in Interfaces)
+
+            var interfaces = Children.OfType<InterfaceModel>();
+            foreach (var model in interfaces)
             {
                 for (int i = 0; i < model.Bases.Count; i++)
                 {
@@ -91,7 +92,9 @@ namespace UMLGenerator.Models.CodeModels
                     output += $"\t{model.Path.Substring(0, model.Path.Length - 1)} +-- {model.Path}{model.Name}\n";
                 output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
             }
-            foreach (var model in Records)
+
+            var records = Children.OfType<RecordModel>();
+            foreach (var model in records)
             {
                 output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
             }

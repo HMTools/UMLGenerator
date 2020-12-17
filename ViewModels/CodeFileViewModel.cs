@@ -37,9 +37,9 @@ namespace UMLGenerator.ViewModels
 
         #region Methods
 
-        private List<object> ScanSubObjects(bool isInObject, string path)
+        private List<BaseCodeModel> ScanSubObjects(bool isInObject, string path)
         {
-            List<object> output = new List<object>();
+            List<BaseCodeModel> output = new List<BaseCodeModel>();
             while (currIndex < Model.Code.Length && Model.Code[currIndex] != '}')
             {
                 if (";{".Contains(Model.Code[currIndex++]))
@@ -50,8 +50,11 @@ namespace UMLGenerator.ViewModels
             currIndex++;
             return output;
         }
-
-        private object GetObject(string header ,bool isInObject, string path)
+        class test1
+        {
+            public static string BasePattern { get; set; } = "123";
+        }
+        private BaseCodeModel GetObject(string header ,bool isInObject, string path)
         {
             currStart = currIndex;
             #region NameSpace Model
@@ -144,8 +147,8 @@ namespace UMLGenerator.ViewModels
             {
                 classesDict.Add(model.Name, new List<string>() { $"{namespacesQueue.Peek().Name}.{path}" });
             }
-            namespacesQueue.Peek().Classes.Add(model);
-            model.AssociateChilds(ScanSubObjects(true, $"{path}{model.Name}__"));
+            namespacesQueue.Peek().Children.Add(model);
+            model.Children = ScanSubObjects(true, $"{path}{model.Name}__");
             return model;
         }
 
@@ -161,8 +164,8 @@ namespace UMLGenerator.ViewModels
             {
                 interfacesDict.Add(model.Name, new List<string>() { $"{namespacesQueue.Peek().Name}.{path}" });
             }
-            namespacesQueue.Peek().Interfaces.Add(model);
-            model.AssociateChilds(ScanSubObjects(true, $"{path}{model.Name}__"));
+            namespacesQueue.Peek().Children.Add(model);
+            model.Children = ScanSubObjects(true, $"{path}{model.Name}__");
             return model;
 
         }
@@ -171,7 +174,7 @@ namespace UMLGenerator.ViewModels
         {
 
             RecordModel model = new RecordModel(statement, path, namespacesQueue.Peek().Name);
-            namespacesQueue.Peek().Records.Add(model);
+            namespacesQueue.Peek().Children.Add(model);
             #region Skip Content
 
             int countOpenBrackets = 1;
@@ -192,19 +195,19 @@ namespace UMLGenerator.ViewModels
         private EnumModel GetEnumModel(string statement, string path)
         {
             EnumModel model = new EnumModel(statement, path, namespacesQueue.Peek().Name);
-            namespacesQueue.Peek().Enums.Add(model);
+            namespacesQueue.Peek().Children.Add(model);
             #region Skip Content
             currStart = currIndex;
             while (Model.Code[currIndex] != '}' && currIndex < Model.Code.Length)
             {
                 if (Model.Code[currIndex] == ',')
                 {
-                    model.Members.Add(new EnumMemberModel(Model.Code.Substring(currStart, currIndex - currStart)));
+                    model.Children.Add(new EnumMemberModel(Model.Code.Substring(currStart, currIndex - currStart)));
                     currStart = currIndex + 1;
                 }
                 currIndex++;
             }
-            model.Members.Add(new EnumMemberModel(Model.Code.Substring(currStart, currIndex - currStart)));
+            model.Children.Add(new EnumMemberModel(Model.Code.Substring(currStart, currIndex - currStart)));
             currStart = currIndex;
             #endregion
             return model;

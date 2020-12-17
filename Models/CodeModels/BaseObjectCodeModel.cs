@@ -13,19 +13,18 @@ namespace UMLGenerator.Models.CodeModels
         public string Path { get; set; }
         public string Namespace { get; set; }
         public string AccessModifier { get; set; }
+        public List<BaseCodeModel> Children { get; set; }
 
         #endregion
 
         #region Constructors
         public BaseObjectCodeModel(string statement, string path, string nameSpace) : base(statement)
         {
+            Children = new List<BaseCodeModel>();
+
             Path = path;
             Namespace = nameSpace;
         }
-        #endregion
-
-        #region Methods
-        public abstract void AssociateChilds(List<object> childs);
         #endregion
     }
 }

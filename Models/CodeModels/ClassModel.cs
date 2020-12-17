@@ -12,11 +12,6 @@ namespace UMLGenerator.Models.CodeModels
         #region Properties
         public bool IsAbstract { get; set; }
         public List<string> Bases { get; set; }
-        public List<ClassModel> Classes { get; set; }
-        public List<InterfaceModel> Interfaces { get; set; }
-        public List<MethodModel> Methods { get; set; }
-        public List<PropertyModel> Properties { get; set; }
-        public List<FieldModel> Fields { get; set; }
 
         public override string NamePattern => @"(^| +)class +(?<Name>((\w+ *<[^>]+>)|\w+))";
         #endregion
@@ -28,64 +23,34 @@ namespace UMLGenerator.Models.CodeModels
         #region Constructors
         public ClassModel(string statement, string path, string nameSpace) : base(statement, path, nameSpace)
         {
-            Classes = new List<ClassModel>();
-            Interfaces = new List<InterfaceModel>();
-            Methods = new List<MethodModel>();
-            Properties = new List<PropertyModel>();
-            Fields = new List<FieldModel>();
         }
         #endregion
 
         #region Methods
-        public override void AssociateChilds(List<object> childs)
-        {
-            foreach (var child in childs)
-            {
-                switch (child)
-                {
-                    case ClassModel obj:
-                        Classes.Add(obj);
-                        break;
-                    case InterfaceModel obj:
-                        Interfaces.Add(obj);
-                        break;
-                    case MethodModel obj:
-                        Methods.Add(obj);
-                        break;
-                    case PropertyModel obj:
-                        Properties.Add(obj);
-                        break;
-                    case FieldModel obj:
-                        Fields.Add(obj);
-                        break;
-                }
-            }
-        }
 
         public override string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
             string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
             string output = $"{tab}{ViewModels.UMLScreenViewModel.AccessModifiersDict[AccessModifier]}class {Path}{Name} " + "{\n";
-            if (Methods.Count > 0)
+            var methods = Children.OfType<MethodModel>();
+            if (methods.Count() > 0)
             {
                 output += $"{tab}.. Methods ..\n";
-                foreach (var model in Methods)
-                {
+                foreach (var model in methods)
                     output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
-                }
             }
-            if(Properties.Count > 0)
+            var properties = Children.OfType<PropertyModel>();
+            if (properties.Count() > 0)
             {
                 output += $"{tab}.. Properties ..\n";
-                foreach (var model in Properties)
-                {
+                foreach (var model in properties)
                     output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
-                }
             }
-            if(Fields.Count > 0)
+            var fields = Children.OfType<FieldModel>();
+            if (fields.Count() > 0)
             {
                 output += $"{tab}.. Fields ..\n";
-                foreach (var model in Fields)
+                foreach (var model in fields)
                 {
                     output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
                 }

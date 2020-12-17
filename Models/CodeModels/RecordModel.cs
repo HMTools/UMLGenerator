@@ -24,10 +24,6 @@ namespace UMLGenerator.Models.CodeModels
         #endregion
 
         #region Methods
-        public override void AssociateChilds(List<object> childs)
-        {
-            throw new NotImplementedException();
-        }
 
         public override string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
