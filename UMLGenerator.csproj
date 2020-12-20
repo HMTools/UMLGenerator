@@ -14,4 +14,10 @@
     <PackageReference Include="PlantUml.Net" Version="1.2.48" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="App.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

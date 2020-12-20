@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,6 @@ namespace UMLGenerator.Interfaces
 {
     public interface ICodeObject
     {
-        public List<BaseCodeModel> Children { get; set; }
+        public ObservableCollection<BaseCodeModel> Children { get; set; }
     }
 }

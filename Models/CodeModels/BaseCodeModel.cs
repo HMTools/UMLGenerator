@@ -8,13 +8,19 @@ using UMLGenerator.Interfaces;
 
 namespace UMLGenerator.Models.CodeModels
 {
-    public abstract class BaseCodeModel : IUMLTransferable
+    public abstract class BaseCodeModel : BaseModel, IUMLTransferable
     {
         #region Properties
         public string Name { get; set; }
         public abstract string NamePattern { get; }
-        //public abstract string BasePattern { get; }
-        //public abstract string BaseFalsePattern { get; }
+
+        private bool? isChecked = true;
+
+        public bool? IsChecked
+        {
+            get { return isChecked; }
+            set { isChecked = value; NotifyPropertyChanged(); }
+        }
 
         #endregion
 
@@ -37,13 +43,6 @@ namespace UMLGenerator.Models.CodeModels
                 }
             }
         }
-        #endregion
-
-        #region Methods
-        //public static bool ValidatePatterns(string statement)
-        //{
-        //    if(Regex.IsMatch(statement, ))
-        //}
         #endregion
 
         #region Abstract Methods

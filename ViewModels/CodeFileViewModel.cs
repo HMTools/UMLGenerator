@@ -44,15 +44,13 @@ namespace UMLGenerator.ViewModels
             {
                 if (";{".Contains(Model.Code[currIndex++]))
                 {
-                    output.Add(GetObject(Model.Code.Substring(currStart, currIndex - currStart), isInObject, path));
+                    var obj = GetObject(Model.Code.Substring(currStart, currIndex - currStart), isInObject, path);
+                    if(obj != null)
+                        output.Add(obj);
                 }
             }
             currIndex++;
             return output;
-        }
-        class test1
-        {
-            public static string BasePattern { get; set; } = "123";
         }
         private BaseCodeModel GetObject(string header ,bool isInObject, string path)
         {
@@ -148,7 +146,10 @@ namespace UMLGenerator.ViewModels
                 classesDict.Add(model.Name, new List<string>() { $"{namespacesQueue.Peek().Name}.{path}" });
             }
             namespacesQueue.Peek().Children.Add(model);
-            model.Children = ScanSubObjects(true, $"{path}{model.Name}__");
+            foreach(var obj in ScanSubObjects(true, $"{path}{model.Name}__"))
+            {
+                model.Children.Add(obj);
+            }
             return model;
         }
 
@@ -165,7 +166,10 @@ namespace UMLGenerator.ViewModels
                 interfacesDict.Add(model.Name, new List<string>() { $"{namespacesQueue.Peek().Name}.{path}" });
             }
             namespacesQueue.Peek().Children.Add(model);
-            model.Children = ScanSubObjects(true, $"{path}{model.Name}__");
+            foreach (var obj in ScanSubObjects(true, $"{path}{model.Name}__"))
+            {
+                model.Children.Add(obj);
+            }
             return model;
 
         }

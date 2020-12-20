@@ -16,6 +16,7 @@ namespace UMLGenerator.ViewModels
     public class UMLScreenViewModel : BaseViewModel
     {
         #region Commands
+        public RelayCommand GenerateUMLCommand { get; private set; }
         public RelayCommand ShowPreviewCommand { get; private set; }
         public RelayCommand BackCommand { get; private set; }
 
@@ -24,7 +25,14 @@ namespace UMLGenerator.ViewModels
         public Dictionary<string, NamespaceModel> Namespaces { get; set; }
         public Dictionary<string, List<string>> Classes { get; set; }
         public Dictionary<string, List<string>> Interfaces { get; set; }
-        public string Results { get; set; }
+        private string results;
+
+        public string Results
+        {
+            get { return results; }
+            set { results = value; NotifyPropertyChanged(); }
+        }
+
         #endregion
 
         #region Public Static Fields
@@ -87,6 +95,8 @@ namespace UMLGenerator.ViewModels
             {
                 mainVM.SelectedViewModel = new SelectSourceViewModel(mainVM);
             });
+
+            GenerateUMLCommand = new RelayCommand((o) => { Results = GenerateUML(Namespaces.Values); });
         }
         private void RunOnFiles(List<FileModel> fileModels) //local files
         {

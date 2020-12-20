@@ -7,11 +7,9 @@ using UMLGenerator.Interfaces;
 
 namespace UMLGenerator.Models.CodeModels
 {
-    public class NamespaceModel : BaseCodeModel
+    public class NamespaceModel : BaseObjectCodeModel
     {
         #region Properties
-        public List<BaseCodeModel> Children { get; set; }
-
         public override string NamePattern => @"(^| +)namespace +(?<Name>[\w.]+) *{";
 
         #endregion
@@ -25,9 +23,8 @@ namespace UMLGenerator.Models.CodeModels
         #endregion
 
         #region Constructors
-        public NamespaceModel(string statement) : base(statement)
+        public NamespaceModel(string statement) : base(statement, "", "")
         {
-            Children = new List<BaseCodeModel>();
         }
         #endregion
 
@@ -36,69 +33,73 @@ namespace UMLGenerator.Models.CodeModels
 
         public override string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
-            string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
-            string output = tab + "namespace " + Name + " {\n";
-
-            var classes = Children.OfType<ClassModel>();
-            foreach (var model in classes)
+            if(IsChecked == true)
             {
-                for(int i = 0; i < model.Bases.Count; i++)
-                {
-                    if(i == 0 && classesDict.ContainsKey(model.Bases[i]))
-                    {
-                        output += $"\tclass {model.Name} extends {classesDict[model.Bases[i]][0]}{model.Bases[i]}\n"; // need to handle ambiguity!!!
+                string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
+                string output = tab + "namespace " + Name + " {\n";
 
-                    }
-                    else
+                var classes = Children.OfType<ClassModel>();
+                foreach (var model in classes)
+                {
+                    for (int i = 0; i < model.Bases.Count; i++)
                     {
-                        if(interfacesDict.ContainsKey(model.Bases[i]))
+                        if (i == 0 && classesDict.ContainsKey(model.Bases[i]))
                         {
-                            output += $"\tclass {model.Name} implements {interfacesDict[model.Bases[i]][0]}{model.Bases[i]}\n"; // need to handle ambiguity!!!
+                            output += $"\tclass {model.Name} extends {classesDict[model.Bases[i]][0]}{model.Bases[i]}\n"; // need to handle ambiguity!!!
+
                         }
                         else
                         {
-                            string impOrExt = model.Bases[i].Length == 1 || model.Bases[i][0] != 'I' || !Char.IsUpper(model.Bases[i][1]) ? "extends" : "implements";
-                            output += $"\tclass {model.Name} {impOrExt} ___Common___.{model.Bases[i]}\n";
+                            if (interfacesDict.ContainsKey(model.Bases[i]))
+                            {
+                                output += $"\tclass {model.Name} implements {interfacesDict[model.Bases[i]][0]}{model.Bases[i]}\n"; // need to handle ambiguity!!!
+                            }
+                            else
+                            {
+                                string impOrExt = model.Bases[i].Length == 1 || model.Bases[i][0] != 'I' || !Char.IsUpper(model.Bases[i][1]) ? "extends" : "implements";
+                                output += $"\tclass {model.Name} {impOrExt} ___Common___.{model.Bases[i]}\n";
+                            }
+
                         }
-                        
                     }
+                    if (model.Path != "")
+                        output += $"\t{model.Path.Substring(0, model.Path.Length - 1)} +-- {model.Path}{model.Name}\n";
+                    output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
                 }
-                if(model.Path != "")
-                    output += $"\t{model.Path.Substring(0, model.Path.Length-1)} +-- {model.Path}{model.Name}\n";
-                output += model.TransferToUML(layer+1, classesDict, interfacesDict);
-            }
 
-            var enums = Children.OfType<EnumModel>();
-            foreach (var model in enums)
-            {
-                output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
-            }
-
-            var interfaces = Children.OfType<InterfaceModel>();
-            foreach (var model in interfaces)
-            {
-                for (int i = 0; i < model.Bases.Count; i++)
+                var enums = Children.OfType<EnumModel>();
+                foreach (var model in enums)
                 {
-                    if (interfacesDict.ContainsKey(model.Bases[i]))
-                    {
-                        output += $"\tinterface {model.Name} implements {interfacesDict[model.Bases[i]][0]}{model.Bases[i]}\n"; // need to handle ambiguity!!!
-                    }
-                    else
-                    {
-                        output += $"\tinterface {model.Name} implements ___Common___.{model.Bases[i]}\n";
-                    }
+                    output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
                 }
-                if (model.Path != "")
-                    output += $"\t{model.Path.Substring(0, model.Path.Length - 1)} +-- {model.Path}{model.Name}\n";
-                output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
-            }
 
-            var records = Children.OfType<RecordModel>();
-            foreach (var model in records)
-            {
-                output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
+                var interfaces = Children.OfType<InterfaceModel>();
+                foreach (var model in interfaces)
+                {
+                    for (int i = 0; i < model.Bases.Count; i++)
+                    {
+                        if (interfacesDict.ContainsKey(model.Bases[i]))
+                        {
+                            output += $"\tinterface {model.Name} implements {interfacesDict[model.Bases[i]][0]}{model.Bases[i]}\n"; // need to handle ambiguity!!!
+                        }
+                        else
+                        {
+                            output += $"\tinterface {model.Name} implements ___Common___.{model.Bases[i]}\n";
+                        }
+                    }
+                    if (model.Path != "")
+                        output += $"\t{model.Path.Substring(0, model.Path.Length - 1)} +-- {model.Path}{model.Name}\n";
+                    output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
+                }
+
+                var records = Children.OfType<RecordModel>();
+                foreach (var model in records)
+                {
+                    output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
+                }
+                return output + tab + "}\n";
             }
-            return  output + tab + "}\n";
+            return "";
         }
         #endregion
     }

@@ -9,33 +9,74 @@
              d:DesignHeight="450" d:DesignWidth="800" d:Background="White">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition />
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="300"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <Button Content="Back" Command="{Binding BackCommand}"/>
-            <Button Content="Show Preview" Command="{Binding ShowPreviewCommand}" />
-        </StackPanel>
-        <TreeView Grid.Row="1" ItemsSource="{Binding Namespaces.Values}">
-            <!--<TreeView.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type m:NamespaceModel}" ItemsSource="{Binding Items}">
+        <TreeView ItemsSource="{Binding Namespaces.Values}">
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type m:NamespaceModel}" ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal">
                         <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
+                        <Label Content="NS" FontWeight="Bold">
+                            <Label.Background>
+                                <SolidColorBrush Color="Purple" Opacity="0.4"/>
+                            </Label.Background>
+                        </Label>
                         <Label Content="{Binding Name}"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
-                <DataTemplate DataType="{x:Type m:FileModel}">
+                <DataTemplate DataType="{x:Type m:ClassModel}">
                     <StackPanel Orientation="Horizontal">
                         <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
+                        <Label Content="C" FontWeight="Bold">
+                            <Label.Background>
+                                <SolidColorBrush Color="Green" Opacity="0.4"/>
+                            </Label.Background>
+                        </Label>
                         <Label Content="{Binding Name}"/>
                     </StackPanel>
-                </DataTemplate>-->
-            <!--</TreeView.Resources>-->
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type m:InterfaceModel}">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
+                        <Label Content="I" FontWeight="Bold">
+                            <Label.Background>
+                                <SolidColorBrush Color="Blue" Opacity="0.4"/>
+                            </Label.Background>
+                        </Label>
+                        <Label Content="{Binding Name}"/>
+                    </StackPanel>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type m:EnumModel}">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
+                        <Label Content="E" FontWeight="Bold">
+                            <Label.Background>
+                                <SolidColorBrush Color="Red" Opacity="0.4"/>
+                            </Label.Background>
+                        </Label>
+                        <Label Content="{Binding Name}"/>
+                    </StackPanel>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type m:RecordModel}">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
+                        <Label Content="R" FontWeight="Bold">
+                            <Label.Background>
+                                <SolidColorBrush Color="Gray"  Opacity="0.4"/>
+                            </Label.Background>
+                        </Label>
+                        <Label Content="{Binding Name}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </TreeView.Resources>
         </TreeView>
-        <TextBox Text="{Binding Results}" Grid.Row="1" Grid.Column="1"/>
+        <TextBox Text="{Binding Results}" Grid.Column="1" Grid.RowSpan="2"/>
+        <Button Content="Show Preview" Command="{Binding ShowPreviewCommand}" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+        <Button Content="Generate PlantUML" Command="{Binding GenerateUMLCommand}" Height="40" Grid.Row="1"/>
     </Grid>
 </UserControl>

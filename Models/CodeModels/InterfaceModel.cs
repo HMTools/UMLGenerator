@@ -26,28 +26,32 @@ namespace UMLGenerator.Models.CodeModels
 
         public override string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
-            string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
-            string output = $"{tab}{ViewModels.UMLScreenViewModel.AccessModifiersDict[AccessModifier]}interface {Path}{Name} " + "{\n";
+            if(IsChecked == true)
+            {
+                string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
+                string output = $"{tab}{ViewModels.UMLScreenViewModel.AccessModifiersDict[AccessModifier]}interface {Path}{Name} " + "{\n";
 
-            var methods = Children.OfType<MethodModel>();
-            if (methods.Count() > 0)
-            {
-                output += $"{tab}.. Methods ..\n";
-                foreach (var model in methods)
+                var methods = Children.OfType<MethodModel>();
+                if (methods.Count() > 0)
                 {
-                    output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
+                    output += $"{tab}.. Methods ..\n";
+                    foreach (var model in methods)
+                    {
+                        output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
+                    }
                 }
-            }
-            var properties = Children.OfType<PropertyModel>();
-            if (properties.Count() > 0)
-            {
-                output += $"{tab}.. Properties ..\n";
-                foreach (var model in properties)
+                var properties = Children.OfType<PropertyModel>();
+                if (properties.Count() > 0)
                 {
-                    output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
+                    output += $"{tab}.. Properties ..\n";
+                    foreach (var model in properties)
+                    {
+                        output += model.TransferToUML(layer + 1, classesDict, interfacesDict);
+                    }
                 }
+                return output + tab + "}\n\n";
             }
-            return output + tab + "}\n\n";
+            return "";
         }
         #endregion
     }

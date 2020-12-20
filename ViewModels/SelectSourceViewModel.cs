@@ -17,7 +17,6 @@ namespace UMLGenerator.ViewModels
         #region Commands
         public RelayCommand SelectFolderCommand { get; private set; }
         public RelayCommand GetDirectoryTree { get; private set; }
-        public RelayCommand NextCommand { get; private set; }
         
         #endregion
         #region Properties
@@ -35,15 +34,6 @@ namespace UMLGenerator.ViewModels
         {
             get { return sourceLanguage; }
             set { sourceLanguage = value; NotifyPropertyChanged(); }
-        }
-
-
-        private string folderPath;
-
-        public string FolderPath
-        {
-            get { return folderPath; }
-            set { folderPath = value; NotifyPropertyChanged(); }
         }
 
         private string repositoryOwner;
@@ -74,8 +64,6 @@ namespace UMLGenerator.ViewModels
         #endregion
         #region Fields
         private MainViewModel mainVM;
-        private GitHubClient githubClient;
-        private long repoId;
         #endregion
 
         #region Constructors
@@ -96,29 +84,22 @@ namespace UMLGenerator.ViewModels
                 dialog.ShowDialog();
                 if (dialog.SelectedPath != "")
                 {
-                    FolderPath = dialog.SelectedPath;
+                    RootDir = GetRootFromFolder(dialog.SelectedPath);
                 }
             });
 
             GetDirectoryTree = new RelayCommand(o =>
             {
-                RootDir = SourceType == SourceTypes.Folder ? GetRootFromFolder() : GetRootFromRepository().GetAwaiter().GetResult();
+                RootDir = GetRootFromRepository();
             });
-
-            NextCommand = new RelayCommand(o =>
-            {
-                mainVM.SelectedViewModel = sourceType == SourceTypes.Folder ?
-                new UMLScreenViewModel(mainVM, GetCheckedFileModels(RootDir)) : new UMLScreenViewModel(mainVM, GetCheckedFileModels(RootDir), githubClient, repoId);
-            });
-            //}, (o) => !string.IsNullOrEmpty(FolderPath));
         }
 
 
-        private DirectoryModel GetRootFromFolder()
+        private DirectoryModel GetRootFromFolder(string path)
         {
-            if (Directory.Exists(FolderPath))
+            if (Directory.Exists(path))
             {
-                return GetFolderDirectory(FolderPath);
+                return GetFolderDirectory(path);
             }
             
             MessageBox.Show("The selected directory doesn't exist");
@@ -126,15 +107,12 @@ namespace UMLGenerator.ViewModels
             return null;
         }
 
-        private async Task<DirectoryModel> GetRootFromRepository()
+        private DirectoryModel GetRootFromRepository()
         {
-            var productInformation = new ProductHeaderValue("UMLGenerator");
-            var credentials = new Credentials("4f7c55c94fcccc3ca26f1f59b5b80a7ff00c3ad6");
-            githubClient = new GitHubClient(productInformation) { Credentials = credentials };
             try
             {
-                repoId = githubClient.Repository.Get(RepositoryOwner, RepositoryName).GetAwaiter().GetResult().Id;
-                return GetRepositoryDirectory(githubClient, repoId, "");
+                mainVM.RepostioryID = mainVM.GitClient.Repository.Get(RepositoryOwner, RepositoryName).GetAwaiter().GetResult().Id;
+                return GetRepositoryDirectory(mainVM.GitClient, mainVM.RepostioryID, "");
             }
             catch
             {
@@ -180,7 +158,7 @@ namespace UMLGenerator.ViewModels
 
 
 
-        private List<FileModel> GetCheckedFileModels(DirectoryModel directory)
+        public List<FileModel> GetCheckedFileModels(DirectoryModel directory)
         {
             List<FileModel> output = new List<FileModel>();
             foreach (var item in directory.Items)

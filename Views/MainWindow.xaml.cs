@@ -15,7 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using UMLGenerator.ViewModels;
 
-namespace UMLGenerator
+namespace UMLGenerator.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

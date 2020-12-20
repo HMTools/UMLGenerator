@@ -6,10 +6,12 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UMLGenerator.ViewModels
+namespace UMLGenerator.Models
 {
-    public class BaseViewModel : INotifyPropertyChanged
+    public class BaseModel :INotifyPropertyChanged
     {
+
+
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         protected void NotifyPropertyChanged([CallerMemberName] String propertyName = "")

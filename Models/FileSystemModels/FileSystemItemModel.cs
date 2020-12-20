@@ -8,16 +8,8 @@ using System.Threading.Tasks;
 
 namespace UMLGenerator.Models.FileSystemModels
 {
-    public class FileSystemItemModel :INotifyPropertyChanged
+    public class FileSystemItemModel :BaseModel
     {
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
 
         #region Properties
         public string Name { get; set; }

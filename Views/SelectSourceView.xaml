@@ -11,22 +11,14 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid d:Background="White">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition  Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <!--#region Source Language (Row 0)-->
-        <StackPanel Orientation="Horizontal">
-            <Label Content="Language :"/>
-            <ComboBox ItemsSource="{Binding Source={convert:EnumBindingSource {x:Type vm:SourceLanguages}}}" SelectedItem="{Binding SourceLanguage}"/>
-        </StackPanel>
-        
-        <!--#endregion-->
-        
-        <!--#region Source Type (Row 1)-->
-        <StackPanel Orientation="Horizontal" Grid.Row="1">
-            <Label Content="Source :" Grid.Row="1"/>
+
+        <!--#region Source Type (Row 0)-->
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Label Content="Source :"/>
             <RadioButton Content="Folder" Margin="0,7,0,0" IsChecked="{Binding SourceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static vm:SourceTypes.Folder}}"/>
             <RadioButton Content="Github" Margin="10,7,0,0" IsChecked="{Binding SourceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static vm:SourceTypes.Github}}"/>
             <ContentControl Margin="10,0,0,0">
@@ -36,7 +28,6 @@
                             <Setter.Value>
                                 <StackPanel Orientation="Horizontal">
                                     <Button Content="Select Folder" Command="{Binding SelectFolderCommand}" Grid.Row="2"/>
-                                    <TextBox Text="{Binding FolderPath}" Margin="10,0,10,0" IsEnabled="False" Width="400" Grid.Row="2" Grid.Column="1"/>
                                 </StackPanel>
                             </Setter.Value>
                         </Setter>
@@ -49,6 +40,7 @@
                                             <TextBox Text="{Binding RepositoryOwner, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0" Width="200"/>
                                             <Label Content="Repository Name"/>
                                             <TextBox Text="{Binding RepositoryName, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0" Width="200"/>
+                                            <Button Content="Get" Command="{Binding GetDirectoryTree}"/>
                                         </StackPanel>
                                     </Setter.Value>
                                 </Setter>
@@ -57,12 +49,11 @@
                     </Style>
                 </ContentControl.Style>
             </ContentControl>
-            <Button Content="Get" Command="{Binding GetDirectoryTree}"/>
         </StackPanel>
         <!--#endregion-->
 
-        <!--#region Files Tree (Row 2)-->
-        <TreeView Grid.Row="2" ItemsSource="{Binding RootDir.Items}">
+        <!--#region Files Tree (Row 1)-->
+        <TreeView Grid.Row="1" ItemsSource="{Binding RootDir.Items}">
             <TreeView.Resources>
                 <HierarchicalDataTemplate DataType="{x:Type m:DirectoryModel}" ItemsSource="{Binding Items}">
                     <StackPanel Orientation="Horizontal">
@@ -78,10 +69,6 @@
                 </DataTemplate>
             </TreeView.Resources>
         </TreeView>
-        <!--#endregion-->
-        
-        <!--#region Next Button (Row 3)-->
-        <Button Content="Next" Command="{Binding NextCommand}" Grid.Row="3" Height="40"/>
         <!--#endregion-->
     </Grid>
 </UserControl>
