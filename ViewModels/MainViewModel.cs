@@ -34,7 +34,6 @@ namespace UMLGenerator.ViewModels
         }
 
         public GitHubClient GitClient { get; set; }
-        public string GitUsername { get; set; }
         public long RepostioryID { get; set; }
         #endregion
 
@@ -58,9 +57,7 @@ namespace UMLGenerator.ViewModels
 
             PlantUMLCommand = new RelayCommand((o) =>
             {
-                SelectedViewModel = sourceViewModel.SourceType == SourceTypes.Folder ?
-                new UMLScreenViewModel(this, sourceViewModel.GetCheckedFileModels(sourceViewModel.RootDir)) :
-                new UMLScreenViewModel(this, sourceViewModel.GetCheckedFileModels(sourceViewModel.RootDir), GitClient, RepostioryID);
+                SelectedViewModel = new UMLScreenViewModel(this, sourceViewModel.GetCheckedFileModels(sourceViewModel.RootDir));
             }, (o) => sourceViewModel.RootDir != null);
 
             SettingsCommand = new RelayCommand((o) =>

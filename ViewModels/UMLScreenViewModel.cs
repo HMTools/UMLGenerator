@@ -18,7 +18,6 @@ namespace UMLGenerator.ViewModels
         #region Commands
         public RelayCommand GenerateUMLCommand { get; private set; }
         public RelayCommand ShowPreviewCommand { get; private set; }
-        public RelayCommand BackCommand { get; private set; }
 
         #endregion
         #region Properties
@@ -59,18 +58,12 @@ namespace UMLGenerator.ViewModels
             Namespaces = new Dictionary<string, NamespaceModel>();
             Classes = new Dictionary<string, List<string>>();
             Interfaces = new Dictionary<string, List<string>>();
-            RunOnFiles(fileModels);
-            Results = GenerateUML(Namespaces.Values);
-            AddCommands();
-        }
-
-        public UMLScreenViewModel(MainViewModel mainVM, List<FileModel> fileModels, GitHubClient client, long repositoryId)
-        {
-            this.mainVM = mainVM;
-            Namespaces = new Dictionary<string, NamespaceModel>();
-            Classes = new Dictionary<string, List<string>>();
-            Interfaces = new Dictionary<string, List<string>>();
-            RunOnFiles(fileModels, client, repositoryId);
+            if(mainVM.RepostioryID == 0)
+            {
+                RunOnFiles(fileModels);
+            }
+            else
+                RunOnFiles(fileModels, mainVM.GitClient, mainVM.RepostioryID);
             Results = GenerateUML(Namespaces.Values);
             AddCommands();
         }
@@ -89,11 +82,6 @@ namespace UMLGenerator.ViewModels
                 var img = renderer.RenderAsync(Results, OutputFormat.Png).GetAwaiter().GetResult();
 
                 new Views.OpenFullWindowPNG(img).ShowDialog();
-            });
-
-            BackCommand = new RelayCommand(o =>
-            {
-                mainVM.SelectedViewModel = new SelectSourceViewModel(mainVM);
             });
 
             GenerateUMLCommand = new RelayCommand((o) => { Results = GenerateUML(Namespaces.Values); });

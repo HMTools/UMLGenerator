@@ -40,7 +40,7 @@
                                             <TextBox Text="{Binding RepositoryOwner, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0" Width="200"/>
                                             <Label Content="Repository Name"/>
                                             <TextBox Text="{Binding RepositoryName, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0" Width="200"/>
-                                            <Button Content="Get" Command="{Binding GetDirectoryTree}"/>
+                                            <Button Content="Get" Command="{Binding GetRepositoryCommand}"/>
                                         </StackPanel>
                                     </Setter.Value>
                                 </Setter>

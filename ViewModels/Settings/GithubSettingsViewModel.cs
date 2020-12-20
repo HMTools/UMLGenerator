@@ -66,7 +66,7 @@ namespace UMLGenerator.ViewModels.Settings
         {
             UpdateKeyCommand = new RelayCommand(o => 
             {
-                if(!string.IsNullOrWhiteSpace(ApiKey))
+                if(!string.IsNullOrWhiteSpace(ApiKey) && ApiKey != ConfigurationManager.AppSettings["GitApiKey"])
                 {
                     var client = mainVM.GetGithubClient(ApiKey);
                     if(client != null)
@@ -74,11 +74,16 @@ namespace UMLGenerator.ViewModels.Settings
                         mainVM.GitClient = client;
                         Libraries.Configurations.AddOrUpdateAppSettings("GitApiKey", ApiKey);
                         Username = mainVM.GitClient.User.Current().GetAwaiter().GetResult().Login;
+
+                        Repos.Clear();
+                        foreach (var repo in mainVM.GitClient.Repository.GetAllForCurrent().GetAwaiter().GetResult())
+                        {
+                            Repos.Add(new { Name = repo.Name, Private = repo.Private, Language = repo.Language });
+                        }
                     }
                     else
                     {
                         MessageBox.Show("Failed to load api key!");
-
                     }
                 }
             });
@@ -86,7 +91,7 @@ namespace UMLGenerator.ViewModels.Settings
         private void LoadData()
         {
             ApiKey = ConfigurationManager.AppSettings["GitApiKey"];
-            if(mainVM.GitClient != null)
+            if (mainVM.GitClient != null)
             {
                 Username = mainVM.GitClient.User.Current().GetAwaiter().GetResult().Login;
                 foreach(var repo in mainVM.GitClient.Repository.GetAllForCurrent().GetAwaiter().GetResult())

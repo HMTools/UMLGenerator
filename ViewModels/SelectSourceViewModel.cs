@@ -16,7 +16,7 @@ namespace UMLGenerator.ViewModels
     {
         #region Commands
         public RelayCommand SelectFolderCommand { get; private set; }
-        public RelayCommand GetDirectoryTree { get; private set; }
+        public RelayCommand GetRepositoryCommand { get; private set; }
         
         #endregion
         #region Properties
@@ -84,41 +84,24 @@ namespace UMLGenerator.ViewModels
                 dialog.ShowDialog();
                 if (dialog.SelectedPath != "")
                 {
-                    RootDir = GetRootFromFolder(dialog.SelectedPath);
+                    RootDir = GetFolderDirectory(dialog.SelectedPath);
+                    mainVM.RepostioryID = 0;
                 }
             });
 
-            GetDirectoryTree = new RelayCommand(o =>
+            GetRepositoryCommand = new RelayCommand(o =>
             {
-                RootDir = GetRootFromRepository();
+                try
+                {
+                    mainVM.RepostioryID = mainVM.GitClient.Repository.Get(RepositoryOwner, RepositoryName).GetAwaiter().GetResult().Id;
+                    RootDir = GetRepositoryDirectory(mainVM.GitClient, mainVM.RepostioryID, "");
+                }
+                catch
+                {
+                    MessageBox.Show("The selected repository private or doesn't exist.");
+                }
+                
             });
-        }
-
-
-        private DirectoryModel GetRootFromFolder(string path)
-        {
-            if (Directory.Exists(path))
-            {
-                return GetFolderDirectory(path);
-            }
-            
-            MessageBox.Show("The selected directory doesn't exist");
-            mainVM.SelectedViewModel = new SelectSourceViewModel(mainVM);
-            return null;
-        }
-
-        private DirectoryModel GetRootFromRepository()
-        {
-            try
-            {
-                mainVM.RepostioryID = mainVM.GitClient.Repository.Get(RepositoryOwner, RepositoryName).GetAwaiter().GetResult().Id;
-                return GetRepositoryDirectory(mainVM.GitClient, mainVM.RepostioryID, "");
-            }
-            catch
-            {
-                MessageBox.Show("The selected repository private or doesn't exist.");
-                return null;
-            }
         }
 
         private DirectoryModel GetFolderDirectory(string path)
@@ -141,7 +124,10 @@ namespace UMLGenerator.ViewModels
         private DirectoryModel GetRepositoryDirectory(GitHubClient client, long repoId, string path)
         {
             var output = new DirectoryModel() { Name = Path.GetFileName(path), FullName = path };
-            var contents = path == "" ? client.Repository.Content.GetAllContents(repoId).GetAwaiter().GetResult():  client.Repository.Content.GetAllContents(repoId, path).GetAwaiter().GetResult();
+            var contents = path == "" ? 
+                client.Repository.Content.GetAllContents(repoId).GetAwaiter().GetResult():
+                client.Repository.Content.GetAllContents(repoId, path).GetAwaiter().GetResult();
+
             foreach (var content in contents)
             {
                 if(content.Type == "dir")
@@ -188,8 +174,7 @@ namespace UMLGenerator.ViewModels
 
     public enum SourceLanguages
     {
-        CSharp,
-        
+        CSharp
     }
     #endregion
 }

@@ -8,10 +8,8 @@ namespace UMLGenerator.ViewModels
 {
     public class CodeFileViewModel
     {
-        #region Properties
-        public CodeFileModel Model { get; set; }
-        #endregion
         #region Fields
+        private string code;
         private int currStart = 0;
         private int currIndex = 0;
         private Dictionary<string, NamespaceModel> namespacesDict;
@@ -29,8 +27,8 @@ namespace UMLGenerator.ViewModels
             this.interfacesDict = interfacesDict;
             namespacesQueue = new Queue<NamespaceModel>();
 
-            Model = new CodeFileModel() { Name = fileName , Code = code};
-            Model.Code = GetOnlyRelevantCode(Model.Code);
+            this.code = code;
+            this.code = GetOnlyRelevantCode(this.code);
             ScanSubObjects(false, "");
         }
         #endregion
@@ -40,11 +38,11 @@ namespace UMLGenerator.ViewModels
         private List<BaseCodeModel> ScanSubObjects(bool isInObject, string path)
         {
             List<BaseCodeModel> output = new List<BaseCodeModel>();
-            while (currIndex < Model.Code.Length && Model.Code[currIndex] != '}')
+            while (currIndex < code.Length && code[currIndex] != '}')
             {
-                if (";{".Contains(Model.Code[currIndex++]))
+                if (";{".Contains(code[currIndex++]))
                 {
-                    var obj = GetObject(Model.Code.Substring(currStart, currIndex - currStart), isInObject, path);
+                    var obj = GetObject(code.Substring(currStart, currIndex - currStart), isInObject, path);
                     if(obj != null)
                         output.Add(obj);
                 }
@@ -182,11 +180,11 @@ namespace UMLGenerator.ViewModels
             #region Skip Content
 
             int countOpenBrackets = 1;
-            while (countOpenBrackets > 0 && currIndex < Model.Code.Length)
+            while (countOpenBrackets > 0 && currIndex < code.Length)
             {
-                if (Model.Code[currIndex] == '{')
+                if (code[currIndex] == '{')
                     countOpenBrackets++;
-                else if (Model.Code[currIndex] == '}')
+                else if (code[currIndex] == '}')
                     countOpenBrackets--;
                 currIndex++;
             }
@@ -202,16 +200,16 @@ namespace UMLGenerator.ViewModels
             namespacesQueue.Peek().Children.Add(model);
             #region Skip Content
             currStart = currIndex;
-            while (Model.Code[currIndex] != '}' && currIndex < Model.Code.Length)
+            while (code[currIndex] != '}' && currIndex < code.Length)
             {
-                if (Model.Code[currIndex] == ',')
+                if (code[currIndex] == ',')
                 {
-                    model.Children.Add(new EnumMemberModel(Model.Code.Substring(currStart, currIndex - currStart)));
+                    model.Children.Add(new EnumMemberModel(code.Substring(currStart, currIndex - currStart)));
                     currStart = currIndex + 1;
                 }
                 currIndex++;
             }
-            model.Children.Add(new EnumMemberModel(Model.Code.Substring(currStart, currIndex - currStart)));
+            model.Children.Add(new EnumMemberModel(code.Substring(currStart, currIndex - currStart)));
             currStart = currIndex;
             #endregion
             return model;
@@ -225,11 +223,11 @@ namespace UMLGenerator.ViewModels
             #region Skip Content
 
             int countOpenBrackets = 1;
-            while (countOpenBrackets > 0 && currIndex < Model.Code.Length)
+            while (countOpenBrackets > 0 && currIndex < code.Length)
             {
-                if (Model.Code[currIndex] == '{')
+                if (code[currIndex] == '{')
                     countOpenBrackets++;
-                else if (Model.Code[currIndex] == '}')
+                else if (code[currIndex] == '}')
                     countOpenBrackets--;
                 currIndex++;
             }
@@ -247,22 +245,22 @@ namespace UMLGenerator.ViewModels
             #region Skip Content
 
             int countOpenBrackets = 1;
-            while (countOpenBrackets > 0 && currIndex < Model.Code.Length)
+            while (countOpenBrackets > 0 && currIndex < code.Length)
             {
-                if (Model.Code[currIndex] == '{')
+                if (code[currIndex] == '{')
                     countOpenBrackets++;
-                else if (Model.Code[currIndex] == '}')
+                else if (code[currIndex] == '}')
                     countOpenBrackets--;
         
                 currIndex++;
             }
             #region Default Value Checking
             int checkIndex = currIndex;
-            while (checkIndex < Model.Code.Length && Model.Code[checkIndex] == ' ')
+            while (checkIndex < code.Length && code[checkIndex] == ' ')
                 checkIndex++;
-            if (Model.Code[checkIndex] == '=')
+            if (code[checkIndex] == '=')
             {
-                while (checkIndex < Model.Code.Length && Model.Code[checkIndex] != ';')
+                while (checkIndex < code.Length && code[checkIndex] != ';')
                 {
                     checkIndex++;
                 }
