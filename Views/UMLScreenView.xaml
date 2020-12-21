@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:UMLGenerator.Views"
              xmlns:m="clr-namespace:UMLGenerator.Models.CodeModels"
+             xmlns:u="clr-namespace:UMLGenerator.Views.UML"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" d:Background="White">
     <Grid>
@@ -75,8 +76,32 @@
                 </DataTemplate>
             </TreeView.Resources>
         </TreeView>
-        <TextBox Text="{Binding Results}" Grid.Column="1" Grid.RowSpan="2"/>
-        <Button Content="Show Preview" Command="{Binding ShowPreviewCommand}" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+
+        <ContentControl Grid.Column="1" Grid.RowSpan="2">
+            <ContentControl.Style>
+                <Style TargetType="ContentControl">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <Grid>
+                                <TextBox Text="{Binding Results}" Grid.Column="1" Grid.RowSpan="2"/>
+                                <Button Content="UML" Command="{Binding ShowUMLCommand}" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                            </Grid>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsUmlPreview}" Value="true">
+                            <Setter Property="Content">
+                                <Setter.Value>
+                                    <Grid>
+                                        <u:ShowUmlView DataContext="{Binding UmlViewModel}"/>
+                                    </Grid>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
         <Button Content="Generate PlantUML" Command="{Binding GenerateUMLCommand}" Height="40" Grid.Row="1"/>
     </Grid>
 </UserControl>

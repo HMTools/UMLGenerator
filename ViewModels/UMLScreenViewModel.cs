@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using UMLGenerator.Interfaces;
 using UMLGenerator.Models.CodeModels;
 using UMLGenerator.Models.FileSystemModels;
@@ -17,7 +18,7 @@ namespace UMLGenerator.ViewModels
     {
         #region Commands
         public RelayCommand GenerateUMLCommand { get; private set; }
-        public RelayCommand ShowPreviewCommand { get; private set; }
+        public RelayCommand ShowUMLCommand { get; private set; }
 
         #endregion
         #region Properties
@@ -31,6 +32,15 @@ namespace UMLGenerator.ViewModels
             get { return results; }
             set { results = value; NotifyPropertyChanged(); }
         }
+
+        private bool isUmlPreview;
+
+        public bool IsUmlPreview
+        {
+            get { return isUmlPreview; }
+            set { isUmlPreview = value; NotifyPropertyChanged(); }
+        }
+        public UML.ShowUmlViewModel UmlViewModel { get; set; }
 
         #endregion
 
@@ -65,6 +75,7 @@ namespace UMLGenerator.ViewModels
             else
                 RunOnFiles(fileModels, mainVM.GitClient, mainVM.RepostioryID);
             Results = GenerateUML(Namespaces.Values);
+            UmlViewModel = new UML.ShowUmlViewModel(Results);
             AddCommands();
         }
         #endregion
@@ -73,18 +84,16 @@ namespace UMLGenerator.ViewModels
 
         private void AddCommands()
         {
-            ShowPreviewCommand = new RelayCommand(o =>
+            ShowUMLCommand = new RelayCommand(o =>
             {
-                var factory = new RendererFactory();
-
-                var renderer = factory.CreateRenderer(new PlantUmlSettings());
-
-                var img = renderer.RenderAsync(Results, OutputFormat.Png).GetAwaiter().GetResult();
-
-                new Views.OpenFullWindowPNG(img).ShowDialog();
+                IsUmlPreview = true;
             });
 
-            GenerateUMLCommand = new RelayCommand((o) => { Results = GenerateUML(Namespaces.Values); });
+            GenerateUMLCommand = new RelayCommand((o) => 
+            { 
+                Results = GenerateUML(Namespaces.Values);
+                UmlViewModel.UpdateUML(Results);
+            });
         }
         private void RunOnFiles(List<FileModel> fileModels) //local files
         {
