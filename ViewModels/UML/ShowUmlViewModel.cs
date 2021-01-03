@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -26,12 +27,13 @@ namespace UMLGenerator.ViewModels.UML
             get { return message; }
             set { message = value; NotifyPropertyChanged(); }
         }
-
+        public bool IsLoading { get; set; } = false;
+        public string SvgString { get; set; }
+        public Bitmap UMLImage { get; set; }
         #endregion
 
         #region Fields
         private CancellationTokenSource cancellationTokenSource;
-        private bool isLoading = false;
         #endregion
 
         #region Constructors
@@ -44,31 +46,36 @@ namespace UMLGenerator.ViewModels.UML
         #region Methods
         public async void UpdateUML(string plantUml)
         {
-            if (isLoading)
+            if (IsLoading)
             {
                 cancellationTokenSource.Cancel();
-                while (isLoading) ;
+                while (IsLoading) ;
             }
             ImageSource = null;
             Message = "Loading ...";
             cancellationTokenSource = new CancellationTokenSource();
-            isLoading = true;
+            IsLoading = true;
             await Task.Run(() =>
             {
                 try
                 {
-                    var svgString = Libraries.PlantUMLMethods.GetSVG(plantUml, cancellationTokenSource.Token);
-                    var svg = Svg.SvgDocument.FromSvg<Svg.SvgDocument>(svgString);
-                    System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke( () =>
-                        ImageSource = svg.Draw().BitmapToImageSource(System.Drawing.Imaging.ImageFormat.Png));
+                    SvgString = Libraries.PlantUMLMethods.GetSVG(plantUml, cancellationTokenSource.Token);
+                    var svg = Svg.SvgDocument.FromSvg<Svg.SvgDocument>(SvgString);
+
+                    System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke( () => 
+                    {
+                        UMLImage = svg.Draw();
+                        ImageSource = UMLImage.BitmapToImageSource(System.Drawing.Imaging.ImageFormat.Png);
+                    });
+                        
                 }
                 catch
                 {
                     Message = "Failed Getting UML";
-                    isLoading = false;
+                    IsLoading = false;
                 }
             });
-            isLoading = false;
+            IsLoading = false;
         }
         #endregion
     }

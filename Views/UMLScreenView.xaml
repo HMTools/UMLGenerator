@@ -84,7 +84,12 @@
                         <Setter.Value>
                             <Grid>
                                 <TextBox Text="{Binding Results}" Grid.Column="1" Grid.RowSpan="2"/>
-                                <Button Content="UML" Command="{Binding ShowUMLCommand}" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Height="30">
+                                    <Button Content="UML" Command="{Binding SwitchShowUMLCommand}" Margin="10,0,0,0" Width="100"/>
+                                    <Button Content="Save Svg" Command="{Binding SaveSvgCommand}" Margin="10,0,0,0" Width="100"/>
+                                    <Button Content="Save Png" Command="{Binding SavePngCommand}" Margin="10,0,0,0" Width="100"/>
+                                    <Button Content="Save PlantUML" Command="{Binding SavePlantUMLCommand}" Margin="10,0,0,0" Width="100"/>
+                                </StackPanel>
                             </Grid>
                         </Setter.Value>
                     </Setter>
@@ -94,6 +99,12 @@
                                 <Setter.Value>
                                     <Grid>
                                         <u:ShowUmlView DataContext="{Binding UmlViewModel}"/>
+                                        <StackPanel Orientation="Horizontal"  HorizontalAlignment="Right" VerticalAlignment="Top" Height="30">
+                                            <Button Content="PlantUML" Command="{Binding SwitchShowUMLCommand}" Margin="10,0,0,0" Width="100"/>
+                                            <Button Content="Save Svg" Command="{Binding SaveSvgCommand}" Margin="10,0,0,0" Width="100"/>
+                                            <Button Content="Save Png" Command="{Binding SavePngCommand}" Margin="10,0,0,0" Width="100"/>
+                                            <Button Content="Save PlantUML" Command="{Binding SavePlantUMLCommand}" Margin="10,0,0,0" Width="100"/>
+                                        </StackPanel>
                                     </Grid>
                                 </Setter.Value>
                             </Setter>

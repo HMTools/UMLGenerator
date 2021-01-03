@@ -39,7 +39,10 @@ namespace UMLGenerator.Models.CodeModels
                 model.Bases = basesMatch.Success ? basesMatch.Groups["Bases"].Value.Split(',').ToList() : new List<string>();
                 for (int i = 0; i < model.Bases.Count; i++)
                 {
+                    if (model.Bases[i].Contains('<'))
+                        model.Bases[i] = model.Bases[i].Split('<')[0];
                     model.Bases[i] = model.Bases[i].Trim();
+                    
                 }
             }
         }

@@ -3,6 +3,7 @@ using PlantUml.Net;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,10 @@ namespace UMLGenerator.ViewModels
     {
         #region Commands
         public RelayCommand GenerateUMLCommand { get; private set; }
-        public RelayCommand ShowUMLCommand { get; private set; }
+        public RelayCommand SwitchShowUMLCommand { get; private set; }
+        public RelayCommand SaveSvgCommand { get; private set; }
+        public RelayCommand SavePngCommand { get; private set; }
+        public RelayCommand SavePlantUMLCommand { get; private set; }
 
         #endregion
         #region Properties
@@ -33,7 +37,7 @@ namespace UMLGenerator.ViewModels
             set { results = value; NotifyPropertyChanged(); }
         }
 
-        private bool isUmlPreview;
+        private bool isUmlPreview = true;
 
         public bool IsUmlPreview
         {
@@ -84,9 +88,42 @@ namespace UMLGenerator.ViewModels
 
         private void AddCommands()
         {
-            ShowUMLCommand = new RelayCommand(o =>
+            SaveSvgCommand = new RelayCommand(o =>
             {
-                IsUmlPreview = true;
+                SaveFileDialog dialog = new SaveFileDialog() { Filter = "SVG file (*.svg)|*.svg" };
+                dialog.ShowDialog();
+                if(dialog.FileName != "")
+                {
+                    File.WriteAllText(dialog.FileName, UmlViewModel.SvgString);
+                }
+
+            }, (o) => !UmlViewModel.IsLoading);
+
+            SavePngCommand = new RelayCommand(o =>
+            {
+                SaveFileDialog dialog = new SaveFileDialog() { Filter = "PNG file (*.png)|*.png" };
+                dialog.ShowDialog();
+                if (dialog.FileName != "")
+                {
+                    UmlViewModel.UMLImage.Save(dialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
+                }
+
+            }, (o) => !UmlViewModel.IsLoading);
+
+            SavePlantUMLCommand = new RelayCommand(o =>
+            {
+                SaveFileDialog dialog = new SaveFileDialog() { Filter = "PlantUML file (*.wsd)|*.wsd" };
+                dialog.ShowDialog();
+                if (dialog.FileName != "")
+                {
+                    File.WriteAllText(dialog.FileName, Results);
+                }
+
+            }, (o) => !string.IsNullOrWhiteSpace(Results));
+
+            SwitchShowUMLCommand = new RelayCommand(o =>
+            {
+                IsUmlPreview = !IsUmlPreview;
             });
 
             GenerateUMLCommand = new RelayCommand((o) => 
