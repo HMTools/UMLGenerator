@@ -1,4 +1,5 @@
-﻿using Octokit;
+﻿using MVVMLibrary.ViewModels;
+using Octokit;
 using PlantUml.Net;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,11 @@ using System.Windows.Forms;
 using UMLGenerator.Interfaces;
 using UMLGenerator.Models.CodeModels;
 using UMLGenerator.Models.FileSystemModels;
-using UMLGenerator.WPFLibrary;
+using WPFLibrary.Commands;
 
-namespace UMLGenerator.ViewModels
+namespace UMLGenerator.ViewModels.Main
 {
-    public class UMLScreenViewModel : BaseViewModel
+    public class UMLViewModel : BaseViewModel
     {
         #region Commands
         public RelayCommand GenerateUMLCommand { get; private set; }
@@ -66,7 +67,7 @@ namespace UMLGenerator.ViewModels
         #endregion
 
         #region Constructors
-        public UMLScreenViewModel(MainViewModel mainVM, List<FileModel> fileModels)
+        public UMLViewModel(MainViewModel mainVM, List<FileModel> fileModels)
         {
             this.mainVM = mainVM;
             Namespaces = new Dictionary<string, NamespaceModel>();

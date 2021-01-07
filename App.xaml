@@ -2,11 +2,11 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:UMLGenerator"
-             xmlns:convert="clr-namespace:UMLGenerator.BindingConverters"
+             xmlns:convert="clr-namespace:WPFLibrary.ValueConverters;assembly=WPFLibrary"
              StartupUri="Views\MainWindow.xaml">
     <Application.Resources>
          <!--#region Converters-->
-        <convert:EnumBooleanConverter x:Key="EnumBooleanConverter"/>
+        <convert:EqualConverter x:Key="EqualConverter"/>
         <!--#endregion-->
     </Application.Resources>
 </Application>

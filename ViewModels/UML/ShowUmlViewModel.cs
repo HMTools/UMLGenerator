@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MVVMLibrary.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -55,26 +56,24 @@ namespace UMLGenerator.ViewModels.UML
             Message = "Loading ...";
             cancellationTokenSource = new CancellationTokenSource();
             IsLoading = true;
-            await Task.Run(() =>
+            try
             {
-                try
+                SvgString = await Libraries.PlantUMLMethods.GetSVG(plantUml, cancellationTokenSource.Token);
+                await Task.Run(() => 
                 {
-                    SvgString = Libraries.PlantUMLMethods.GetSVG(plantUml, cancellationTokenSource.Token);
                     var svg = Svg.SvgDocument.FromSvg<Svg.SvgDocument>(SvgString);
 
-                    System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke( () => 
+                    System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() =>
                     {
                         UMLImage = svg.Draw();
                         ImageSource = UMLImage.BitmapToImageSource(System.Drawing.Imaging.ImageFormat.Png);
                     });
-                        
-                }
-                catch
-                {
-                    Message = "Failed Getting UML";
-                    IsLoading = false;
-                }
-            });
+                });
+            }
+            catch (Exception exception)
+            {
+                Message = $"Failed Getting UML | {exception.Message}";
+            }
             IsLoading = false;
         }
         #endregion

@@ -1,4 +1,5 @@
-﻿using Octokit;
+﻿using MVVMLibrary.ViewModels;
+using Octokit;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +9,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UMLGenerator.Interfaces;
 using UMLGenerator.Models.CodeModels;
-using UMLGenerator.WPFLibrary;
+using UMLGenerator.ViewModels.Main;
+using WPFLibrary.Commands;
 
 namespace UMLGenerator.ViewModels
 {
@@ -22,8 +24,8 @@ namespace UMLGenerator.ViewModels
         #endregion
 
         #region Properties
-        public SelectSourceViewModel sourceViewModel { get; set; }
-        public UMLScreenViewModel umlViewModel { get; set; }
+        public SourceViewModel sourceViewModel { get; set; }
+        public UMLViewModel umlViewModel { get; set; }
 
         private BaseViewModel selectedViewModel;
 
@@ -40,7 +42,7 @@ namespace UMLGenerator.ViewModels
         #region Constructors
         public MainViewModel()
         {
-            sourceViewModel = new SelectSourceViewModel(this);
+            sourceViewModel = new SourceViewModel(this);
             SelectedViewModel = sourceViewModel;
             AddCommands();
             LoadData();
@@ -57,7 +59,7 @@ namespace UMLGenerator.ViewModels
 
             PlantUMLCommand = new RelayCommand((o) =>
             {
-                SelectedViewModel = new UMLScreenViewModel(this, sourceViewModel.GetCheckedFileModels(sourceViewModel.RootDir));
+                SelectedViewModel = new UMLViewModel(this, sourceViewModel.GetCheckedFileModels(sourceViewModel.RootDir));
             }, (o) => sourceViewModel.RootDir != null);
 
             SettingsCommand = new RelayCommand((o) =>

@@ -1,5 +1,4 @@
-﻿using Ookii.Dialogs.Wpf;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,16 +12,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using UMLGenerator.ViewModels;
 
-namespace UMLGenerator.Views
+namespace UMLGenerator.Views.Main
 {
     /// <summary>
-    /// Interaction logic for SelectedSourceView.xaml
+    /// Interaction logic for UMLScreenView.xaml
     /// </summary>
-    public partial class SelectSourceView : UserControl
+    public partial class UMLView : UserControl
     {
-        public SelectSourceView()
+        public UMLView()
         {
             InitializeComponent();
         }

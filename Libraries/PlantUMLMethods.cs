@@ -14,30 +14,22 @@ namespace UMLGenerator.Libraries
 {
     public static class PlantUMLMethods
     {
-        public static string GetSVG(string content)
+        public static async Task<string> GetSVG(string content)
         {
-            try
-            {
-                var client = new HttpClient();
-                content = Uri.UnescapeDataString(content);
-                var bytes = Encode(content);
-                var str = $"http://plantuml.com/plantuml/svg/{bytes}";
-                return client.GetStringAsync(str).GetAwaiter().GetResult();
-            }
-            catch(Exception exception)
-            {
-                MessageBox.Show(exception.Message);
-                return "";
-            }
+            var client = new HttpClient();
+            content = Uri.UnescapeDataString(content);
+            var bytes = Encode(content);
+            var str = $"http://plantuml.com/plantuml/svg/{bytes}";
+            return await client.GetStringAsync(str);
         }
 
-        public static string GetSVG(string content, CancellationToken cancellationToken)
+        public static async Task<string> GetSVG(string content, CancellationToken cancellationToken)
         {
-                var client = new HttpClient();
-                content = Uri.UnescapeDataString(content);
-                var bytes = Encode(content);
-                var str = $"http://plantuml.com/plantuml/svg/{bytes}";
-                return client.GetStringAsync(str, cancellationToken).GetAwaiter().GetResult();
+            var client = new HttpClient();
+            content = Uri.UnescapeDataString(content);
+            var bytes = Encode(content);
+            var str = $"http://plantuml.com/plantuml/svg/{bytes}";
+            return await client.GetStringAsync(str, cancellationToken);
         }
 
         private static string Encode(string content)

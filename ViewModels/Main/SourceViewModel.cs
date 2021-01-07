@@ -1,4 +1,5 @@
-﻿using Octokit;
+﻿using MVVMLibrary.ViewModels;
+using Octokit;
 using Ookii.Dialogs.Wpf;
 using System;
 using System.Collections.Generic;
@@ -8,11 +9,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using UMLGenerator.Models.FileSystemModels;
-using UMLGenerator.WPFLibrary;
+using WPFLibrary.Commands;
 
-namespace UMLGenerator.ViewModels
+namespace UMLGenerator.ViewModels.Main
 {
-    public class SelectSourceViewModel : BaseViewModel
+    public class SourceViewModel : BaseViewModel
     {
         #region Commands
         public RelayCommand SelectFolderCommand { get; private set; }
@@ -67,7 +68,7 @@ namespace UMLGenerator.ViewModels
         #endregion
 
         #region Constructors
-        public SelectSourceViewModel(MainViewModel mainVM)
+        public SourceViewModel(MainViewModel mainVM)
         {
             this.mainVM = mainVM;
             AddMethods();

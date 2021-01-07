@@ -4,17 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UMLGenerator"
-        xmlns:vm="clr-namespace:UMLGenerator.ViewModels"
-        xmlns:v="clr-namespace:UMLGenerator.Views"
+        xmlns:vm="clr-namespace:UMLGenerator.ViewModels.Main"
+        xmlns:v="clr-namespace:UMLGenerator.Views.Main"
         mc:Ignorable="d"
         Title="UML Generator" Height="640" Width="1024" WindowStartupLocation="CenterScreen" WindowState="Maximized">
     <DockPanel>
         <DockPanel.Resources>
-            <DataTemplate DataType="{x:Type vm:SelectSourceViewModel}">
-                <v:SelectSourceView DataContext="{Binding }"/>
+            <DataTemplate DataType="{x:Type vm:SourceViewModel}">
+                <v:SourceView DataContext="{Binding }"/>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:UMLScreenViewModel}">
-                <v:UMLScreenView DataContext="{Binding }"/>
+            <DataTemplate DataType="{x:Type vm:UMLViewModel}">
+                <v:UMLView DataContext="{Binding }"/>
             </DataTemplate>
         </DockPanel.Resources>
         <Menu DockPanel.Dock="Top">
@@ -27,6 +27,11 @@
             <MenuItem Header="_Views" >
                 <MenuItem Header="_Source Selection" Command="{Binding SourceSelectionCommand}"/>
                 <MenuItem Header="_PlantUML" Command="{Binding PlantUMLCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Export" >
+                <MenuItem Header="Export SVG"/>
+                <MenuItem Header="Export PNG"/>
+                <MenuItem Header="Export PlantUML"/>
             </MenuItem>
         </Menu>
         
