@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace UMLGenerator.Views.UML
+namespace UMLGenerator.Views.Main
 {
     /// <summary>
-    /// Interaction logic for ShowUmlView.xaml
+    /// Interaction logic for ObjectsTreeView.xaml
     /// </summary>
-    public partial class ShowUmlView : UserControl
+    public partial class ObjectsTreeView : UserControl
     {
-        public ShowUmlView()
+        public ObjectsTreeView()
         {
             InitializeComponent();
         }

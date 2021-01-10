@@ -4,108 +4,48 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:UMLGenerator.Views"
-             xmlns:m="clr-namespace:UMLGenerator.Models.CodeModels"
-             xmlns:u="clr-namespace:UMLGenerator.Views.UML"
+             xmlns:zoom="clr-namespace:UMLGenerator.Libraries"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" d:Background="White">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <TreeView ItemsSource="{Binding Namespaces.Values}">
-            <TreeView.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type m:NamespaceModel}" ItemsSource="{Binding Children}">
-                    <StackPanel Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
-                        <Label Content="NS" FontWeight="Bold">
-                            <Label.Background>
-                                <SolidColorBrush Color="Purple" Opacity="0.4"/>
-                            </Label.Background>
-                        </Label>
-                        <Label Content="{Binding Name}"/>
-                    </StackPanel>
-                </HierarchicalDataTemplate>
-                <DataTemplate DataType="{x:Type m:ClassModel}">
-                    <StackPanel Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
-                        <Label Content="C" FontWeight="Bold">
-                            <Label.Background>
-                                <SolidColorBrush Color="Green" Opacity="0.4"/>
-                            </Label.Background>
-                        </Label>
-                        <Label Content="{Binding Name}"/>
-                    </StackPanel>
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type m:InterfaceModel}">
-                    <StackPanel Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
-                        <Label Content="I" FontWeight="Bold">
-                            <Label.Background>
-                                <SolidColorBrush Color="Blue" Opacity="0.4"/>
-                            </Label.Background>
-                        </Label>
-                        <Label Content="{Binding Name}"/>
-                    </StackPanel>
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type m:EnumModel}">
-                    <StackPanel Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
-                        <Label Content="E" FontWeight="Bold">
-                            <Label.Background>
-                                <SolidColorBrush Color="Red" Opacity="0.4"/>
-                            </Label.Background>
-                        </Label>
-                        <Label Content="{Binding Name}"/>
-                    </StackPanel>
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type m:RecordModel}">
-                    <StackPanel Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
-                        <Label Content="R" FontWeight="Bold">
-                            <Label.Background>
-                                <SolidColorBrush Color="Gray"  Opacity="0.4"/>
-                            </Label.Background>
-                        </Label>
-                        <Label Content="{Binding Name}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </TreeView.Resources>
-        </TreeView>
-
-        <ContentControl Grid.Column="1" Grid.RowSpan="2">
+        <ContentControl>
             <ContentControl.Style>
                 <Style TargetType="ContentControl">
                     <Setter Property="Content">
                         <Setter.Value>
-                            <Grid>
-                                <TextBox Text="{Binding Results}" Grid.Column="1" Grid.RowSpan="2"/>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Height="30">
-                                    <Button Content="UML" Command="{Binding SwitchShowUMLCommand}" Margin="10,0,0,0" Width="100"/>
-                                    <Button Content="Save Svg" Command="{Binding SaveSvgCommand}" Margin="10,0,0,0" Width="100"/>
-                                    <Button Content="Save Png" Command="{Binding SavePngCommand}" Margin="10,0,0,0" Width="100"/>
-                                    <Button Content="Save PlantUML" Command="{Binding SavePlantUMLCommand}" Margin="10,0,0,0" Width="100"/>
-                                </StackPanel>
-                            </Grid>
+                            <TextBox Text="{Binding PlantUml}"/>
                         </Setter.Value>
                     </Setter>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsUmlPreview}" Value="true">
+                        <DataTrigger Binding="{Binding IsUmlView}" Value="true">
                             <Setter Property="Content">
                                 <Setter.Value>
-                                    <Grid>
-                                        <u:ShowUmlView DataContext="{Binding UmlViewModel}"/>
-                                        <StackPanel Orientation="Horizontal"  HorizontalAlignment="Right" VerticalAlignment="Top" Height="30">
-                                            <Button Content="PlantUML" Command="{Binding SwitchShowUMLCommand}" Margin="10,0,0,0" Width="100"/>
-                                            <Button Content="Save Svg" Command="{Binding SaveSvgCommand}" Margin="10,0,0,0" Width="100"/>
-                                            <Button Content="Save Png" Command="{Binding SavePngCommand}" Margin="10,0,0,0" Width="100"/>
-                                            <Button Content="Save PlantUML" Command="{Binding SavePlantUMLCommand}" Margin="10,0,0,0" Width="100"/>
-                                        </StackPanel>
-                                    </Grid>
+                                    <ContentControl>
+                                        <ContentControl.Style>
+                                            <Style TargetType="ContentControl">
+                                                <Setter Property="Content">
+                                                    <Setter.Value>
+                                                        <Grid>
+                                                            <zoom:ZoomBorder x:Name="border" ClipToBounds="True" Background="White">
+                                                                <Image Source="{Binding ImageSource}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto"/>
+                                                            </zoom:ZoomBorder>
+                                                        </Grid>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding ImageSource}" Value="{x:Null}">
+                                                        <Setter Property="Content">
+                                                            <Setter.Value>
+                                                                <Grid>
+                                                                    <Label Content="{Binding Message}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold"/>
+                                                                </Grid>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ContentControl.Style>
+                                    </ContentControl>
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
@@ -113,6 +53,5 @@
                 </Style>
             </ContentControl.Style>
         </ContentControl>
-        <Button Content="Generate PlantUML" Command="{Binding GenerateUMLCommand}" Height="40" Grid.Row="1"/>
     </Grid>
 </UserControl>

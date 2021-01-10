@@ -36,7 +36,7 @@ namespace UMLGenerator.Models.CodeModels
         public override string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
             string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
-            return $"{tab}{ViewModels.Main.UMLViewModel.AccessModifiersDict[AccessModifier]}{ReturnType} {Name}({Parameters})\n\n";
+            return $"{tab}{ViewModels.Main.ObjectsTreeViewModel.AccessModifiersDict[AccessModifier]}{ReturnType} {Name}({Parameters})\n\n";
         }
 
         #endregion

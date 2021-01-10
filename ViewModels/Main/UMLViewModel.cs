@@ -4,11 +4,14 @@ using PlantUml.Net;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Media.Imaging;
 using UMLGenerator.Interfaces;
 using UMLGenerator.Models.CodeModels;
 using UMLGenerator.Models.FileSystemModels;
@@ -19,152 +22,93 @@ namespace UMLGenerator.ViewModels.Main
     public class UMLViewModel : BaseViewModel
     {
         #region Commands
-        public RelayCommand GenerateUMLCommand { get; private set; }
-        public RelayCommand SwitchShowUMLCommand { get; private set; }
-        public RelayCommand SaveSvgCommand { get; private set; }
-        public RelayCommand SavePngCommand { get; private set; }
-        public RelayCommand SavePlantUMLCommand { get; private set; }
-
+        public RelayCommand SwitchViewCommand { get; private set; }
         #endregion
         #region Properties
-        public Dictionary<string, NamespaceModel> Namespaces { get; set; }
-        public Dictionary<string, List<string>> Classes { get; set; }
-        public Dictionary<string, List<string>> Interfaces { get; set; }
-        private string results;
+        private string plantUml;
 
-        public string Results
+        public string PlantUml
         {
-            get { return results; }
-            set { results = value; NotifyPropertyChanged(); }
+            get { return plantUml; }
+            set { plantUml = value; NotifyPropertyChanged(); }
         }
 
-        private bool isUmlPreview = true;
+        private bool isUmlView = true;
 
-        public bool IsUmlPreview
+        public bool IsUmlView
         {
-            get { return isUmlPreview; }
-            set { isUmlPreview = value; NotifyPropertyChanged(); }
+            get { return isUmlView; }
+            set { isUmlView = value; NotifyPropertyChanged(); }
         }
-        public UML.ShowUmlViewModel UmlViewModel { get; set; }
 
-        #endregion
+        private BitmapImage imageSource;
 
-        #region Public Static Fields
-        public static Dictionary<string, char> AccessModifiersDict = new Dictionary<string, char>() //maybe need to remove from static
+        public BitmapImage ImageSource
         {
-            { "", '-'},
-            { "private", '-'},
-            { "protected", '#'},
-            { "private protected", '#'},
-            { "protected internal", '#'},
-            { "internal", '#'},
-            { "public", '+'}
-        };
-        #endregion
+            get { return imageSource; }
+            set { imageSource = value; NotifyPropertyChanged(); }
+        }
 
+        private string message;
+
+        public string Message
+        {
+            get { return message; }
+            set { message = value; NotifyPropertyChanged(); }
+        }
+        public bool IsLoading { get; set; } = false;
+        public string SvgString { get; set; }
+        public Bitmap UMLImage { get; set; }
+
+        #endregion
         #region Fields
-        private MainViewModel mainVM;
+        private CancellationTokenSource cancellationTokenSource;
         #endregion
 
         #region Constructors
-        public UMLViewModel(MainViewModel mainVM, List<FileModel> fileModels)
+        public UMLViewModel()
         {
-            this.mainVM = mainVM;
-            Namespaces = new Dictionary<string, NamespaceModel>();
-            Classes = new Dictionary<string, List<string>>();
-            Interfaces = new Dictionary<string, List<string>>();
-            if(mainVM.RepostioryID == 0)
-            {
-                RunOnFiles(fileModels);
-            }
-            else
-                RunOnFiles(fileModels, mainVM.GitClient, mainVM.RepostioryID);
-            Results = GenerateUML(Namespaces.Values);
-            UmlViewModel = new UML.ShowUmlViewModel(Results);
-            AddCommands();
         }
         #endregion
 
         #region Methods
-
-        private void AddCommands()
+        protected override void AddCommands()
         {
-            SaveSvgCommand = new RelayCommand(o =>
+            SwitchViewCommand = new RelayCommand(o =>
             {
-                SaveFileDialog dialog = new SaveFileDialog() { Filter = "SVG file (*.svg)|*.svg" };
-                dialog.ShowDialog();
-                if(dialog.FileName != "")
-                {
-                    File.WriteAllText(dialog.FileName, UmlViewModel.SvgString);
-                }
-
-            }, (o) => !UmlViewModel.IsLoading);
-
-            SavePngCommand = new RelayCommand(o =>
-            {
-                SaveFileDialog dialog = new SaveFileDialog() { Filter = "PNG file (*.png)|*.png" };
-                dialog.ShowDialog();
-                if (dialog.FileName != "")
-                {
-                    UmlViewModel.UMLImage.Save(dialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
-                }
-
-            }, (o) => !UmlViewModel.IsLoading);
-
-            SavePlantUMLCommand = new RelayCommand(o =>
-            {
-                SaveFileDialog dialog = new SaveFileDialog() { Filter = "PlantUML file (*.wsd)|*.wsd" };
-                dialog.ShowDialog();
-                if (dialog.FileName != "")
-                {
-                    File.WriteAllText(dialog.FileName, Results);
-                }
-
-            }, (o) => !string.IsNullOrWhiteSpace(Results));
-
-            SwitchShowUMLCommand = new RelayCommand(o =>
-            {
-                IsUmlPreview = !IsUmlPreview;
-            });
-
-            GenerateUMLCommand = new RelayCommand((o) => 
-            { 
-                Results = GenerateUML(Namespaces.Values);
-                UmlViewModel.UpdateUML(Results);
-            });
+                IsUmlView = !IsUmlView;
+            }); 
         }
-        private void RunOnFiles(List<FileModel> fileModels) //local files
+        public async void UpdateUML(string plantUml)
         {
-            foreach(var file in fileModels)
+            if (IsLoading)
             {
-                new CodeFileViewModel(file.Name, System.IO.File.ReadAllText(file.FullName), Namespaces, Classes, Interfaces);
+                cancellationTokenSource.Cancel();
+                while (IsLoading) ;
             }
-        }
-
-        private void RunOnFiles(List<FileModel> fileModels, GitHubClient client, long repositoryId) // github files
-        {
-            foreach (var file in fileModels)
+            ImageSource = null;
+            Message = "Loading ...";
+            cancellationTokenSource = new CancellationTokenSource();
+            IsLoading = true;
+            try
             {
-                try
+                SvgString = await Libraries.PlantUMLMethods.GetSVG(plantUml, cancellationTokenSource.Token);
+                await Task.Run(() =>
                 {
-                    var code = client.Repository.Content.GetAllContents(repositoryId, file.FullName).GetAwaiter().GetResult()[0].Content;
-                    new CodeFileViewModel(file.Name, code, Namespaces, Classes, Interfaces);
-                }
-                catch
-                {
-                    //failed getting this file
-                }
-            }
-        }
+                    var svg = Svg.SvgDocument.FromSvg<Svg.SvgDocument>(SvgString);
 
-        private string GenerateUML(IEnumerable<IUMLTransferable> source)
-        {
-            string res = "@startuml\n";
-            foreach (var obj in source)
-            {
-                res += obj.TransferToUML(0, Classes, Interfaces);
+                    System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() =>
+                    {
+                        UMLImage = svg.Draw();
+                        ImageSource = UMLImage.BitmapToImageSource(System.Drawing.Imaging.ImageFormat.Png);
+                    });
+                });
             }
-            return res + "@enduml";
+            catch (Exception exception)
+            {
+                Message = $"Failed Getting UML | {exception.Message}";
+            }
+            IsLoading = false;
         }
         #endregion
     }

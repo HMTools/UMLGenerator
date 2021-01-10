@@ -29,7 +29,7 @@ namespace UMLGenerator.Models.CodeModels
             if(IsChecked == true)
             {
                 string tab = String.Concat(System.Linq.Enumerable.Repeat("\t", layer));
-                string output = $"{tab}{ViewModels.Main.UMLViewModel.AccessModifiersDict[AccessModifier]}interface {Path}{Name} " + "{\n";
+                string output = $"{tab}{ViewModels.Main.ObjectsTreeViewModel.AccessModifiersDict[AccessModifier]}interface {Path}{Name} " + "{\n";
 
                 var methods = Children.OfType<MethodModel>();
                 if (methods.Count() > 0)

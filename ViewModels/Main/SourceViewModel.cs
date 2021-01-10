@@ -15,9 +15,14 @@ namespace UMLGenerator.ViewModels.Main
 {
     public class SourceViewModel : BaseViewModel
     {
+        #region Events
+        public event EventHandler<List<FileModel>> OnSourceSelectedUpdate;
+        #endregion
+
         #region Commands
         public RelayCommand SelectFolderCommand { get; private set; }
         public RelayCommand GetRepositoryCommand { get; private set; }
+        public RelayCommand GetObjectsTreeCommand { get; private set; }
         
         #endregion
         #region Properties
@@ -26,7 +31,24 @@ namespace UMLGenerator.ViewModels.Main
         public SourceTypes SourceType
         {
             get { return sourceType; }
-            set { sourceType = value; NotifyPropertyChanged(); }
+            set {
+                if(value == SourceTypes.Github && mainVM.GitClient == null)
+                {
+                    MessageBox.Show("To use Github repositories as source for UML, you need first asign a Github API Token!");
+                    if (MessageBox.Show("Do you want to add your Github API Token now ?", "Github API", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    {
+                        mainVM.SettingsCommand.Execute(null);
+                        if(mainVM.GitClient != null)
+                            sourceType = value; NotifyPropertyChanged();
+                    }
+                    return;
+                }
+                else
+                {
+                    sourceType = value; NotifyPropertyChanged();
+                }
+                
+            }
         }
 
         private SourceLanguages sourceLanguage;
@@ -71,15 +93,13 @@ namespace UMLGenerator.ViewModels.Main
         public SourceViewModel(MainViewModel mainVM)
         {
             this.mainVM = mainVM;
-            AddMethods();
         }
         #endregion
 
         #region Methods
-        private void AddMethods()
+        protected override void AddCommands()
         {
-            
-            SelectFolderCommand = new RelayCommand(o => 
+            SelectFolderCommand = new RelayCommand(o =>
             {
                 var dialog = new VistaFolderBrowserDialog();
                 dialog.ShowDialog();
@@ -101,10 +121,14 @@ namespace UMLGenerator.ViewModels.Main
                 {
                     MessageBox.Show("The selected repository private or doesn't exist.");
                 }
-                
-            });
-        }
 
+            });
+
+            GetObjectsTreeCommand = new RelayCommand(o => 
+            {
+                OnSourceSelectedUpdate?.Invoke(this, GetCheckedFileModels(RootDir));
+            }, o => RootDir != null);
+        }
         private DirectoryModel GetFolderDirectory(string path)
         {
             var output = new DirectoryModel() { Name = Path.GetFileName(path), FullName = path };

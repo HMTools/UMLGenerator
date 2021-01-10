@@ -69,5 +69,8 @@
             </TreeView.Resources>
         </TreeView>
         <!--#endregion-->
+        <!--#region Generate Button (Row 2-->
+        <Button Content="Generate Objects Tree" Command="{Binding GetObjectsTreeCommand}"  Height="40" Grid.Row="2"/>
+        <!--#endregion-->
     </Grid>
 </UserControl>

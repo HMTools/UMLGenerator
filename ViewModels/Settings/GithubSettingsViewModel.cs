@@ -1,6 +1,7 @@
 ﻿using MVVMLibrary.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Linq;
 using System.Text;
@@ -15,17 +16,17 @@ namespace UMLGenerator.ViewModels.Settings
 
         #region Commands
 
-        public RelayCommand UpdateKeyCommand { get; private set; }
+        public RelayCommand UpdateTokenCommand { get; private set; }
 
         #endregion
 
         #region Properties
-        private string apiKey;
+        private string apiToken;
 
-        public string ApiKey
+        public string ApiToken
         {
-            get { return apiKey; }
-            set { apiKey = value; NotifyPropertyChanged(); }
+            get { return apiToken; }
+            set { apiToken = value; NotifyPropertyChanged(); }
         }
 
 
@@ -36,14 +37,7 @@ namespace UMLGenerator.ViewModels.Settings
             get { return username; }
             set { username = value; NotifyPropertyChanged(); }
         }
-
-        private List<object> repos;
-
-        public List<object> Repos
-        {
-            get { return repos; }
-            set { repos = value; NotifyPropertyChanged(); }
-        }
+        public ObservableCollection<object> Repos { get; set; }
 
 
         #endregion
@@ -56,24 +50,23 @@ namespace UMLGenerator.ViewModels.Settings
         public GithubSettingsViewModel(MainViewModel mainVM)
         {
             this.mainVM = mainVM;
-            Repos = new List<object>();
-            AddCommands();
+            Repos = new ObservableCollection<object>();
             LoadData();
         }
         #endregion
 
         #region Methods
-        private void AddCommands()
+        protected override void AddCommands()
         {
-            UpdateKeyCommand = new RelayCommand(o => 
+            UpdateTokenCommand = new RelayCommand(o => 
             {
-                if(!string.IsNullOrWhiteSpace(ApiKey) && ApiKey != ConfigurationManager.AppSettings["GitApiKey"])
+                if(!string.IsNullOrWhiteSpace(ApiToken) && ApiToken != ConfigurationManager.AppSettings["GitApiToken"])
                 {
-                    var client = mainVM.GetGithubClient(ApiKey);
+                    var client = mainVM.GetGithubClient(ApiToken);
                     if(client != null)
                     {
                         mainVM.GitClient = client;
-                        Libraries.Configurations.AddOrUpdateAppSettings("GitApiKey", ApiKey);
+                        Libraries.Configurations.AddOrUpdateAppSettings("GitApiToken", ApiToken);
                         Username = mainVM.GitClient.User.Current().GetAwaiter().GetResult().Login;
 
                         Repos.Clear();
@@ -84,14 +77,14 @@ namespace UMLGenerator.ViewModels.Settings
                     }
                     else
                     {
-                        MessageBox.Show("Failed to load api key!");
+                        MessageBox.Show("Failed to load api token!");
                     }
                 }
             });
         }
         private void LoadData()
         {
-            ApiKey = ConfigurationManager.AppSettings["GitApiKey"];
+            ApiToken = ConfigurationManager.AppSettings["GitApiToken"];
             if (mainVM.GitClient != null)
             {
                 Username = mainVM.GitClient.User.Current().GetAwaiter().GetResult().Login;

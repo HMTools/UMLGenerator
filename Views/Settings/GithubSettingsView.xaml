@@ -17,9 +17,9 @@
 
         <Label Content="Github API" HorizontalAlignment="Center" Margin="0,10,0,0"/>
         <StackPanel Orientation="Horizontal" Grid.Row="1">
-            <Label Content="Key :"/>
-            <TextBox Text="{Binding ApiKey}" Width="300" Margin="10,0,0,0" VerticalContentAlignment="Center"/>
-            <Button Content="Update" Command="{Binding UpdateKeyCommand}" Margin="10,0,0,0"/>
+            <Label Content="Token :"/>
+            <TextBox Text="{Binding ApiToken}" Width="300" Margin="10,0,0,0" VerticalContentAlignment="Center"/>
+            <Button Content="Update" Command="{Binding UpdateTokenCommand}" Margin="10,0,0,0"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2">
             <Label Content="Username :"/>
@@ -32,7 +32,7 @@
             <Rectangle Stroke="Black" Fill="PaleVioletRed" Width="10" Height="10" StrokeThickness="1" Margin="20,4,0,0"/>
             <Label Content="(Private Repository)"/>
         </StackPanel>
-        <DataGrid ItemsSource="{Binding Repos}" AutoGenerateColumns="False" Grid.Row="4" VerticalScrollBarVisibility="Auto" Background="White">
+        <DataGrid ItemsSource="{Binding Repos, NotifyOnSourceUpdated=True}" AutoGenerateColumns="False" Grid.Row="4" VerticalScrollBarVisibility="Auto" Background="White">
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Setter Property="Background">
