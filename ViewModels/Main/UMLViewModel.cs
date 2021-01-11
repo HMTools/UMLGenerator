@@ -23,6 +23,7 @@ namespace UMLGenerator.ViewModels.Main
     {
         #region Commands
         public RelayCommand SwitchViewCommand { get; private set; }
+        public RelayCommand CopyToClipboardCommand { get; private set; }
         #endregion
         #region Properties
         private string plantUml;
@@ -78,7 +79,12 @@ namespace UMLGenerator.ViewModels.Main
             SwitchViewCommand = new RelayCommand(o =>
             {
                 IsUmlView = !IsUmlView;
-            }); 
+            });
+            CopyToClipboardCommand = new RelayCommand(o => 
+            {
+                Clipboard.SetText(PlantUml);
+                mainVM.SetStatus("Copy PlantUML To Clipboard | Succeed", System.Windows.Media.Brushes.Blue, 2000);
+            });
         }
         public async void UpdateUML(string plantUml)
         {

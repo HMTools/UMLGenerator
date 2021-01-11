@@ -23,34 +23,60 @@
                 <v:GithubView DataContext="{Binding }"/>
             </DataTemplate>
         </DockPanel.Resources>
-        <ToolBarTray DockPanel.Dock="Left" Orientation="Vertical" IsLocked="True" Background="Transparent">
-            <ToolBar Background="Transparent">
+        <Border BorderBrush="Gray" BorderThickness="1" DockPanel.Dock="Bottom">
+            <StatusBar>
+                <StatusBarItem>
+                    <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusColor}" FontSize="16" Margin="20,5,0,5"/>
+                </StatusBarItem>
+            </StatusBar>
+        </Border>   
+        
+        <GroupBox DockPanel.Dock="Left" Header="Menu">
+            <StackPanel Orientation="Vertical" Background="Transparent">
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Width" Value="100"/>
+                        <Setter Property="Height" Value="60"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                    </Style>
+                    <Style TargetType="{x:Type Image}">
+                        <Setter Property="Stretch" Value="None"/>
+                    </Style>
+                </StackPanel.Resources>
                 <Button Command="{Binding SourceVM.ToggleShowCommand}">
                     <StackPanel Orientation="Vertical">
-                        <Image Source="/Resources/Images/SourceIcon.png" />
+                        <Image Source="/Resources/Images/SourceIcon.png"/>
                         <TextBlock>Source</TextBlock>
                     </StackPanel>
                 </Button>
                 <Button Command="{Binding ObjectsTreeVM.ToggleShowCommand}">
                     <StackPanel Orientation="Vertical">
-                        <Image Source="/Resources/Images/ObjectsTreeIcon.png" />
+                        <Image Source="/Resources/Images/ObjectsTreeIcon.png"/>
                         <TextBlock>Objects Tree</TextBlock>
                     </StackPanel>
                 </Button>
                 <Button Command="{Binding UmlVM.ToggleShowCommand}">
                     <StackPanel Orientation="Vertical">
-                        <Image Source="/Resources/Images/UMLIcon.png" />
+                        <Image Source="/Resources/Images/UMLIcon.png"/>
                         <TextBlock>UML</TextBlock>
                     </StackPanel>
                 </Button>
                 <Separator/>
                 <Button Command="{Binding ToggleExportCommand}">
                     <StackPanel Orientation="Vertical">
-                        <Image Source="/Resources/Images/ExportIcon.png" />
+                        <Image Source="/Resources/Images/ExportIcon.png"/>
                         <TextBlock>Export</TextBlock>
                     </StackPanel>
                 </Button>
                 <ContentControl>
+                    <ContentControl.Resources>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="FontSize" Value="16"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="FontStyle" Value="Italic"/>
+                        </Style>
+                    </ContentControl.Resources>
                     <ContentControl.Style>
                         <Style TargetType="ContentControl">
                             <Style.Triggers>
@@ -58,15 +84,14 @@
                                     <Setter Property="Content">
                                         <Setter.Value>
                                             <StackPanel Orientation="Vertical">
-                                                <Button Command="{Binding ExportSVGCommand}" Height="60" Background="Transparent" BorderBrush="Transparent">
-                                                        <TextBlock Text="SVG" FontSize="16" FontWeight="Bold" FontStyle="Italic"/>
-                                                    
+                                                <Button Command="{Binding ExportSVGCommand}">
+                                                    <TextBlock Text="SVG" FontFamily="Verdana"/>
                                                 </Button>
-                                                <Button Command="{Binding ExportPNGCommand}" Height="60" Background="Transparent" BorderBrush="Transparent">
-                                                    <TextBlock Text="PNG" FontSize="16" FontWeight="Bold" FontStyle="Italic"/>
+                                                <Button Command="{Binding ExportPNGCommand}">
+                                                    <TextBlock Text="PNG"  FontFamily="Verdana"/>
                                                 </Button>
-                                                <Button Command="{Binding ExportPlantCommand}" Height="60" Background="Transparent" BorderBrush="Transparent">
-                                                    <TextBlock Text="PlantUML" FontSize="16" FontWeight="Bold" FontStyle="Italic"/>
+                                                <Button Command="{Binding ExportPlantCommand}">
+                                                    <TextBlock Text="PlantUML"  FontFamily="Verdana"/>
                                                 </Button>
                                             </StackPanel>
                                         </Setter.Value>
@@ -79,27 +104,28 @@
                 <Separator/>
                 <Button Command="{Binding GithubVM.ToggleShowCommand}">
                     <StackPanel Orientation="Vertical">
-                        <Image Source="/Resources/Images/ApiIcon.png" />
+                        <Image Source="/Resources/Images/ApiIcon.png"/>
                         <TextBlock>Github</TextBlock>
                     </StackPanel>
                 </Button>
-            </ToolBar>
-        </ToolBarTray>
-        <Grid >
+            </StackPanel>
+        </GroupBox>
+        
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding SourceVM.ColWidth, Mode=TwoWay}" MinWidth="{Binding SourceVM.ColMinWidth}"/>
                 <ColumnDefinition Width="{Binding ObjectsTreeVM.ColWidth, Mode=TwoWay}" MinWidth="{Binding ObjectsTreeVM.ColMinWidth}"/>
                 <ColumnDefinition Width="{Binding UmlVM.ColWidth, Mode=TwoWay}" MinWidth="{Binding UmlVM.ColMinWidth}"/>
             </Grid.ColumnDefinitions>
             
-            <GroupBox Header="Source" Margin="10,0,10,10" Visibility="{Binding SourceVM.IsShown, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+            <GroupBox Header="Source" Margin="10,0,10,0" Visibility="{Binding SourceVM.IsShown, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <ContentControl Content="{Binding SourceVM}"/>
             </GroupBox>
-            <GridSplitter Width="5" Background="LightGray" Margin="0,10,0,10"/>
+            <GridSplitter Width="5" Background="LightGray" Margin="0,10,0,0"/>
             <GroupBox Header="Objects Tree" Grid.Column="1"  Margin="10,0,10,10" Visibility="{Binding ObjectsTreeVM.IsShown, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <ContentControl Content="{Binding ObjectsTreeVM}"/>
             </GroupBox>
-            <GridSplitter Width="5" Grid.Column="1"  Background="LightGray" Margin="0,10,0,10"/>
+            <GridSplitter Width="5" Grid.Column="1"  Background="LightGray" Margin="0,10,0,0"/>
             <GroupBox Header="UML" Grid.Column="2"  Margin="10,0,10,10" Visibility="{Binding UmlVM.IsShown, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <ContentControl Content="{Binding UmlVM}"/>
             </GroupBox>
@@ -111,5 +137,6 @@
                 </Border>
             </Popup>
         </Grid>
+        
     </DockPanel>
 </Window>

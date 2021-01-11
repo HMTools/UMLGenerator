@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using WPFLibrary.Commands;
 
 namespace UMLGenerator.ViewModels.Main
@@ -78,11 +79,12 @@ namespace UMLGenerator.ViewModels.Main
                         {
                             Repos.Add(new { repo.Name, repo.Private, repo.Language , repo.Id});
                         }
+                        mainVM.SetStatus($"Set Github Token | Succeed | Username: {Username}", Brushes.Blue, 2000);
                     }
                     else
                     {
                         ApiToken = lastWorkedToken;
-                        MessageBox.Show("Failed to load api token!");
+                        mainVM.SetStatus($"Set Github Token | Failed!", Brushes.Red, 3000);
                     }
                 }
             });
@@ -92,6 +94,8 @@ namespace UMLGenerator.ViewModels.Main
                 dynamic repo = o;
                 RepostioryID = repo.Id;
                 mainVM.SourceVM.SourceType = SourceTypes.Github;
+                mainVM.SourceVM.RepositoryName = repo.Name;
+                mainVM.SourceVM.RepositoryOwner = username;
                 mainVM.SourceVM.RootDir = mainVM.SourceVM.GetRepositoryDirectory(GitClient, RepostioryID, "");
             });
         }
