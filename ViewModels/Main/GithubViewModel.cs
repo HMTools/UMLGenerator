@@ -16,7 +16,6 @@ namespace UMLGenerator.ViewModels.Main
     {
 
         #region Commands
-
         public RelayCommand UpdateTokenCommand { get; private set; }
 
         #endregion
@@ -68,6 +67,7 @@ namespace UMLGenerator.ViewModels.Main
                     var client = GetGithubClient(ApiToken);
                     if (client != null)
                     {
+                        lastWorkedToken = ApiToken;
                         GitClient = client;
                         Libraries.Configurations.AddOrUpdateAppSettings("GitApiToken", ApiToken);
                         Username = GitClient.User.Current().GetAwaiter().GetResult().Login;
@@ -92,6 +92,7 @@ namespace UMLGenerator.ViewModels.Main
             GitClient = GetGithubClient(ApiToken);
             if (GitClient != null)
             {
+                lastWorkedToken = ApiToken;
                 Username = GitClient.User.Current().GetAwaiter().GetResult().Login;
                 foreach (var repo in GitClient.Repository.GetAllForCurrent().GetAwaiter().GetResult())
                 {
