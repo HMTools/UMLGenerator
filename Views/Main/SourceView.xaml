@@ -20,13 +20,13 @@
             <Label Content="Source :"/>
             <RadioButton Content="Folder" Margin="0,7,0,0" IsChecked="{Binding SourceType, Converter={StaticResource EqualConverter}, ConverterParameter={x:Static vm:SourceTypes.Folder}}"/>
             <RadioButton Content="Github" Margin="10,7,0,0" IsChecked="{Binding SourceType, Converter={StaticResource EqualConverter}, ConverterParameter={x:Static vm:SourceTypes.Github}}"/>
-            <ContentControl Margin="10,0,0,0">
+            <ContentControl Grid.Row="1" Margin="10,0,0,0">
                 <ContentControl.Style>
                     <Style TargetType="ContentControl">
                         <Setter Property="Content">
                             <Setter.Value>
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Content="Select Folder" Command="{Binding SelectFolderCommand}" Grid.Row="2"/>
+                                    <Button Content="Select Folder" Command="{Binding SelectFolderCommand}" Background="Transparent" Width="200" Height="30"/>
                                 </StackPanel>
                             </Setter.Value>
                         </Setter>
@@ -36,10 +36,10 @@
                                     <Setter.Value>
                                         <StackPanel Orientation="Horizontal">
                                             <Label Content="Repository Owner"/>
-                                            <TextBox Text="{Binding RepositoryOwner, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0" Width="200"/>
+                                            <TextBox Text="{Binding RepositoryOwner, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,10,0" Width="200"/>
                                             <Label Content="Repository Name"/>
-                                            <TextBox Text="{Binding RepositoryName, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0" Width="200"/>
-                                            <Button Content="Get" Command="{Binding GetRepositoryCommand}"/>
+                                            <TextBox Text="{Binding RepositoryName, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,10,0" Width="200"/>
+                                            <Button Content="Get" Command="{Binding GetRepositoryCommand}" Background="Transparent" Width="75" Height="30"/>
                                         </StackPanel>
                                     </Setter.Value>
                                 </Setter>
@@ -50,9 +50,10 @@
             </ContentControl>
         </StackPanel>
         <!--#endregion-->
+        
 
         <!--#region Files Tree (Row 1)-->
-        <TreeView Grid.Row="1" ItemsSource="{Binding RootDir.Items}">
+        <TreeView Grid.Row="1" ItemsSource="{Binding RootDir.Items}" BorderBrush="Transparent">
             <TreeView.Resources>
                 <HierarchicalDataTemplate DataType="{x:Type m:DirectoryModel}" ItemsSource="{Binding Items}">
                     <StackPanel Orientation="Horizontal">
@@ -69,8 +70,8 @@
             </TreeView.Resources>
         </TreeView>
         <!--#endregion-->
-        <!--#region Generate Button (Row 2-->
-        <Button Content="Generate Objects Tree" Command="{Binding GetObjectsTreeCommand}"  Height="40" Grid.Row="2"/>
+        <!--#region Generate Button (Row 2)-->
+        <Button Content="Generate Objects Tree" Command="{Binding GetObjectsTreeCommand}"  Height="40" Grid.Row="2" />
         <!--#endregion-->
     </Grid>
 </UserControl>

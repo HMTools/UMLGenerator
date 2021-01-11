@@ -58,7 +58,7 @@ namespace UMLGenerator.ViewModels.Main
             GenerateUMLCommand = new RelayCommand((o) =>
             {
                 mainVM.UmlVM.UpdateUML(GenerateUML(Namespaces.Values));
-            });
+            }, o => Namespaces.Count > 0);
         }
 
         public void GenerateObjectsTree(List<FileModel> fileModels)

@@ -12,7 +12,7 @@
             <RowDefinition />
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TreeView ItemsSource="{Binding TreeItems}">
+        <TreeView ItemsSource="{Binding TreeItems}" BorderBrush="Transparent">
             <TreeView.Resources>
                 <HierarchicalDataTemplate DataType="{x:Type codeModels:NamespaceModel}" ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal">

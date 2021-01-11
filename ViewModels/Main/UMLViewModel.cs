@@ -67,6 +67,7 @@ namespace UMLGenerator.ViewModels.Main
         #region Constructors
         public UMLViewModel(MainViewModel mainVM) : base(mainVM)
         {
+            IsShown = false;
         }
         #endregion
 
@@ -81,7 +82,6 @@ namespace UMLGenerator.ViewModels.Main
         }
         public async void UpdateUML(string plantUml)
         {
-            IsShown = false;
             PlantUml = plantUml;
             if (IsLoading)
             {

@@ -13,6 +13,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Label Content="Github API" HorizontalAlignment="Center" Margin="0,10,0,0"/>
@@ -33,6 +34,11 @@
             <Label Content="(Private Repository)"/>
         </StackPanel>
         <DataGrid ItemsSource="{Binding Repos}" AutoGenerateColumns="False" Grid.Row="4" VerticalScrollBarVisibility="Auto" Background="White" Margin="5,0,10,10">
+            <DataGrid.InputBindings>
+                <MouseBinding MouseAction="LeftDoubleClick"
+                              Command="{Binding GetSelectedRepositoryCommand}"
+                              CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=SelectedItem}"/>
+            </DataGrid.InputBindings>
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Setter Property="Background">
@@ -40,6 +46,7 @@
                             <SolidColorBrush Color="LightGreen" Opacity="0.8"/>
                         </Setter.Value>
                     </Setter>
+                    
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Private}" Value="true">
                             <Setter Property="Background">
@@ -52,9 +59,11 @@
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" MinWidth="300" FontWeight="Bold"/>
-                <DataGridTextColumn Header="Language" Binding="{Binding Language}" Width="*" FontWeight="Bold" FontStyle="Italic"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" MinWidth="300" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Language" Binding="{Binding Language, Mode=OneWay}" Width="*" FontWeight="Bold" FontStyle="Italic"/>
             </DataGrid.Columns>
         </DataGrid>
+        <TextBlock Text="Double Click On The Repository To Import Its Source" Grid.Row="5" FontWeight="Bold" FontStyle="Italic"
+                   VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,5" FontSize="16"/>
     </Grid>
 </UserControl>

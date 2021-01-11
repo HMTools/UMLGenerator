@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using WPFLibrary.Commands;
 
 namespace UMLGenerator.ViewModels.Main
@@ -21,12 +22,26 @@ namespace UMLGenerator.ViewModels.Main
         public bool IsShown
         {
             get { return isShown; }
-            set { isShown = value; NotifyPropertyChanged(); NotifyPropertyChanged("ColMinWidth"); }
+            set { isShown = value; NotifyPropertyChanged(); NotifyPropertyChanged("ColMinWidth"); NotifyPropertyChanged("ColWidth"); }
         }
 
         public int ColMinWidth
         {
             get { return IsShown ? 300 : 0; }
+        }
+
+
+        private GridLength colWidth = new GridLength(1, GridUnitType.Star);
+
+        public GridLength ColWidth
+        {
+            get { return IsShown ? colWidth : new GridLength(0); }
+            set {
+                if(IsShown)
+                {
+                    colWidth = value; NotifyPropertyChanged();
+                }
+            }
         }
 
         #endregion

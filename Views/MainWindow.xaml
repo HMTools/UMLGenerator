@@ -87,9 +87,9 @@
         </ToolBarTray>
         <Grid >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MinWidth="{Binding SourceVM.ColMinWidth}"/>
-                <ColumnDefinition Width="*" MinWidth="{Binding ObjectsTreeVM.ColMinWidth}"/>
-                <ColumnDefinition Width="*" MinWidth="{Binding UmlVM.ColMinWidth}"/>
+                <ColumnDefinition Width="{Binding SourceVM.ColWidth, Mode=TwoWay}" MinWidth="{Binding SourceVM.ColMinWidth}"/>
+                <ColumnDefinition Width="{Binding ObjectsTreeVM.ColWidth, Mode=TwoWay}" MinWidth="{Binding ObjectsTreeVM.ColMinWidth}"/>
+                <ColumnDefinition Width="{Binding UmlVM.ColWidth, Mode=TwoWay}" MinWidth="{Binding UmlVM.ColMinWidth}"/>
             </Grid.ColumnDefinitions>
             
             <GroupBox Header="Source" Margin="10,0,10,10" Visibility="{Binding SourceVM.IsShown, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
@@ -104,7 +104,7 @@
                 <ContentControl Content="{Binding UmlVM}"/>
             </GroupBox>
             <Popup IsOpen="{Binding GithubVM.IsShown}" Placement="Relative" PlacementTarget="{Binding RelativeSource= {RelativeSource Mode=TemplatedParent}}" StaysOpen="False">
-                <Border BorderBrush="Gray" BorderThickness="2">
+                <Border BorderBrush="Black" BorderThickness="5">
                     <Grid Background="white" Width="Auto" Height="Auto">
                         <ContentControl Content="{Binding GithubVM}" Width="600" Height="600"/>
                     </Grid>

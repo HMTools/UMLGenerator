@@ -17,6 +17,7 @@ namespace UMLGenerator.ViewModels.Main
 
         #region Commands
         public RelayCommand UpdateTokenCommand { get; private set; }
+        public RelayCommand GetSelectedRepositoryCommand { get; private set; }
 
         #endregion
 
@@ -85,6 +86,14 @@ namespace UMLGenerator.ViewModels.Main
                     }
                 }
             });
+            GetSelectedRepositoryCommand = new RelayCommand(o => 
+            {
+                IsShown = false;
+                dynamic repo = o;
+                RepostioryID = repo.Id;
+                mainVM.SourceVM.SourceType = SourceTypes.Github;
+                mainVM.SourceVM.RootDir = mainVM.SourceVM.GetRepositoryDirectory(GitClient, RepostioryID, "");
+            });
         }
         private void LoadData()
         {
@@ -96,7 +105,7 @@ namespace UMLGenerator.ViewModels.Main
                 Username = GitClient.User.Current().GetAwaiter().GetResult().Login;
                 foreach (var repo in GitClient.Repository.GetAllForCurrent().GetAwaiter().GetResult())
                 {
-                    Repos.Add(new { repo.Name, repo.Private, repo.Language });
+                    Repos.Add(new { repo.Name, repo.Private, repo.Language, repo.Id });
                 }
             }
         }

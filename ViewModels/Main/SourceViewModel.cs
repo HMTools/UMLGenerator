@@ -105,9 +105,9 @@ namespace UMLGenerator.ViewModels.Main
                     mainVM.GithubVM.RepostioryID = mainVM.GithubVM.GitClient.Repository.Get(RepositoryOwner, RepositoryName).GetAwaiter().GetResult().Id;
                     RootDir = GetRepositoryDirectory(mainVM.GithubVM.GitClient, mainVM.GithubVM.RepostioryID, "");
                 }
-                catch
+                catch (Exception exception)
                 {
-                    MessageBox.Show("The selected repository private or doesn't exist.");
+                    MessageBox.Show(exception.Message);
                 }
 
             });
@@ -137,7 +137,7 @@ namespace UMLGenerator.ViewModels.Main
             return output;
         }
 
-        private DirectoryModel GetRepositoryDirectory(GitHubClient client, long repoId, string path)
+        public DirectoryModel GetRepositoryDirectory(GitHubClient client, long repoId, string path)
         {
             var output = new DirectoryModel() { Name = Path.GetFileName(path), FullName = path };
             var contents = path == "" ? 
