@@ -13,12 +13,8 @@ using WPFLibrary.Commands;
 
 namespace UMLGenerator.ViewModels.Main
 {
-    public class SourceViewModel : BaseViewModel
+    public class SourceViewModel : BaseMainPartViewModel
     {
-        #region Events
-        public event EventHandler<List<FileModel>> OnSourceSelectedUpdate;
-        #endregion
-
         #region Commands
         public RelayCommand SelectFolderCommand { get; private set; }
         public RelayCommand GetRepositoryCommand { get; private set; }
@@ -32,13 +28,13 @@ namespace UMLGenerator.ViewModels.Main
         {
             get { return sourceType; }
             set {
-                if(value == SourceTypes.Github && mainVM.GitClient == null)
+                if(value == SourceTypes.Github && mainVM.GithubVM.GitClient == null)
                 {
-                    MessageBox.Show("To use Github repositories as source for UML, you need first asign a Github API Token!");
+                    MessageBox.Show("To use Github repositories as source for UML, first you need to asign a Github API Token!");
                     if (MessageBox.Show("Do you want to add your Github API Token now ?", "Github API", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
-                        mainVM.SettingsCommand.Execute(null);
-                        if(mainVM.GitClient != null)
+                        mainVM.GithubVM.IsShown = true;
+                        if(mainVM.GithubVM.GitClient != null)
                             sourceType = value; NotifyPropertyChanged();
                     }
                     return;
@@ -82,23 +78,15 @@ namespace UMLGenerator.ViewModels.Main
             get { return rootDir; }
             set { rootDir = value; NotifyPropertyChanged(); }
         }
-
-
         #endregion
-        #region Fields
-        private MainViewModel mainVM;
-        #endregion
-
         #region Constructors
-        public SourceViewModel(MainViewModel mainVM)
-        {
-            this.mainVM = mainVM;
-        }
+        public SourceViewModel(MainViewModel mainVM) : base(mainVM) { }
         #endregion
 
         #region Methods
         protected override void AddCommands()
         {
+            base.AddCommands();
             SelectFolderCommand = new RelayCommand(o =>
             {
                 var dialog = new VistaFolderBrowserDialog();
@@ -106,7 +94,7 @@ namespace UMLGenerator.ViewModels.Main
                 if (dialog.SelectedPath != "")
                 {
                     RootDir = GetFolderDirectory(dialog.SelectedPath);
-                    mainVM.RepostioryID = 0;
+                    mainVM.GithubVM.RepostioryID = 0;
                 }
             });
 
@@ -114,8 +102,8 @@ namespace UMLGenerator.ViewModels.Main
             {
                 try
                 {
-                    mainVM.RepostioryID = mainVM.GitClient.Repository.Get(RepositoryOwner, RepositoryName).GetAwaiter().GetResult().Id;
-                    RootDir = GetRepositoryDirectory(mainVM.GitClient, mainVM.RepostioryID, "");
+                    mainVM.GithubVM.RepostioryID = mainVM.GithubVM.GitClient.Repository.Get(RepositoryOwner, RepositoryName).GetAwaiter().GetResult().Id;
+                    RootDir = GetRepositoryDirectory(mainVM.GithubVM.GitClient, mainVM.GithubVM.RepostioryID, "");
                 }
                 catch
                 {
@@ -126,7 +114,10 @@ namespace UMLGenerator.ViewModels.Main
 
             GetObjectsTreeCommand = new RelayCommand(o => 
             {
-                OnSourceSelectedUpdate?.Invoke(this, GetCheckedFileModels(RootDir));
+                mainVM.ObjectsTreeVM.IsShown = true;
+                mainVM.UmlVM.IsShown = true;
+                IsShown = false;
+                mainVM.ObjectsTreeVM.GenerateObjectsTree(GetCheckedFileModels(RootDir));
             }, o => RootDir != null);
         }
         private DirectoryModel GetFolderDirectory(string path)

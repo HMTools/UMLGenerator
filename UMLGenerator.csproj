@@ -8,6 +8,40 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Images\ApiIcon.png" />
+    <None Remove="Resources\Images\ExportIcon.png" />
+    <None Remove="Resources\Images\ObjectsTreeIcon.png" />
+    <None Remove="Resources\Images\PlantUMLIcon.png" />
+    <None Remove="Resources\Images\PNGIcon.png" />
+    <None Remove="Resources\Images\SourceIcon.png" />
+    <None Remove="Resources\Images\UMLIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\Images\ApiIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\ExportIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\ObjectsTreeIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\PlantUMLIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\PNGIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\SourceIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\UMLIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="HMTools.MVVMLibrary" Version="1.0.0" />
     <PackageReference Include="HMTools.WPFLibrary" Version="1.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />

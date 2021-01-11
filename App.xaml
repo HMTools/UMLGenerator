@@ -7,6 +7,7 @@
     <Application.Resources>
          <!--#region Converters-->
         <convert:EqualConverter x:Key="EqualConverter"/>
+        <convert:BoolToVisibilityCollapsedConverter x:Key="BoolToVisibilityCollapsedConverter"/>
         <!--#endregion-->
     </Application.Resources>
 </Application>

@@ -27,11 +27,5 @@ namespace UMLGenerator.Views
             DataContext = new MainViewModel();
             InitializeComponent();
         }
-
-        //private void Button_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var dialog = new VistaFolderBrowserDialog();
-        //    dialog.ShowDialog();
-        //}
     }
 }

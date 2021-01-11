@@ -10,16 +10,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace UMLGenerator.Views.Settings
+namespace UMLGenerator.Views.Main
 {
     /// <summary>
-    /// Interaction logic for SettingsView.xaml
+    /// Interaction logic for GithubApiView.xaml
     /// </summary>
-    public partial class SettingsView : Window
+    public partial class GithubView : UserControl
     {
-        public SettingsView()
+        public GithubView()
         {
             InitializeComponent();
         }

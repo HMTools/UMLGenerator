@@ -19,7 +19,7 @@ namespace UMLGenerator.ViewModels
         #endregion
 
         #region Constructors
-        public CodeFileViewModel(string fileName, string code, Dictionary<string, NamespaceModel> namespacesDict,
+        public CodeFileViewModel(string code, Dictionary<string, NamespaceModel> namespacesDict,
             Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
             this.namespacesDict = namespacesDict;
@@ -42,7 +42,7 @@ namespace UMLGenerator.ViewModels
             {
                 if (";{".Contains(code[currIndex++]))
                 {
-                    var obj = GetObject(code.Substring(currStart, currIndex - currStart), isInObject, path);
+                    var obj = GetObject(code[currStart..currIndex], isInObject, path);
                     if(obj != null)
                         output.Add(obj);
                 }
@@ -204,12 +204,12 @@ namespace UMLGenerator.ViewModels
             {
                 if (code[currIndex] == ',')
                 {
-                    model.Children.Add(new EnumMemberModel(code.Substring(currStart, currIndex - currStart)));
+                    model.Children.Add(new EnumMemberModel(code[currStart..currIndex]));
                     currStart = currIndex + 1;
                 }
                 currIndex++;
             }
-            model.Children.Add(new EnumMemberModel(code.Substring(currStart, currIndex - currStart)));
+            model.Children.Add(new EnumMemberModel(code[currStart..currIndex]));
             currStart = currIndex;
             #endregion
             return model;
@@ -283,7 +283,7 @@ namespace UMLGenerator.ViewModels
         }
 
 
-        private string GetOnlyRelevantCode(string str)
+        private static string GetOnlyRelevantCode(string str)
         {
             string res = Libraries.CodeCleanupMethods.RemoveComments(str);
             res = Libraries.CodeCleanupMethods.RemoveAllStrings(res);

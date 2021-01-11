@@ -20,7 +20,7 @@ namespace UMLGenerator.ViewModels
     {
         #region Commands
 
-        public RelayCommand SettingsCommand { get; private set; }
+        public RelayCommand ToggleExportCommand { get; private set; }
         public RelayCommand ExportSVGCommand { get; private set; }
         public RelayCommand ExportPNGCommand { get; private set; }
         public RelayCommand ExportPlantCommand { get; private set; }
@@ -30,38 +30,32 @@ namespace UMLGenerator.ViewModels
         public SourceViewModel SourceVM { get; set; }
         public ObjectsTreeViewModel ObjectsTreeVM { get; set; }
         public UMLViewModel UmlVM { get; set; }
+        public GithubViewModel GithubVM { get; set; }
 
-        public GitHubClient GitClient { get; set; }
-        public long RepostioryID { get; set; }
+        private bool isShowExport;
+
+        public bool IsShowExport
+        {
+            get { return isShowExport; }
+            set { isShowExport = value; NotifyPropertyChanged(); }
+        }
         #endregion
 
         #region Constructors
         public MainViewModel()
         {
+            GithubVM = new GithubViewModel(this);
             SourceVM = new SourceViewModel(this);
-            ObjectsTreeVM = new ObjectsTreeViewModel();
-            UmlVM = new UMLViewModel();
-
-            SourceVM.OnSourceSelectedUpdate += (s, e) =>
-            {
-                ObjectsTreeVM.GenerateObjectsTree(e, GitClient, RepostioryID);
-            };
-            ObjectsTreeVM.OnSelectedObjectsUpdate += (s, e) =>
-            {
-                UmlVM.UpdateUML(e);
-            };
-            LoadData();
+            ObjectsTreeVM = new ObjectsTreeViewModel(this);
+            UmlVM = new UMLViewModel(this);
         }
         #endregion
 
         #region Methods
         protected override void AddCommands()
         {
-            SettingsCommand = new RelayCommand(o =>
-            {
-               new Views.Settings.SettingsView() { DataContext = new Settings.SettingsViewModel(this) }.ShowDialog();
-            });
-
+            base.AddCommands();
+            ToggleExportCommand = new RelayCommand(o => IsShowExport = !IsShowExport);
             ExportSVGCommand = new RelayCommand(o => 
             {
                 SaveFileDialog dialog = new SaveFileDialog() { Filter = "SVG file (*.svg)|*.svg" };
@@ -70,7 +64,7 @@ namespace UMLGenerator.ViewModels
                 {
                     File.WriteAllText(dialog.FileName, UmlVM.SvgString);
                 }
-            }, o => UmlVM.SvgString != "" && UmlVM.IsLoading == false);
+            }, o => !string.IsNullOrEmpty(UmlVM.SvgString) && UmlVM.IsLoading == false);
 
             ExportPNGCommand = new RelayCommand(o =>
             {
@@ -80,7 +74,7 @@ namespace UMLGenerator.ViewModels
                 {
                     UmlVM.UMLImage.Save(dialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
                 }
-            }, o => UmlVM.SvgString != "" && UmlVM.IsLoading == false);
+            }, o => !string.IsNullOrEmpty(UmlVM.SvgString) && UmlVM.IsLoading == false);
 
             ExportPlantCommand = new RelayCommand(o =>
             {
@@ -91,36 +85,7 @@ namespace UMLGenerator.ViewModels
                     File.WriteAllText(dialog.FileName, UmlVM.PlantUml);
                 }
             }, (o) => !string.IsNullOrWhiteSpace(UmlVM.PlantUml));
-        }
-
-        private void LoadData()
-        {
-            GitClient = GetGithubClient(ConfigurationManager.AppSettings["GitApiToken"]);
-        }
-
-        public GitHubClient GetGithubClient(string token)
-        {
-            if (!string.IsNullOrEmpty(token))
-            {
-                var productInformation = new ProductHeaderValue("UMLGenerator");
-                var credentials = new Credentials(token);
-                var client = new GitHubClient(productInformation) { Credentials = credentials };
-                try
-                {
-                    var user = client.User.Current().GetAwaiter().GetResult();
-                    return client;
-                }
-                catch (Exception ex)
-                {
-                    if (ex.Message == "Bad credentials")
-                    {
-                        return null;
-                    }
-                }
-            }
-            
-            return null;
-        }
+        }      
         #endregion
     }
 }

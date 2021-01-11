@@ -19,7 +19,7 @@ using WPFLibrary.Commands;
 
 namespace UMLGenerator.ViewModels.Main
 {
-    public class UMLViewModel : BaseViewModel
+    public class UMLViewModel : BaseMainPartViewModel
     {
         #region Commands
         public RelayCommand SwitchViewCommand { get; private set; }
@@ -59,14 +59,13 @@ namespace UMLGenerator.ViewModels.Main
         public bool IsLoading { get; set; } = false;
         public string SvgString { get; set; }
         public Bitmap UMLImage { get; set; }
-
         #endregion
         #region Fields
         private CancellationTokenSource cancellationTokenSource;
         #endregion
 
         #region Constructors
-        public UMLViewModel()
+        public UMLViewModel(MainViewModel mainVM) : base(mainVM)
         {
         }
         #endregion
@@ -74,6 +73,7 @@ namespace UMLGenerator.ViewModels.Main
         #region Methods
         protected override void AddCommands()
         {
+            base.AddCommands();
             SwitchViewCommand = new RelayCommand(o =>
             {
                 IsUmlView = !IsUmlView;
@@ -81,6 +81,8 @@ namespace UMLGenerator.ViewModels.Main
         }
         public async void UpdateUML(string plantUml)
         {
+            IsShown = false;
+            PlantUml = plantUml;
             if (IsLoading)
             {
                 cancellationTokenSource.Cancel();

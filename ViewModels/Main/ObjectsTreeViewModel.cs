@@ -14,11 +14,8 @@ using WPFLibrary.Commands;
 
 namespace UMLGenerator.ViewModels.Main
 {
-    public class ObjectsTreeViewModel : BaseViewModel
+    public class ObjectsTreeViewModel : BaseMainPartViewModel
     {
-        #region Events
-        public event EventHandler<string> OnSelectedObjectsUpdate;
-        #endregion
 
         #region Commands
         public RelayCommand GenerateUMLCommand { get; private set; }
@@ -28,9 +25,7 @@ namespace UMLGenerator.ViewModels.Main
         public Dictionary<string, NamespaceModel> Namespaces { get; set; }
         public Dictionary<string, List<string>> Classes { get; set; }
         public Dictionary<string, List<string>> Interfaces { get; set; }
-
         public ObservableCollection<NamespaceModel> TreeItems { get; set; } = new ObservableCollection<NamespaceModel>();
-
         #endregion
 
         #region Public Static Fields
@@ -47,8 +42,9 @@ namespace UMLGenerator.ViewModels.Main
         #endregion
 
         #region Constructors
-        public ObjectsTreeViewModel()
+        public ObjectsTreeViewModel(MainViewModel mainVM) : base(mainVM)
         {
+            IsShown = false;
             Namespaces = new Dictionary<string, NamespaceModel>();
             Classes = new Dictionary<string, List<string>>();
             Interfaces = new Dictionary<string, List<string>>();
@@ -58,33 +54,34 @@ namespace UMLGenerator.ViewModels.Main
         #region Methods
         protected override void AddCommands()
         {
+            base.AddCommands();
             GenerateUMLCommand = new RelayCommand((o) =>
             {
-                OnSelectedObjectsUpdate?.Invoke(this, GenerateUML(Namespaces.Values));
+                mainVM.UmlVM.UpdateUML(GenerateUML(Namespaces.Values));
             });
         }
 
-        public void GenerateObjectsTree(List<FileModel> fileModels, GitHubClient client, long repositoryId)
+        public void GenerateObjectsTree(List<FileModel> fileModels)
         {
-            if (repositoryId == 0)
+            if (mainVM.GithubVM.RepostioryID == 0)
             {
                 RunOnFiles(fileModels);
             }
             else
-                RunOnFiles(fileModels, client, repositoryId);
+                RunOnFiles(fileModels, mainVM.GithubVM.GitClient, mainVM.GithubVM.RepostioryID);
             TreeItems.Clear();
             foreach(var item in Namespaces.Values)
             {
                 TreeItems.Add(item);
             }
-            OnSelectedObjectsUpdate?.Invoke(this, GenerateUML(Namespaces.Values));
+            mainVM.UmlVM.UpdateUML(GenerateUML(Namespaces.Values));
         }
 
         private void RunOnFiles(List<FileModel> fileModels) //local files
         {
             foreach (var file in fileModels)
             {
-                new CodeFileViewModel(file.Name, System.IO.File.ReadAllText(file.FullName), Namespaces, Classes, Interfaces);
+                new CodeFileViewModel(System.IO.File.ReadAllText(file.FullName), Namespaces, Classes, Interfaces);
             }
         }
 
@@ -95,7 +92,7 @@ namespace UMLGenerator.ViewModels.Main
                 try
                 {
                     var code = client.Repository.Content.GetAllContents(repositoryId, file.FullName).GetAwaiter().GetResult()[0].Content;
-                    new CodeFileViewModel(file.Name, code, Namespaces, Classes, Interfaces);
+                    new CodeFileViewModel(code, Namespaces, Classes, Interfaces);
                 }
                 catch (Exception exception)
                 {
