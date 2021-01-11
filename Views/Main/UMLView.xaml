@@ -17,10 +17,16 @@
                                 <TextBox Text="{Binding PlantUml}"/>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,10,10,0">
                                     <Button Background="Transparent" BorderBrush="Transparent" Command="{Binding CopyToClipboardCommand}">
-                                        <Image Source="/Resources/Images/CopyIcon.png" Stretch="None"/>
+                                        <StackPanel Orientation="Vertical">
+                                            <Image Source="/Resources/Images/CopyIcon.png" Stretch="None"/>
+                                            <TextBlock HorizontalAlignment="Center">Copy</TextBlock>
+                                        </StackPanel>
                                     </Button>
                                     <Button Background="Transparent" BorderBrush="Transparent" Command="{Binding SwitchViewCommand}">
-                                        <Image Source="/Resources/Images/UmlGraphIcon.png" Stretch="None"/>
+                                        <StackPanel Orientation="Vertical">
+                                            <Image Source="/Resources/Images/UmlGraphIcon.png" Stretch="None"/>
+                                            <TextBlock  HorizontalAlignment="Center">UML</TextBlock>
+                                        </StackPanel>
                                     </Button>
                                 </StackPanel>
                             </Grid>
@@ -59,7 +65,11 @@
                                         </ContentControl>
                                         <Button VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,10,10,0" Background="Transparent" BorderBrush="Transparent"
                                                                     Command="{Binding SwitchViewCommand}">
-                                            <Image Source="/Resources/Images/TextIcon.png" Stretch="None"/>
+                                            <StackPanel Orientation="Vertical">
+                                                <Image Source="/Resources/Images/TextIcon.png" Stretch="None"/>
+                                                <TextBlock  HorizontalAlignment="Center">PlantUML</TextBlock>
+                                            </StackPanel>
+                                            
                                         </Button>
                                     </Grid>
                                 </Setter.Value>

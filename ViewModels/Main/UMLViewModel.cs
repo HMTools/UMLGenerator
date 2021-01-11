@@ -104,7 +104,6 @@ namespace UMLGenerator.ViewModels.Main
                 await Task.Run(() =>
                 {
                     var svg = Svg.SvgDocument.FromSvg<Svg.SvgDocument>(SvgString);
-
                     System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() =>
                     {
                         UMLImage = svg.Draw();
