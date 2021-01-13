@@ -1,6 +1,5 @@
 ﻿using MVVMLibrary.ViewModels;
 using Octokit;
-using PlantUml.Net;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
