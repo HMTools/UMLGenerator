@@ -17,16 +17,16 @@
 
         <!--#region Source Type (Row 0)-->
         <StackPanel Orientation="Horizontal" Grid.Row="0">
-            <Label Content="Source :"/>
-            <RadioButton Content="Folder" Margin="0,7,0,0" IsChecked="{Binding SourceType, Converter={StaticResource EqualConverter}, ConverterParameter={x:Static vm:SourceTypes.Folder}}"/>
-            <RadioButton Content="Github" Margin="10,7,0,0" IsChecked="{Binding SourceType, Converter={StaticResource EqualConverter}, ConverterParameter={x:Static vm:SourceTypes.Github}}"/>
+            <Label Content="Source :" Style="{StaticResource Label_Property3}"/>
+            <RadioButton Content="Folder" Margin="0,10,0,0" IsChecked="{Binding SourceType, Converter={StaticResource EqualityConverter}, ConverterParameter={x:Static vm:SourceTypes.Folder}}"/>
+            <RadioButton Content="Github" Margin="10,10,0,0" IsChecked="{Binding SourceType, Converter={StaticResource EqualityConverter}, ConverterParameter={x:Static vm:SourceTypes.Github}}"/>
             <ContentControl Grid.Row="1" Margin="10,0,0,0">
                 <ContentControl.Style>
                     <Style TargetType="ContentControl">
                         <Setter Property="Content">
                             <Setter.Value>
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Content="Select Folder" Command="{Binding SelectFolderCommand}" Background="Transparent" Width="200" Height="30"/>
+                                    <Button Content="Select Folder" Command="{Binding SelectFolderCommand}" Style="{StaticResource Button_NoBackground}" Width="200" Height="30"/>
                                 </StackPanel>
                             </Setter.Value>
                         </Setter>
@@ -35,11 +35,11 @@
                                 <Setter Property="Content">
                                     <Setter.Value>
                                         <StackPanel Orientation="Horizontal">
-                                            <Label Content="Repository Owner"/>
+                                            <Label Content="Repository Owner" Style="{StaticResource Label_Property3}"/>
                                             <TextBox Text="{Binding RepositoryOwner, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,10,0" Width="200"/>
-                                            <Label Content="Repository Name"/>
+                                            <Label Content="Repository Name" Style="{StaticResource Label_Property3}"/>
                                             <TextBox Text="{Binding RepositoryName, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,10,0" Width="200"/>
-                                            <Button Content="Get" Command="{Binding GetRepositoryCommand}" Background="Transparent" Width="75" Height="30"/>
+                                            <Button Content="Get" Command="{Binding GetRepositoryCommand}" Style="{StaticResource Button_NoBackground}" Width="75" Height="30"/>
                                         </StackPanel>
                                     </Setter.Value>
                                 </Setter>
@@ -71,7 +71,7 @@
         </TreeView>
         <!--#endregion-->
         <!--#region Generate Button (Row 2)-->
-        <Button Content="Generate Objects Tree" Command="{Binding GetObjectsTreeCommand}"  Height="40" Grid.Row="2" />
+        <Button Content="Generate Objects Tree" Style="{StaticResource Button_NoBackground}" Command="{Binding GetObjectsTreeCommand}"  Height="40" Grid.Row="2" />
         <!--#endregion-->
     </Grid>
 </UserControl>

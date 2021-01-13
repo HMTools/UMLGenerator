@@ -55,12 +55,12 @@
 
   <ItemGroup>
     <PackageReference Include="HMTools.MVVMLibrary" Version="1.0.0" />
-    <PackageReference Include="HMTools.WPFLibrary" Version="1.0.4" />
+    <PackageReference Include="HMTools.WPFLibrary" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Octokit" Version="0.48.0" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="3.1.0" />
     <PackageReference Include="PlantUml.Net" Version="1.2.48" />
-    <PackageReference Include="Svg" Version="3.1.0-g" />
+    <PackageReference Include="Svg" Version="3.2.3" />
   </ItemGroup>
 
   <ItemGroup>

@@ -34,12 +34,7 @@
         <GroupBox DockPanel.Dock="Left" Header="Menu">
             <StackPanel Orientation="Vertical" Background="Transparent">
                 <StackPanel.Resources>
-                    <Style TargetType="{x:Type Button}">
-                        <Setter Property="Width" Value="100"/>
-                        <Setter Property="Height" Value="60"/>
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="BorderBrush" Value="Transparent"/>
-                    </Style>
+                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource Button_ImageButton}"/>
                     <Style TargetType="{x:Type Image}">
                         <Setter Property="Stretch" Value="None"/>
                     </Style>
@@ -69,38 +64,20 @@
                         <TextBlock>Export</TextBlock>
                     </StackPanel>
                 </Button>
-                <ContentControl>
-                    <ContentControl.Resources>
-                        <Style TargetType="{x:Type TextBlock}">
-                            <Setter Property="FontSize" Value="16"/>
-                            <Setter Property="FontWeight" Value="Bold"/>
-                            <Setter Property="FontStyle" Value="Italic"/>
-                        </Style>
-                    </ContentControl.Resources>
-                    <ContentControl.Style>
-                        <Style TargetType="ContentControl">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsShowExport}" Value="true">
-                                    <Setter Property="Content">
-                                        <Setter.Value>
-                                            <StackPanel Orientation="Vertical">
-                                                <Button Command="{Binding ExportSVGCommand}">
-                                                    <TextBlock Text="SVG" FontFamily="Verdana"/>
-                                                </Button>
-                                                <Button Command="{Binding ExportPNGCommand}">
-                                                    <TextBlock Text="PNG"  FontFamily="Verdana"/>
-                                                </Button>
-                                                <Button Command="{Binding ExportPlantCommand}">
-                                                    <TextBlock Text="PlantUML"  FontFamily="Verdana"/>
-                                                </Button>
-                                            </StackPanel>
-                                        </Setter.Value>
-                                    </Setter>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ContentControl.Style>
-                </ContentControl>
+                <StackPanel Orientation="Vertical" Visibility="{Binding IsShowExport, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource TextBlock_AsIcon}"/>
+                    </StackPanel.Resources>
+                    <Button Command="{Binding ExportSVGCommand}">
+                        <TextBlock Text="SVG"/>
+                    </Button>
+                    <Button Command="{Binding ExportPNGCommand}">
+                        <TextBlock Text="PNG"/>
+                    </Button>
+                    <Button Command="{Binding ExportPlantCommand}">
+                        <TextBlock Text="PlantUML"/>
+                    </Button>
+                </StackPanel>
                 <Separator/>
                 <Button Command="{Binding GithubVM.ToggleShowCommand}">
                     <StackPanel Orientation="Vertical">
@@ -110,14 +87,14 @@
                 </Button>
             </StackPanel>
         </GroupBox>
-        
+
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding SourceVM.ColWidth, Mode=TwoWay}" MinWidth="{Binding SourceVM.ColMinWidth}"/>
                 <ColumnDefinition Width="{Binding ObjectsTreeVM.ColWidth, Mode=TwoWay}" MinWidth="{Binding ObjectsTreeVM.ColMinWidth}"/>
                 <ColumnDefinition Width="{Binding UmlVM.ColWidth, Mode=TwoWay}" MinWidth="{Binding UmlVM.ColMinWidth}"/>
             </Grid.ColumnDefinitions>
-            
+
             <GroupBox Header="Source" Margin="10,0,10,0" Visibility="{Binding SourceVM.IsShown, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <ContentControl Content="{Binding SourceVM}"/>
             </GroupBox>
@@ -132,11 +109,10 @@
             <Popup IsOpen="{Binding GithubVM.IsShown}" Placement="Relative" PlacementTarget="{Binding RelativeSource= {RelativeSource Mode=TemplatedParent}}" StaysOpen="False">
                 <Border BorderBrush="Black" BorderThickness="5">
                     <Grid Background="white" Width="Auto" Height="Auto">
-                        <ContentControl Content="{Binding GithubVM}" Width="600" Height="600"/>
+                        <ContentControl Content="{Binding GithubVM}" Width="600" Height="600"  Margin="10,0,0,0"/>
                     </Grid>
                 </Border>
             </Popup>
         </Grid>
-        
     </DockPanel>
 </Window>

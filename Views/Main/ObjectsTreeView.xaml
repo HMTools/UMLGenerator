@@ -71,6 +71,6 @@
                 </DataTemplate>
             </TreeView.Resources>
         </TreeView>
-        <Button Content="Generate PlantUML" Command="{Binding GenerateUMLCommand}" Height="40" Grid.Row="1"/>
+        <Button Content="Generate PlantUML" Command="{Binding GenerateUMLCommand}" Style="{StaticResource Button_NoBackground}" Height="40" Grid.Row="1"/>
     </Grid>
 </UserControl>

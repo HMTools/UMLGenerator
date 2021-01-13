@@ -5,9 +5,13 @@
              xmlns:convert="clr-namespace:WPFLibrary.ValueConverters;assembly=WPFLibrary"
              StartupUri="Views\MainWindow.xaml">
     <Application.Resources>
-         <!--#region Converters-->
-        <convert:EqualConverter x:Key="EqualConverter"/>
-        <convert:BoolToVisibilityCollapsedConverter x:Key="BoolToVisibilityCollapsedConverter"/>
-        <!--#endregion-->
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/WPFLibrary;component/Styles/StylesDictionary.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/WPFLibrary;component/ValueConverters/ConvertersDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource TextBox_Base}"/>
+            <Style TargetType="{x:Type DataGrid}" BasedOn="{StaticResource DataGrid_Base}"/>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
