@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="UMLGenerator.Views.CodeLanguages.LanguagesEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UMLGenerator.Views.CodeLanguages"
+              xmlns:vm="clr-namespace:UMLGenerator.ViewModels.CodeLanguages"
+             mc:Ignorable="d" 
+    d:DesignHeight="450" d:DesignWidth="800" d:Background="White">
+    <Grid>
+        <Grid.Resources>
+            <DataTemplate DataType="{x:Type vm:CodeComponentViewModel}">
+                <local:CodeComponentView DataContext="{Binding }"/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:CodeLanguageViewModel}">
+                <local:CodeLanguageView DataContext="{Binding }"/>
+            </DataTemplate>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <GroupBox Header="Compononents">
+            <ListBox ItemsSource="{Binding SelectedLanguage.Components.Keys}" SelectedItem="{Binding SelectedComponentName}" Width="300">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding }"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </GroupBox>
+        <ContentControl Grid.Column="1" Content="{Binding SelectedViewModel}"/>
+    </Grid>
+</UserControl>

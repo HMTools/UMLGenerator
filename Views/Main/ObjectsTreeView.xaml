@@ -14,9 +14,9 @@
         </Grid.RowDefinitions>
         <TreeView ItemsSource="{Binding TreeItems}" BorderBrush="Transparent">
             <TreeView.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type codeModels:NamespaceModel}" ItemsSource="{Binding Children}">
+                <HierarchicalDataTemplate DataType="{x:Type codeModels:CodeObjectModel}" ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
+                        <!--<CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>-->
                         <Label Content="NS" FontWeight="Bold">
                             <Label.Background>
                                 <SolidColorBrush Color="Purple" Opacity="0.4"/>
@@ -25,7 +25,7 @@
                         <Label Content="{Binding Name}"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
-                <DataTemplate DataType="{x:Type codeModels:ClassModel}">
+                <!--<DataTemplate DataType="{x:Type codeModels:ClassModel}">
                     <StackPanel Orientation="Horizontal">
                         <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
                         <Label Content="C" FontWeight="Bold">
@@ -68,7 +68,7 @@
                         </Label>
                         <Label Content="{Binding Name}"/>
                     </StackPanel>
-                </DataTemplate>
+                </DataTemplate>-->
             </TreeView.Resources>
         </TreeView>
         <Button Content="Generate PlantUML" Command="{Binding GenerateUMLCommand}" Style="{StaticResource Button_NoBackground}" Height="40" Grid.Row="1"/>

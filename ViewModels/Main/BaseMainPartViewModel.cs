@@ -17,7 +17,7 @@ namespace UMLGenerator.ViewModels.Main
 
         #endregion
         #region Properties
-        private bool isShown = true;
+        private bool isShown = false;
 
         public bool IsShown
         {

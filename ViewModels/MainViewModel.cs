@@ -2,17 +2,20 @@
 using Octokit;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media;
 using UMLGenerator.Interfaces;
 using UMLGenerator.Models.CodeModels;
+using UMLGenerator.ViewModels.CodeLanguages;
 using UMLGenerator.ViewModels.Main;
 using WPFLibrary.Commands;
 
@@ -28,10 +31,11 @@ namespace UMLGenerator.ViewModels
         #endregion
 
         #region Properties
+        public GithubViewModel GithubVM { get; set; }
+        public LanguagesEditorViewModel LanguagesVM  { get; set; }
         public SourceViewModel SourceVM { get; set; }
         public ObjectsTreeViewModel ObjectsTreeVM { get; set; }
         public UMLViewModel UmlVM { get; set; }
-        public GithubViewModel GithubVM { get; set; }
 
         private bool isShowExport;
 
@@ -57,17 +61,21 @@ namespace UMLGenerator.ViewModels
             set { statusColor = value; NotifyPropertyChanged(); }
         }
 
+       
         #endregion
 
         #region Constructors
         public MainViewModel()
         {
             GithubVM = new GithubViewModel(this);
+            LanguagesVM = new LanguagesEditorViewModel(this);
             SourceVM = new SourceViewModel(this);
             ObjectsTreeVM = new ObjectsTreeViewModel(this);
             UmlVM = new UMLViewModel(this);
         }
         #endregion
+
+        
 
         #region Methods
         protected override void AddCommands()

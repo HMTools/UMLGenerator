@@ -67,7 +67,6 @@ namespace UMLGenerator.ViewModels.Main
         #region Constructors
         public UMLViewModel(MainViewModel mainVM) : base(mainVM)
         {
-            IsShown = false;
         }
         #endregion
 

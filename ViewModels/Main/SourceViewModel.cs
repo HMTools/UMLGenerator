@@ -80,7 +80,10 @@ namespace UMLGenerator.ViewModels.Main
         }
         #endregion
         #region Constructors
-        public SourceViewModel(MainViewModel mainVM) : base(mainVM) { }
+        public SourceViewModel(MainViewModel mainVM) : base(mainVM) 
+        {
+            IsShown = false;
+        }
         #endregion
 
         #region Methods

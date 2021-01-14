@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UMLGenerator"
         xmlns:vm="clr-namespace:UMLGenerator.ViewModels.Main"
+        xmlns:vmlanguage="clr-namespace:UMLGenerator.ViewModels.CodeLanguages"
         xmlns:v="clr-namespace:UMLGenerator.Views.Main"
+        xmlns:vlanguage="clr-namespace:UMLGenerator.Views.CodeLanguages"
+       
         mc:Ignorable="d"
         Title="UML Generator" Height="640" Width="1024" WindowStartupLocation="CenterScreen" WindowState="Maximized">
     <DockPanel>
@@ -21,6 +24,9 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:GithubViewModel}">
                 <v:GithubView DataContext="{Binding }"/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vmlanguage:LanguagesEditorViewModel}">
+                <vlanguage:LanguagesEditorView DataContext="{Binding }"/>
             </DataTemplate>
         </DockPanel.Resources>
         <Border BorderBrush="Gray" BorderThickness="1" DockPanel.Dock="Bottom">
@@ -55,6 +61,12 @@
                     <StackPanel Orientation="Vertical">
                         <Image Source="/Resources/Images/UMLIcon.png"/>
                         <TextBlock>UML</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding LanguagesVM.ToggleShowCommand}">
+                    <StackPanel Orientation="Vertical">
+                        <Image Source="/Resources/Images/UMLIcon.png"/>
+                        <TextBlock>Languages</TextBlock>
                     </StackPanel>
                 </Button>
                 <Separator/>
@@ -93,6 +105,7 @@
                 <ColumnDefinition Width="{Binding SourceVM.ColWidth, Mode=TwoWay}" MinWidth="{Binding SourceVM.ColMinWidth}"/>
                 <ColumnDefinition Width="{Binding ObjectsTreeVM.ColWidth, Mode=TwoWay}" MinWidth="{Binding ObjectsTreeVM.ColMinWidth}"/>
                 <ColumnDefinition Width="{Binding UmlVM.ColWidth, Mode=TwoWay}" MinWidth="{Binding UmlVM.ColMinWidth}"/>
+                <ColumnDefinition Width="{Binding LanguagesVM.ColWidth, Mode=TwoWay}" MinWidth="{Binding LanguagesVM.ColMinWidth}"/>
             </Grid.ColumnDefinitions>
 
             <GroupBox Header="Source" Margin="10,0,10,0" Visibility="{Binding SourceVM.IsShown, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
@@ -105,6 +118,10 @@
             <GridSplitter Width="5" Grid.Column="1"  Background="LightGray" Margin="0,10,0,0"/>
             <GroupBox Header="UML" Grid.Column="2"  Margin="10,0,10,10" Visibility="{Binding UmlVM.IsShown, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <ContentControl Content="{Binding UmlVM}"/>
+            </GroupBox>
+            <GridSplitter Width="5" Grid.Column="2"  Background="LightGray" Margin="0,10,0,0"/>
+            <GroupBox Header="Code Languages" Grid.Column="3" Margin="10,0,10,10" Visibility="{Binding LanguagesVM.IsShown, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                <ContentControl Content="{Binding LanguagesVM}"/>
             </GroupBox>
             <Popup IsOpen="{Binding GithubVM.IsShown}" Placement="Relative" PlacementTarget="{Binding RelativeSource= {RelativeSource Mode=TemplatedParent}}" StaysOpen="False">
                 <Border BorderBrush="Black" BorderThickness="5">

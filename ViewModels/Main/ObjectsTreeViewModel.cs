@@ -22,32 +22,12 @@ namespace UMLGenerator.ViewModels.Main
         #endregion
 
         #region Properties
-        public Dictionary<string, NamespaceModel> Namespaces { get; set; }
-        public Dictionary<string, List<string>> Classes { get; set; }
-        public Dictionary<string, List<string>> Interfaces { get; set; }
-        public ObservableCollection<NamespaceModel> TreeItems { get; set; } = new ObservableCollection<NamespaceModel>();
-        #endregion
-
-        #region Public Static Fields
-        public static Dictionary<string, char> AccessModifiersDict = new Dictionary<string, char>() //maybe need to remove from static
-        {
-            { "", '-'},
-            { "private", '-'},
-            { "protected", '#'},
-            { "private protected", '#'},
-            { "protected internal", '#'},
-            { "internal", '#'},
-            { "public", '+'}
-        };
+        public ObservableCollection<CodeComponentTypeModel> TreeItems { get; set; } = new ObservableCollection<CodeComponentTypeModel>();
         #endregion
 
         #region Constructors
         public ObjectsTreeViewModel(MainViewModel mainVM) : base(mainVM)
         {
-            IsShown = false;
-            Namespaces = new Dictionary<string, NamespaceModel>();
-            Classes = new Dictionary<string, List<string>>();
-            Interfaces = new Dictionary<string, List<string>>();
         }
         #endregion
 
@@ -57,8 +37,8 @@ namespace UMLGenerator.ViewModels.Main
             base.AddCommands();
             GenerateUMLCommand = new RelayCommand((o) =>
             {
-                mainVM.UmlVM.UpdateUML(GenerateUML(Namespaces.Values));
-            }, o => Namespaces.Count > 0);
+                mainVM.UmlVM.UpdateUML(GenerateUML(TreeItems));
+            }, o => TreeItems.Count > 0);
         }
 
         public void GenerateObjectsTree(List<FileModel> fileModels)
@@ -70,18 +50,18 @@ namespace UMLGenerator.ViewModels.Main
             else
                 RunOnFiles(fileModels, mainVM.GithubVM.GitClient, mainVM.GithubVM.RepostioryID);
             TreeItems.Clear();
-            foreach(var item in Namespaces.Values)
+            foreach(var item in TreeItems)
             {
                 TreeItems.Add(item);
             }
-            mainVM.UmlVM.UpdateUML(GenerateUML(Namespaces.Values));
+            mainVM.UmlVM.UpdateUML(GenerateUML(TreeItems));
         }
 
         private void RunOnFiles(List<FileModel> fileModels) //local files
         {
             foreach (var file in fileModels)
             {
-                new CodeFileViewModel(System.IO.File.ReadAllText(file.FullName), Namespaces, Classes, Interfaces);
+                new CodeFileViewModel(System.IO.File.ReadAllText(file.FullName), mainVM.LanguagesVM.SelectedLanguage);
             }
         }
 
@@ -92,7 +72,7 @@ namespace UMLGenerator.ViewModels.Main
                 try
                 {
                     var code = client.Repository.Content.GetAllContents(repositoryId, file.FullName).GetAwaiter().GetResult()[0].Content;
-                    new CodeFileViewModel(code, Namespaces, Classes, Interfaces);
+                    new CodeFileViewModel(code, mainVM.LanguagesVM.SelectedLanguage);
                 }
                 catch (Exception exception)
                 {
@@ -106,7 +86,7 @@ namespace UMLGenerator.ViewModels.Main
             string res = "@startuml\n";
             foreach (var obj in source)
             {
-                res += obj.TransferToUML(0, Classes, Interfaces);
+                //res += obj.TransferToUML(0, null, null);
             }
             return res + "@enduml";
         }

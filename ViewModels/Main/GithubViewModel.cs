@@ -52,7 +52,6 @@ namespace UMLGenerator.ViewModels.Main
         #region Constructors
         public GithubViewModel(MainViewModel mainVM) : base(mainVM)
         {
-            IsShown = false;
             Repos = new ObservableCollection<object>();
             LoadData();
         }
