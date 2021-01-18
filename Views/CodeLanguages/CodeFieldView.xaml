@@ -1,0 +1,108 @@
+﻿<UserControl x:Class="UMLGenerator.Views.CodeLanguages.CodeFieldView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UMLGenerator.Views.CodeLanguages"
+             xmlns:m="clr-namespace:UMLGenerator.Models.CodeModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Label Content="Name :" Style="{StaticResource Label_Property3}"/>
+        <TextBox Grid.Column="1" Text="{Binding Field.Name, UpdateSourceTrigger=PropertyChanged}"/>
+        <Grid Grid.Row="1" Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityCollapsedConverter}}" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Label Content="Pattern :" Style="{StaticResource Label_Property3}"/>
+            <TextBox Grid.Column="1" Text="{Binding Field.Pattern, UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Content="Input Type :" Style="{StaticResource Label_Property3}" Grid.Row="1"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
+                <RadioButton Content="Textual" Margin="0,10,0,0" IsChecked="{Binding Field.InputType, Converter={StaticResource EqualityConverter}, ConverterParameter={x:Static m:FieldInputType.Textual}}"/>
+                <RadioButton Content="Boolean" Margin="10,10,0,0" IsChecked="{Binding Field.InputType, Converter={StaticResource EqualityConverter}, ConverterParameter={x:Static m:FieldInputType.Boolean}}"/>
+                <RadioButton Content="Switch" Margin="10,10,0,0" IsChecked="{Binding Field.InputType, Converter={StaticResource EqualityConverter}, ConverterParameter={x:Static m:FieldInputType.Switch}}"/>
+            </StackPanel>
+            <ContentControl Grid.Row="2" Grid.ColumnSpan="2">
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Field.InputType}" Value="1">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Label Content="True Value :" Style="{StaticResource Label_Property3}"/>
+                                            <TextBox Grid.Column="1" Text="{Binding Field.TrueValue, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,0"/>
+                                            <Label Content="False Value :" Style="{StaticResource Label_Property3}" Grid.Column="2"/>
+                                            <TextBox Grid.Column="3" Text="{Binding Field.FalseValue, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </Grid>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Field.InputType}" Value="2">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <StackPanel Orientation="Vertical">
+                                            <Button Content="Add New Case" Style="{StaticResource Button_NoBackground}" Command="{Binding AddCaseCommand}"/>
+                                            <ItemsControl ItemsSource="{Binding Field.Cases}" AlternationCount="1000">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <GroupBox>
+                                                            <GroupBox.Header>
+                                                                <Button Style="{StaticResource Button_ImageButton}" Width="Auto" Height="Auto"
+                                                Command="{Binding DataContext.RemoveCaseCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" 
+                                                CommandParameter="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}">
+                                                                    <TextBlock Text="x" Style="{StaticResource TextBlock_AsIcon}"/>
+                                                                </Button>
+                                                            </GroupBox.Header>
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <Label Content="Case (Regex):" Style="{StaticResource Label_Property3}"/>
+                                                                <TextBox Grid.Column="1" Text="{Binding Case, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                <Label Content="Value :" Style="{StaticResource Label_Property3}" Grid.Column="2"/>
+                                                                <TextBox Grid.Column="3" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
+                                                            </Grid>
+                                                        </GroupBox>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+        </Grid>
+            
+    </Grid>
+    
+</UserControl>

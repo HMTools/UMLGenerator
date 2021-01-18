@@ -5,10 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:UMLGenerator.Views.CodeLanguages"
               xmlns:vm="clr-namespace:UMLGenerator.ViewModels.CodeLanguages"
+             xmlns:freez="clr-namespace:WPFLibrary.Freezables;assembly=WPFLibrary"
              mc:Ignorable="d" 
     d:DesignHeight="450" d:DesignWidth="800" d:Background="White">
     <Grid>
         <Grid.Resources>
+            <freez:BindingProxy x:Key="VMProxy" Data="{Binding }"/>
             <DataTemplate DataType="{x:Type vm:CodeComponentViewModel}">
                 <local:CodeComponentView DataContext="{Binding }"/>
             </DataTemplate>
@@ -20,15 +22,90 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <GroupBox Header="Compononents">
-            <ListBox ItemsSource="{Binding SelectedLanguage.Components.Keys}" SelectedItem="{Binding SelectedComponentName}" Width="300">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding }"/>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <GroupBox>
+            <GroupBox.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Languages"/>
+                    <Button Style="{StaticResource Button_ImageButton}" Command="{Binding AddLanguageCommand}" Margin="10,0,0,0" Width="Auto" Height="Auto">
+                        <TextBlock Text="Add"/>
+                    </Button>
+                </StackPanel>
+            </GroupBox.Header>
+            <ListBox ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguageName}" Width="300" MinHeight="150">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="ContentTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding }"/>
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="ContentTemplate">
+                                    <Setter.Value>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding }"/>
+                                                <Button Content="Edit" Margin="10,0,0,0" Command="{Binding Data.EditLanguageCommand, Source={StaticResource VMProxy}}"
+                                                        CommandParameter="{Binding }"/>
+                                                <Button Content="Save" Margin="10,0,0,0" Command="{Binding Data.SaveLanguageCommand, Source={StaticResource VMProxy}}"
+                                                        CommandParameter="{Binding }"/>
+                                                <Button Content="Remove" Margin="10,0,0,0" Command="{Binding Data.RemoveLanguageCommand, Source={StaticResource VMProxy}}"
+                                                        CommandParameter="{Binding }"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
             </ListBox>
         </GroupBox>
-        <ContentControl Grid.Column="1" Content="{Binding SelectedViewModel}"/>
+        <GroupBox Grid.Row="1">
+            <GroupBox.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Components"/>
+                    <Button Style="{StaticResource Button_ImageButton}" Command="{Binding AddComponentCommand}" Margin="10,0,0,0" Width="Auto" Height="Auto">
+                        <TextBlock Text="Add"/>
+                    </Button>
+                </StackPanel>
+            </GroupBox.Header>
+            <ListBox ItemsSource="{Binding Components}" SelectedValue="{Binding SelectedComponent}" Width="300" MinHeight="300" >
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="ContentTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <Label Content="{Binding Name}"/>
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="ContentTemplate">
+                                    <Setter.Value>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Name}"/>
+                                                <Button Content="Remove" Margin="10,0,0,0" Command="{Binding Data.RemoveComponentCommand, Source={StaticResource VMProxy}}"
+                                                        CommandParameter="{Binding }"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+        </GroupBox>
+        <ContentControl Grid.Column="1" Content="{Binding SelectedViewModel}" Grid.RowSpan="2"/>
     </Grid>
 </UserControl>

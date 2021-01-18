@@ -4,9 +4,230 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:UMLGenerator.Views.CodeLanguages"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:m="clr-namespace:UMLGenerator.Models.CodeModels"
+             xmlns:vm="clr-namespace:UMLGenerator.ViewModels.CodeLanguages"
+             xmlns:v="clr-namespace:UMLGenerator.Views.CodeLanguages"
+             xmlns:behav="clr-namespace:WPFLibrary.Behaviors;assembly=WPFLibrary"
+             xmlns:freez="clr-namespace:WPFLibrary.Freezables;assembly=WPFLibrary"
              mc:Ignorable="d" 
     d:DesignHeight="450" d:DesignWidth="800" d:Background="White">
-    <GroupBox Header="Component's Details">
+    <UserControl.Resources>
+        <freez:BindingProxy x:Key="VMProxy" Data="{Binding }"/>
+        <DataTemplate DataType="{x:Type vm:CodeFieldViewModel}">
+            <v:CodeFieldView DataContext="{Binding }"/>
+        </DataTemplate>
+    </UserControl.Resources>
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 
-    </GroupBox>
+        <GroupBox>
+            <GroupBox.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Language's Details"/>
+                    <Button Margin="10,0,0,0" Width="Auto" Height="Auto" >
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource Button_NoBackground}">
+                                <Setter Property="Command" Value="{Binding CreateLanguageCommand}"/>
+                                <Setter Property="Content" Value="Create"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsCreating}" Value="false">
+                                        <Setter Property="Command" Value="{Binding SaveLanguageCommand}"/>
+                                        <Setter Property="Content" Value="Save"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+            </GroupBox.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Label Style="{StaticResource Label_Property3}" Content="Name :"/>
+                <TextBox Grid.Column="1" Text="{Binding Language.Name , UpdateSourceTrigger=PropertyChanged}"/>
+                <GroupBox Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="Black">
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Cleanup Patterns"/>
+                            <Button Style="{StaticResource Button_ImageButton}" Width="Auto" Height="Auto" Content="+" FontSize="16" FontWeight="Bold" Foreground="Blue"
+                                    Command="{Binding AddCleanupCommand}" />
+                        </StackPanel>
+                    </GroupBox.Header>
+                    <ItemsControl ItemsSource="{Binding Language.CleanupModels}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type m:CodeCleanupModel}">
+                                <GroupBox BorderBrush="CadetBlue" BorderThickness="2">
+                                    <GroupBox.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Name}"/>
+                                            <Button Style="{StaticResource Button_ImageButton}" Width="Auto" Height="Auto" Content="X" Foreground="Red"
+                                                Command="{Binding DataContext.RemoveCleanupCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                CommandParameter="{Binding }">
+                                            </Button>
+                                        </StackPanel>
+                                    </GroupBox.Header>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Label Style="{StaticResource Label_Property3}" Content="Name :"/>
+                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+                                        <Label Style="{StaticResource Label_Property3}" Content="Pattern :" Grid.Row="1"/>
+                                        <TextBox Text="{Binding Pattern, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"  Grid.Row="1"/>
+                                        <Label Style="{StaticResource Label_Property3}" Content="Replace With" Grid.Column="2"/>
+                                        <ComboBox SelectedIndex="0" Grid.Column="3">
+                                            <ComboBoxItem Content="Empty Text" />
+                                            <ComboBoxItem Content="New Line" IsSelected="{Binding ReplaceWithNewLine, Mode=TwoWay}" />
+                                        </ComboBox>
+                                        <Label Style="{StaticResource Label_Property3}" Content="Regex Flag" Grid.Column="4"/>
+                                        <ComboBox SelectedIndex="0" Grid.Column="5">
+                                            <ComboBoxItem Content="Single Line" IsSelected="{Binding RegexSignleLine, Mode=TwoWay}"/>
+                                            <ComboBoxItem Content="Multi Line"  />
+                                        </ComboBox>
+                                    </Grid>
+                                </GroupBox>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </GroupBox>
+                <GroupBox Grid.Row="2" Grid.ColumnSpan="2" BorderBrush="Black">
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Delimiters"/>
+                            <Button Style="{StaticResource Button_ImageButton}" Width="Auto" Height="Auto" Content="+" FontSize="16" FontWeight="Bold" Foreground="Blue"
+                                    Command="{Binding AddDelimiterCommand}" />
+                        </StackPanel>
+                    </GroupBox.Header>
+                    <ItemsControl ItemsSource="{Binding Language.CodeDelimiters}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type m:CodeDelimiterModel}">
+                                <GroupBox BorderThickness="2" BorderBrush="LightGreen">
+                                    <GroupBox.Header>
+                                        <Button Style="{StaticResource Button_ImageButton}" Width="Auto" Height="Auto" Content="X" Foreground="Red"
+                                                Command="{Binding Data.RemoveDelimiterCommand, Source={StaticResource VMProxy}}"
+                                                CommandParameter="{Binding }"/>
+                                    </GroupBox.Header>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Label Style="{StaticResource Label_Property3}" Content="Open Delimiter :"/>
+                                        <TextBox Text="{Binding OpenDelimiter, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource CharToStringConverter}}" Grid.Column="1"/>
+                                        <CheckBox Content="Has Close" IsChecked="{Binding HasClose, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Grid.Column="2"/>
+                                        <Label Style="{StaticResource Label_Property3}" Content="Close Delimiter :" Grid.Row="1"
+                                               Visibility="{Binding HasClose, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+                                        <TextBox Text="{Binding CloseDelimiter, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource CharToStringConverter}}" Grid.Column="1"  Grid.Row="1"
+                                                 Visibility="{Binding HasClose, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+                                    </Grid>
+                                </GroupBox>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </GroupBox>
+                <GroupBox Header="First Layer Components" Grid.Row="3" Grid.ColumnSpan="2" BorderBrush="Black">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <GroupBox Header="Selected   (The order is important for the PlantUML parsing)">
+                            <ListBox ItemsSource="{Binding Language.SubComponents}" MaxHeight="300" MinHeight="200"
+                                 BorderThickness="1" BorderBrush="Black">
+                                <i:Interaction.Behaviors>
+                                    <behav:DraggableListBoxItemBehavior  Effect="Move" AllowControlDropTarget="True" AllowItemDropTarget="True" VisualizeOnOver="True"
+                                        DropCommand="{Binding Source={StaticResource VMProxy}, Path=Data.AddSubComponentCommand}"
+                                        DragEnterCommand="{Binding Source={StaticResource VMProxy}, Path=Data.SwapSubComponentCommand}"/>
+                                </i:Interaction.Behaviors>
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListBoxItem}">
+                                        <Setter Property="Content" Value="{Binding }"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
+                        </GroupBox>
+                        <GroupBox Header="All Components" Grid.Column="1">
+                            <ListBox ItemsSource="{Binding LanguagesEditor.Components}" MaxHeight="300" MinHeight="200"
+                                 BorderThickness="1" BorderBrush="Black">
+                                <i:Interaction.Behaviors>
+                                    <behav:DraggableListBoxItemBehavior Effect="Copy" AllowControlDropTarget="True" VisualizeOnOver="True"
+                                                                        DropCommand="{Binding Source={StaticResource VMProxy}, Path=Data.RemoveSubComponentCommand}"/>
+                                </i:Interaction.Behaviors>
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListBoxItem}">
+                                        <Setter Property="Content" Value="{Binding Name}"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
+                        </GroupBox>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="Common Fields" Grid.Row="4" Grid.ColumnSpan="2" BorderBrush="Black">
+                    <StackPanel Orientation="Vertical">
+                        <Button Content="Add Field" Command="{Binding AddFieldCommand}"/>
+                        <ItemsControl ItemsSource="{Binding Fields}" AlternationCount="1000">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <GroupBox BorderThickness="2" BorderBrush="CadetBlue">
+                                        <GroupBox.Header>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Label Content="{Binding Field.Name}"/>
+                                                <Button Style="{StaticResource Button_ImageButton}" Width="Auto" Height="Auto"
+                                                Command="{Binding Data.RemoveFieldCommand, Source={StaticResource VMProxy}}"
+                                                CommandParameter="{Binding }">
+                                                    <TextBlock Text="x"  Style="{StaticResource TextBlock_AsIcon}"/>
+                                                </Button>
+                                                <Button Style="{StaticResource Button_ImageButton}" Width="Auto" Height="Auto" Command="{Binding ToggleExpandCommand}">
+                                                    <TextBlock>
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlock_AsIcon}">
+                                                                <Setter Property="Text" Value="O"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsExpanded}" Value="true">
+                                                                        <Setter Property="Text" Value="C"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Button>
+                                            </StackPanel>
+                                        </GroupBox.Header>
+                                        <ContentControl Content="{Binding }"/>
+                                    </GroupBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="PlantUML Builder"  Grid.Row="5" Grid.ColumnSpan="2" BorderBrush="Black">
+                    <TextBox Text="{Binding Language.UMLPattern, UpdateSourceTrigger=PropertyChanged}" Height="200" AcceptsReturn="True" AcceptsTab="True" VerticalContentAlignment="Top"/>
+                </GroupBox>
+            </Grid>
+        </GroupBox>
+    </ScrollViewer>
 </UserControl>

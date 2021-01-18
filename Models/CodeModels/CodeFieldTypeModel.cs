@@ -10,10 +10,28 @@ namespace UMLGenerator.Models.CodeModels
     public class CodeFieldTypeModel : BaseModel
     {
         #region Properties
-        public string Name { get; set; }
+        private string name;
+
+        public string Name
+        {
+            get { return name; }
+            set { name = value; NotifyPropertyChanged(); }
+        }
+
         public string Pattern { get; set; }
-        public ObservableCollection<string> Values { get; set; } = new ObservableCollection<string>();
-        public FieldInputType InputType { get; set; }
+        public string TrueValue { get; set; }
+        public string FalseValue { get; set; }
+        public ObservableCollection<CodeCaseModel> Cases { get; set; } = new ObservableCollection<CodeCaseModel>();
+        private FieldInputType inputType;
+
+        public FieldInputType InputType
+        {
+            get { return inputType; }
+            set { 
+                inputType = value;
+                NotifyPropertyChanged(); }
+        }
+
         #endregion
     }
 

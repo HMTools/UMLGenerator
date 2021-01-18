@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using UMLGenerator.Interfaces;
@@ -18,7 +19,7 @@ using WPFLibrary.Commands;
 
 namespace UMLGenerator.ViewModels.Main
 {
-    public class UMLViewModel : BaseMainPartViewModel
+    public class UMLViewModel : BaseGridColumnViewModel
     {
         #region Commands
         public RelayCommand SwitchViewCommand { get; private set; }
@@ -62,11 +63,13 @@ namespace UMLGenerator.ViewModels.Main
         #endregion
         #region Fields
         private CancellationTokenSource cancellationTokenSource;
+        private MainViewModel mainVM;
         #endregion
 
         #region Constructors
-        public UMLViewModel(MainViewModel mainVM) : base(mainVM)
+        public UMLViewModel(MainViewModel mainVM) : base(300, new GridLength(1, GridUnitType.Star), false)
         {
+            this.mainVM = mainVM;
         }
         #endregion
 
@@ -80,7 +83,7 @@ namespace UMLGenerator.ViewModels.Main
             });
             CopyToClipboardCommand = new RelayCommand(o => 
             {
-                Clipboard.SetText(PlantUml);
+                System.Windows.Clipboard.SetText(PlantUml);
                 mainVM.SetStatus("Copy PlantUML To Clipboard | Succeed", System.Windows.Media.Brushes.Blue, 2000);
             });
         }

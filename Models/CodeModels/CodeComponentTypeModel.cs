@@ -12,13 +12,21 @@ namespace UMLGenerator.Models.CodeModels
     {
         #region Properties
         public string Name { get; set; } = "";
-        public ObservableCollection<string> Containers { get; set; } = new ObservableCollection<string>();
+        public string Tag { get; set; } = "";
+        public System.Windows.Media.Color TagColor { get; set; }
+        public ObservableCollection<string> SubComponents { get; set; } = new ObservableCollection<string>();
         public ObservableCollection<CodeFieldTypeModel> Fields { get; set; } = new ObservableCollection<CodeFieldTypeModel>();
-
+        public ObservableCollection<CodeDelimiterModel> CodeDelimiters { get; set; } = new ObservableCollection<CodeDelimiterModel>();
         public string NamePattern { get; set; } = "";
-        public ObservableCollection<string> TruePatterns { get; set; } = new ObservableCollection<string>();
-        public ObservableCollection<string> FalsePatterns { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<CodePatternModel> TruePatterns { get; set; } = new ObservableCollection<CodePatternModel>();
+        public ObservableCollection<CodePatternModel> FalsePatterns { get; set; } = new ObservableCollection<CodePatternModel>();
+        public string UMLPattern { get; set; }
+        public bool IsUniqueCollection { get; set; }
 
+        public CodeComponentTypeModel()
+        {
+            TagColor = System.Windows.Media.Colors.Blue;
+        }
         public string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
         {
             throw new NotImplementedException();

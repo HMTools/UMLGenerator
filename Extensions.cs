@@ -34,5 +34,16 @@ namespace UMLGenerator
             }
         }
         #endregion
+
+        #region MyRegion
+
+        #endregion
+        public static void Swap<T>(this IList<T> list, T obj1, T obj2)
+        {
+            var indexA = list.IndexOf(obj1);
+            var indexB = list.IndexOf(obj2);
+            list[indexA] = obj2;
+            list[indexB] = obj1;
+        }
     }
 }

@@ -13,7 +13,7 @@ using WPFLibrary.Commands;
 
 namespace UMLGenerator.ViewModels.Main
 {
-    public class GithubViewModel : BaseMainPartViewModel
+    public class GithubViewModel : BaseGridColumnViewModel
     {
 
         #region Commands
@@ -46,12 +46,14 @@ namespace UMLGenerator.ViewModels.Main
         #endregion
 
         #region Fields
+        private MainViewModel mainVM;
         private string lastWorkedToken;
         #endregion
 
         #region Constructors
-        public GithubViewModel(MainViewModel mainVM) : base(mainVM)
+        public GithubViewModel(MainViewModel mainVM) : base(300, new GridLength(1, GridUnitType.Star), false)
         {
+            this.mainVM = mainVM;
             Repos = new ObservableCollection<object>();
             LoadData();
         }

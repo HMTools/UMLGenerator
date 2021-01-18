@@ -13,7 +13,7 @@ using WPFLibrary.Commands;
 
 namespace UMLGenerator.ViewModels.Main
 {
-    public class SourceViewModel : BaseMainPartViewModel
+    public class SourceViewModel : BaseGridColumnViewModel
     {
         #region Commands
         public RelayCommand SelectFolderCommand { get; private set; }
@@ -79,10 +79,15 @@ namespace UMLGenerator.ViewModels.Main
             set { rootDir = value; NotifyPropertyChanged(); }
         }
         #endregion
+
+        #region Fields
+        private MainViewModel mainVM;
+        #endregion
+
         #region Constructors
-        public SourceViewModel(MainViewModel mainVM) : base(mainVM) 
+        public SourceViewModel(MainViewModel mainVM) : base(300, new GridLength(1, GridUnitType.Star)) 
         {
-            IsShown = false;
+            this.mainVM = mainVM;
         }
         #endregion
 

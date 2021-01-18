@@ -7,15 +7,29 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows;
 using UMLGenerator.Models.CodeModels;
 using UMLGenerator.ViewModels.Main;
+using WPFLibrary.Commands;
 
 namespace UMLGenerator.ViewModels.CodeLanguages
 {
-    public class LanguagesEditorViewModel : BaseMainPartViewModel
+    public class LanguagesEditorViewModel : BaseGridColumnViewModel
     {
+        #region Commands
+
+        public RelayCommand AddLanguageCommand { get; private set; }
+        public RelayCommand EditLanguageCommand { get; private set; }
+        public RelayCommand SaveLanguageCommand { get; private set; }
+        public RelayCommand RemoveLanguageCommand { get; private set; }
+        public RelayCommand AddComponentCommand { get; private set; }
+        public RelayCommand RemoveComponentCommand { get; private set; }
+
+        #endregion
+
         #region Properties
         public ObservableCollection<string> Languages { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<CodeComponentTypeModel> Components { get; set; } = new ObservableCollection<CodeComponentTypeModel>();
 
         private string selectedLanguageName;
 
@@ -25,7 +39,8 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             set
             {
                 selectedLanguageName = value;
-                SelectedLanguage = JsonSerializer.Deserialize<CodeLanguageModel>(File.ReadAllText($"{Directory.GetCurrentDirectory()}\\Languages\\{value}.json"));
+                if(value != null)
+                    SelectedLanguage = JsonSerializer.Deserialize<CodeLanguageModel>(File.ReadAllText($"{Directory.GetCurrentDirectory()}\\Languages\\{value}.json"));
                 NotifyPropertyChanged();
             }
         }
@@ -39,24 +54,15 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             set
             {
                 selectedLanguage = value;
-                SelectedViewModel = new CodeLanguageViewModel(value);
+                Components.Clear();
+                foreach(var comp in value.Components)
+                {
+                    Components.Add(comp.Value);
+                }
+                EditLanguageCommand?.Execute(value.Name);
                 NotifyPropertyChanged();
             }
         }
-
-        private string selectedComponentName;
-
-        public string SelectedComponentName
-        {
-            get { return selectedComponentName; }
-            set
-            {
-                selectedComponentName = value;
-                SelectedComponent = SelectedLanguage.Components[value];
-                NotifyPropertyChanged();
-            }
-        }
-
 
         private CodeComponentTypeModel selectedComponent;
 
@@ -66,7 +72,8 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             set 
             { 
                 selectedComponent = value;
-                SelectedViewModel = new CodeComponentViewModel(value);
+                if(value != null)
+                    SelectedViewModel = new CodeComponentViewModel(this, value);
                 NotifyPropertyChanged(); 
             }
         }
@@ -81,14 +88,96 @@ namespace UMLGenerator.ViewModels.CodeLanguages
 
         #endregion
 
+        #region Fields
+        private MainViewModel mainVM;
+        #endregion
+
         #region Constructors
-        public LanguagesEditorViewModel(MainViewModel mainVM) : base(mainVM)
+        public LanguagesEditorViewModel(MainViewModel mainVM) : base(300, new System.Windows.GridLength(1, System.Windows.GridUnitType.Star))
         {
+            this.mainVM = mainVM;
             LoadData();
         }
         #endregion
 
         #region Methods
+        protected override void AddCommands()
+        {
+            base.AddCommands();
+            AddLanguageCommand = new RelayCommand(o => 
+            {
+                var newVM = new CodeLanguageViewModel(this, null);
+                newVM.OnCreate += (s, e) =>
+                {
+                    File.WriteAllText($"{Directory.GetCurrentDirectory()}\\Languages\\{newVM.Language.Name}.json", JsonSerializer.Serialize(newVM.Language));
+                    Languages.Add(newVM.Language.Name);
+                    SelectedLanguageName = newVM.Language.Name;
+                };
+                SelectedViewModel = newVM;
+            });
+            SaveLanguageCommand = new RelayCommand(o => 
+            {
+                SelectedLanguage.Components.Clear();
+                bool validate = true;
+                foreach (var comp in Components)
+                {
+                    if(SelectedLanguage.Components.ContainsKey(comp.Name))
+                    {
+                        MessageBox.Show("Language cannot have two or more Components with the same name !");
+                        validate = false;
+                        break;
+                    }
+                    SelectedLanguage.Components.Add(comp.Name, comp);
+                }
+                if(validate)
+                {
+                    File.Delete($"{Directory.GetCurrentDirectory()}\\Languages\\{o as string}.json");
+                    File.WriteAllText($"{Directory.GetCurrentDirectory()}\\Languages\\{o as string}.json", JsonSerializer.Serialize(SelectedLanguage));
+                    mainVM.SetStatus($"{o as string} language saved", System.Windows.Media.Brushes.Blue, 2000);
+                }
+            });
+            EditLanguageCommand = new RelayCommand(o => 
+            {
+                SelectedComponent = null;
+                var newVM = new CodeLanguageViewModel(this, SelectedLanguage);
+                newVM.OnSave += (s, e) =>
+                {
+                    File.Delete($"{Directory.GetCurrentDirectory()}\\Languages\\{o as string}.json");
+                    File.WriteAllText($"{Directory.GetCurrentDirectory()}\\Languages\\{(s as CodeLanguageViewModel).Language.Name}.json", JsonSerializer.Serialize(SelectedLanguage));
+                    if(o as string != (s as CodeLanguageViewModel).Language.Name)
+                    {
+                        Languages.Add((s as CodeLanguageViewModel).Language.Name);
+                        SelectedLanguageName = (s as CodeLanguageViewModel).Language.Name;
+                        Languages.Remove(o as string);
+                    }
+                };
+                SelectedViewModel = newVM;
+            });
+            RemoveLanguageCommand = new RelayCommand(o => 
+            { 
+                if(MessageBox.Show($"Are you sure you want to delete {o as string}?", "Delete Language", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    File.Delete($"{Directory.GetCurrentDirectory()}\\Languages\\{o as string}.json");
+                    Languages.Remove(o as string);
+                }
+            });
+
+            AddComponentCommand = new RelayCommand(o => 
+            {
+                var newVM = new CodeComponentViewModel(this, null);
+                newVM.OnCreate += (s, e) =>
+                {
+                    Components.Add(newVM.Component);
+                };
+                SelectedViewModel = newVM;
+            });
+            RemoveComponentCommand = new RelayCommand(o =>
+            {
+                Components.Remove(o as CodeComponentTypeModel);
+            }
+            );
+        }
+
         private void LoadData()
         {
             Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}\\Languages");
@@ -101,48 +190,5 @@ namespace UMLGenerator.ViewModels.CodeLanguages
 
         }
         #endregion
-
-        private void LoadDemoData()
-        {
-
-
-            //var language = new CodeLanguageModel();
-            //language.Name = "C#";
-            //language.CleanupModels.Add(new CodeCleanupModel("Block Comments", @"/\*(.*?)\*/", false, true));
-            //language.CleanupModels.Add(new CodeCleanupModel("Line Comments", @"//(.*?)\r?\n", true, true));
-            //language.CleanupModels.Add(new CodeCleanupModel("Strings", @"""((\\[^\n]|[^""\n])*)""", false, true));
-            //language.CleanupModels.Add(new CodeCleanupModel("Regions", @"^[ \t]*\#[ \t]*(region|endregion).*\n", false, false));
-            //language.CleanupModels.Add(new CodeCleanupModel("New Lines And Tabs", @"\t|\n|\r", false, true));
-            //language.CleanupModels.Add(new CodeCleanupModel("Verbatim Strings", @"@(""[^""]*"")+", false, true));
-            //language.CleanupModels.Add(new CodeCleanupModel("All Strings", "((\".*\")|(\'.*\'))", false, false));
-            //language.CodeDelimiters.Add(new CodeDelimiterModel() { OpenDelimiter = '{', CloseDelimiter = '}', HasClose = true });
-            //language.CodeDelimiters.Add(new CodeDelimiterModel() { OpenDelimiter = ';', HasClose = false });
-
-            //var classComp = new CodeComponentTypeModel();
-            //classComp.Name = "Class";
-            //classComp.NamePattern = @"(^| +)class +(?<Name>((\w+ *<[^>]+>)|\w+))";
-            //classComp.TruePatterns.Add(@"(^| +)class ");
-            //language.Components.Add(classComp.Name, classComp);
-
-
-            //var abstractField = new CodeFieldTypeModel();
-            //classComp.Fields.Add(abstractField);
-            //abstractField.Name = "IsAbstract";
-            //abstractField.Pattern = @"(^| +)(abstract) +";
-            //abstractField.InputType = FieldInputType.Boolean;
-            //abstractField.Values.Add("{abstract} ");
-            //abstractField.Values.Add("");
-
-            //var namespaceComp = new CodeComponentTypeModel();
-            //namespaceComp.Containers.Add(classComp.Name);
-            //namespaceComp.Name = "Namespace";
-            //namespaceComp.NamePattern = @"(^| +)namespace +(?<Name>[\w.]+) *{";
-            //namespaceComp.TruePatterns.Add(@"(^| +)namespace +([\w.]+) *{");
-            //language.Components.Add(namespaceComp.Name, namespaceComp);
-            //language.Containers.Add(namespaceComp.Name);
-
-            //Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}\\Languages");
-            //File.WriteAllText($"{Directory.GetCurrentDirectory()}\\Languages\\C#.json", JsonSerializer.Serialize<CodeLanguageModel>(language));
-        }
     }
 }

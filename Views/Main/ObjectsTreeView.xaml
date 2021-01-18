@@ -17,58 +17,14 @@
                 <HierarchicalDataTemplate DataType="{x:Type codeModels:CodeObjectModel}" ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal">
                         <!--<CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>-->
-                        <Label Content="NS" FontWeight="Bold">
+                        <Label Content="{Binding Type.Tag}" FontWeight="Bold">
                             <Label.Background>
-                                <SolidColorBrush Color="Purple" Opacity="0.4"/>
+                                <SolidColorBrush Color="{Binding Type.TagColor}"/>
                             </Label.Background>
                         </Label>
                         <Label Content="{Binding Name}"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
-                <!--<DataTemplate DataType="{x:Type codeModels:ClassModel}">
-                    <StackPanel Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
-                        <Label Content="C" FontWeight="Bold">
-                            <Label.Background>
-                                <SolidColorBrush Color="Green" Opacity="0.4"/>
-                            </Label.Background>
-                        </Label>
-                        <Label Content="{Binding Name}"/>
-                    </StackPanel>
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type codeModels:InterfaceModel}">
-                    <StackPanel Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
-                        <Label Content="I" FontWeight="Bold">
-                            <Label.Background>
-                                <SolidColorBrush Color="Blue" Opacity="0.4"/>
-                            </Label.Background>
-                        </Label>
-                        <Label Content="{Binding Name}"/>
-                    </StackPanel>
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type codeModels:EnumModel}">
-                    <StackPanel Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
-                        <Label Content="E" FontWeight="Bold">
-                            <Label.Background>
-                                <SolidColorBrush Color="Red" Opacity="0.4"/>
-                            </Label.Background>
-                        </Label>
-                        <Label Content="{Binding Name}"/>
-                    </StackPanel>
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type codeModels:RecordModel}">
-                    <StackPanel Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
-                        <Label Content="R" FontWeight="Bold">
-                            <Label.Background>
-                                <SolidColorBrush Color="Gray"  Opacity="0.4"/>
-                            </Label.Background>
-                        </Label>
-                        <Label Content="{Binding Name}"/>
-                    </StackPanel>
-                </DataTemplate>-->
             </TreeView.Resources>
         </TreeView>
         <Button Content="Generate PlantUML" Command="{Binding GenerateUMLCommand}" Style="{StaticResource Button_NoBackground}" Height="40" Grid.Row="1"/>
