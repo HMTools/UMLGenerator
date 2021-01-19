@@ -22,7 +22,13 @@ namespace UMLGenerator.ViewModels.Main
         #endregion
 
         #region Properties
-        public ObservableCollection<CodeObjectModel> TreeItems { get; set; } = new ObservableCollection<CodeObjectModel>();
+        private CodeProjectModel codeProject;
+
+        public CodeProjectModel CodeProject
+        {
+            get { return codeProject; }
+            set { codeProject = value; NotifyPropertyChanged(); }
+        }
         #endregion
 
 
@@ -42,59 +48,48 @@ namespace UMLGenerator.ViewModels.Main
             base.AddCommands();
             GenerateUMLCommand = new RelayCommand((o) =>
             {
-                mainVM.UmlVM.UpdateUML(GenerateUML(TreeItems));
-            }, o => TreeItems.Count > 0);
+                mainVM.UmlVM.UpdateUML(CodeProject.TransferToUML());
+            }, o => CodeProject != null && CodeProject.Children.Count > 0);
         }
 
         public void GenerateObjectsTree(List<FileModel> fileModels)
         {
-            TreeItems.Clear();
             if (mainVM.GithubVM.RepostioryID == 0)
             {
                 RunOnFiles(fileModels);
             }
             else
                 RunOnFiles(fileModels, mainVM.GithubVM.GitClient, mainVM.GithubVM.RepostioryID);
-            
-            mainVM.UmlVM.UpdateUML(GenerateUML(TreeItems));
+
+            mainVM.UmlVM.UpdateUML(CodeProject.TransferToUML());
         }
 
         private void RunOnFiles(List<FileModel> fileModels) //local files
         {
-            var project = new CodeProjectModel(mainVM.LanguagesVM.SelectedLanguage);
+            CodeProject = new CodeProjectModel(mainVM.LanguagesVM.SelectedLanguage);
             foreach (var file in fileModels)
             {
-                var vm = new CodeFileViewModel(System.IO.File.ReadAllText(file.FullName), project);
-                vm.GetLanguageObjects().ForEach(item => TreeItems.Add(item)); 
+                var vm = new CodeFileViewModel(System.IO.File.ReadAllText(file.FullName), CodeProject);
+                vm.GetLanguageObjects().ForEach(item => CodeProject.Children.Add(item));
             }
         }
 
         private void RunOnFiles(List<FileModel> fileModels, GitHubClient client, long repositoryId) // github files
         {
-            var project = new CodeProjectModel(mainVM.LanguagesVM.SelectedLanguage);
+            CodeProject = new CodeProjectModel(mainVM.LanguagesVM.SelectedLanguage);
             foreach (var file in fileModels)
             {
                 try
                 {
                     var code = client.Repository.Content.GetAllContents(repositoryId, file.FullName).GetAwaiter().GetResult()[0].Content;
-                    var vm = new CodeFileViewModel(code, project);
-                    vm.GetLanguageObjects().ForEach(item => TreeItems.Add(item));
+                    var vm = new CodeFileViewModel(code, CodeProject);
+                    vm.GetLanguageObjects().ForEach(item => CodeProject.Children.Add(item));
                 }
                 catch (Exception exception)
                 {
                     MessageBox.Show(exception.Message);
                 }
             }
-        }
-
-        private string GenerateUML(IEnumerable<CodeObjectModel> source)
-        {
-            string res = "@startuml\n";
-            foreach (var obj in source)
-            {
-                //res += obj.TransferToUML(0, null, null);
-            }
-            return res + "@enduml";
         }
         #endregion
     }

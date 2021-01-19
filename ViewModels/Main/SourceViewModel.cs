@@ -137,7 +137,7 @@ namespace UMLGenerator.ViewModels.Main
             }
             foreach (var file in Directory.GetFiles(path))
             {
-                if (Path.GetExtension(file) == ".cs")
+                if (Path.GetExtension(file) == $".{mainVM.LanguagesVM.SelectedLanguage.FileExtension}")
                 {
                     output.Items.Add(new FileModel() { Name = Path.GetFileName(file), FullName = file });
                 }

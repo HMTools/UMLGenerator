@@ -15,7 +15,6 @@ namespace UMLGenerator.ViewModels.CodeLanguages
     {
         #region Events
         public event EventHandler OnCreate;
-        public event EventHandler OnSave;
         #endregion
 
         #region Commands
@@ -86,17 +85,6 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                 else
                 {
                     OnCreate?.Invoke(this, EventArgs.Empty);
-                }
-            });
-            SaveLanguageCommand = new RelayCommand(o => 
-            {
-                if (string.IsNullOrWhiteSpace(Language.Name))
-                {
-                    MessageBox.Show("Please decalre a name!");
-                }
-                else
-                {
-                    OnSave?.Invoke(this, EventArgs.Empty);
                 }
             });
             AddFieldCommand = new RelayCommand(o =>

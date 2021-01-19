@@ -28,18 +28,6 @@ namespace UMLGenerator.ViewModels
         #region Methods
         public List<CodeObjectModel> GetLanguageObjects()
         {
-            //List<CodeObjectModel> output = new List<CodeObjectModel>();
-            //var delimiters = GetDelimitersDict(project.Language.CodeDelimiters);
-            //while (currIndex < code.Length)
-            //{
-            //    if (delimiters.ContainsKey(code[currIndex++]))
-            //    {
-            //        var obj = GetComponent(code[currStart..currIndex], project.Language, delimiters[code[currIndex - 1]]);
-            //        if (obj != null)
-            //            output.Add(obj);
-            //        currStart = currIndex;
-            //    }
-            //}
             return GetComponentChildren(project.Language, new CodeDelimiterModel());
         }
 
@@ -127,25 +115,34 @@ namespace UMLGenerator.ViewModels
                 else
                 {
                     project.UniqueCollections[componentType.Name].Add(obj.Name, obj);
-                    #region Get Fields From Statement
-                    foreach (var fieldType in componentType.Fields)
-                    {
-                        var match = Regex.Match(statement, fieldType.Pattern);
-                        switch (fieldType.InputType)
-                        {
-                            case FieldInputType.Textual:
-                                obj.FieldsFound.Add(fieldType.Name, match.Success ? match.Groups["Value"].Value : "");
-                                break;
-                            case FieldInputType.Boolean:
-                                obj.FieldsFound.Add(fieldType.Name, match.Success ? fieldType.TrueValue : fieldType.FalseValue);
-                                break;
-                            case FieldInputType.Switch:
-                                break;
-                        }
-                    }
-                    #endregion
                 }
             }
+            #region Get Fields From Statement
+            foreach (var fieldType in componentType.Fields)
+            {
+                var match = Regex.Match(statement, fieldType.Pattern);
+                switch (fieldType.InputType)
+                {
+                    case FieldInputType.Textual:
+                        if (match.Success)
+                            obj.FieldsFound.Add(fieldType.Name, match.Groups["Value"].Value);
+                        break;
+                    case FieldInputType.Boolean:
+                        obj.FieldsFound.Add(fieldType.Name, match.Success ? fieldType.TrueValue : fieldType.FalseValue);
+                        break;
+                    case FieldInputType.Switch:
+                        foreach (var tryCase in fieldType.Cases)
+                        {
+                            if (Regex.IsMatch(match.Groups["Value"].Value, tryCase.Case))
+                            {
+                                obj.FieldsFound.Add(fieldType.Name, tryCase.Value);
+                                break;
+                            }
+                        }
+                        break;
+                }
+            }
+            #endregion
             return true;
         }
         private CodeComponentTypeModel GetComponentType(string statement, CodeComponentTypeModel parentType)

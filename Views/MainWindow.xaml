@@ -46,24 +46,60 @@
                     </Style>
                 </StackPanel.Resources>
                 <Button Command="{Binding SourceVM.ToggleShowCommand}">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource Button_ImageButton}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SourceVM.IsShown}" Value="true">
+                                    <Setter Property="Background" Value="LightGreen"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                     <StackPanel Orientation="Vertical">
                         <Image Source="/Resources/Images/SourceIcon.png"/>
                         <TextBlock>Source</TextBlock>
                     </StackPanel>
                 </Button>
                 <Button Command="{Binding ObjectsTreeVM.ToggleShowCommand}">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource Button_ImageButton}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ObjectsTreeVM.IsShown}" Value="true">
+                                    <Setter Property="Background" Value="LightGreen"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                     <StackPanel Orientation="Vertical">
                         <Image Source="/Resources/Images/ObjectsTreeIcon.png"/>
                         <TextBlock>Objects Tree</TextBlock>
                     </StackPanel>
                 </Button>
                 <Button Command="{Binding UmlVM.ToggleShowCommand}">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource Button_ImageButton}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding UmlVM.IsShown}" Value="true">
+                                    <Setter Property="Background" Value="LightGreen"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                     <StackPanel Orientation="Vertical">
                         <Image Source="/Resources/Images/UMLIcon.png"/>
                         <TextBlock>UML</TextBlock>
                     </StackPanel>
                 </Button>
                 <Button Command="{Binding LanguagesVM.ToggleShowCommand}">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource Button_ImageButton}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding LanguagesVM.IsShown}" Value="true">
+                                    <Setter Property="Background" Value="LightGreen"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                     <StackPanel Orientation="Vertical">
                         <Image Source="/Resources/Images/UMLIcon.png"/>
                         <TextBlock>Languages</TextBlock>

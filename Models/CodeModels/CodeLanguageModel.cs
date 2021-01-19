@@ -13,6 +13,7 @@ namespace UMLGenerator.Models.CodeModels
         public Dictionary<string, CodeComponentTypeModel> Components { get; set; } = new Dictionary<string, CodeComponentTypeModel>();
 
         public ObservableCollection<CodeCleanupModel> CleanupModels { get; set; } = new ObservableCollection<CodeCleanupModel>();
+        public string FileExtension { get; set; } = "";
         #endregion
     }
 }

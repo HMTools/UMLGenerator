@@ -29,19 +29,12 @@
                 </Button>
             </StackPanel>
         </GroupBox.Header>
-        <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <GroupBox Header="General" BorderBrush="Black">
+        <TabControl>
+            <TabItem Header="General">
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -50,16 +43,9 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Label Content="Component Name :" Style="{StaticResource Label_Property3}"/>
                         <TextBox Margin="10,0,0,0" Style="{StaticResource TextBox_Base}" Grid.Column="1" Text="{Binding UpdateSourceTrigger=PropertyChanged, Path=Component.Name}"/>
-                        <Label Content="Unique Collection :" Style="{StaticResource Label_Property3}" Grid.Column="2"/>
-                        <ComboBox SelectedIndex="0" Grid.Column="3">
-                            <ComboBoxItem Content="false" />
-                            <ComboBoxItem Content="true" IsSelected="{Binding Component.IsUniqueCollection, Mode=TwoWay}" />
-                        </ComboBox>
                         <Label Content="Tag :" Style="{StaticResource Label_Property3}" Grid.Row="1"/>
                         <TextBox Margin="10,0,0,0" Grid.Column="1" Grid.Row="1" Text="{Binding Component.Tag, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="3"/>
                         <Label Content="Tag Color:" Style="{StaticResource Label_Property3}" Grid.Row="2"/>
@@ -68,9 +54,16 @@
                         <Label Content="Name Pattern :" Style="{StaticResource Label_Property3}" Grid.Row="3"/>
                         <TextBox Margin="10,0,0,0" Style="{StaticResource TextBox_Base}" Grid.Column="1" Grid.ColumnSpan="3"
                                  Grid.Row="3" Text="{Binding UpdateSourceTrigger=PropertyChanged, Path=Component.NamePattern}"/>
+                        <Label Content="Unique Collection :" Style="{StaticResource Label_Property3}" Grid.Row="4"/>
+                        <ComboBox SelectedIndex="0" Grid.Column="1" Margin="10,0,0,0" Grid.Row="4">
+                            <ComboBoxItem Content="false" />
+                            <ComboBoxItem Content="true" IsSelected="{Binding Component.IsUniqueCollection, Mode=TwoWay}" />
+                        </ComboBox>
                     </Grid>
-                </GroupBox>
-                <GroupBox Header="Recognize Patterns" Grid.Row="1" BorderBrush="Black">
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Recognize Patterns">
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -126,9 +119,10 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </Grid>
-
-                </GroupBox>
-                <GroupBox Header="Fields" Grid.Row="2" BorderBrush="Black">
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Fields">
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -176,16 +170,17 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </Grid>
-                </GroupBox>
-                <GroupBox Header="Sub Components" Grid.Row="3" BorderBrush="Black">
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Sub Components">
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <GroupBox Header="Selected   (The order is important for the PlantUML parsing)">
-                            <ListBox ItemsSource="{Binding Component.SubComponents}" MaxHeight="300" MinHeight="200"
-                                 BorderThickness="1" BorderBrush="Black">
+                            <ListBox ItemsSource="{Binding Component.SubComponents}" BorderThickness="1" BorderBrush="Black">
                                 <i:Interaction.Behaviors>
                                     <behav:DraggableListBoxItemBehavior  Effect="Move" AllowControlDropTarget="True" AllowItemDropTarget="True" VisualizeOnOver="True"
                                         DropCommand="{Binding Source={StaticResource VMProxy}, Path=Data.AddSubCommand}"
@@ -199,8 +194,7 @@
                             </ListBox>
                         </GroupBox>
                         <GroupBox Header="All Components" Grid.Column="1">
-                            <ListBox ItemsSource="{Binding LanguageEditor.Components}" MaxHeight="300" MinHeight="200"
-                                 BorderThickness="1" BorderBrush="Black">
+                            <ListBox ItemsSource="{Binding LanguageEditor.Components}" BorderThickness="1" BorderBrush="Black">
                                 <i:Interaction.Behaviors>
                                     <behav:DraggableListBoxItemBehavior Effect="Copy" AllowControlDropTarget="True" VisualizeOnOver="True"
                                                                         DropCommand="{Binding Source={StaticResource VMProxy}, Path=Data.RemoveSubCommand}"/>
@@ -213,16 +207,18 @@
                             </ListBox>
                         </GroupBox>
                     </Grid>
-                </GroupBox>
-                <GroupBox Grid.Row="4" Grid.ColumnSpan="2" BorderBrush="Black">
-                    <GroupBox.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Delimiters"/>
-                            <Button Style="{StaticResource Button_ImageButton}" Width="Auto" Height="Auto" Content="+" FontSize="16" FontWeight="Bold" Foreground="Blue"
+                </ScrollViewer>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Delimiters"/>
+                        <Button Style="{StaticResource Button_ImageButton}" Width="Auto" Height="Auto" Content="+" FontSize="16" FontWeight="Bold" Foreground="Blue"
                                     Command="{Binding Data.AddDelimiterCommand, Source={StaticResource VMProxy}}"
                                     CommandParameter="{Binding }"/>
-                        </StackPanel>
-                    </GroupBox.Header>
+                    </StackPanel>
+                </TabItem.Header>
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding Component.CodeDelimiters}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type m:CodeDelimiterModel}">
@@ -254,11 +250,13 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                </GroupBox>
-                <GroupBox Header="PlantUML Builder"  Grid.Row="5" BorderBrush="Black">
-                    <TextBox Text="{Binding Component.UMLPattern, UpdateSourceTrigger=PropertyChanged}" Height="200" AcceptsReturn="True" AcceptsTab="True" VerticalContentAlignment="Top"/>
-                </GroupBox>
-            </Grid>
-        </ScrollViewer>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="PlantUML Builder">
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                    <TextBox Text="{Binding Component.UMLPattern, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" AcceptsTab="True" VerticalContentAlignment="Top"/>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
     </GroupBox>
 </UserControl>

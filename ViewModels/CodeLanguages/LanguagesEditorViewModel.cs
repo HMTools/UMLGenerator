@@ -129,6 +129,11 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                     }
                     SelectedLanguage.Components.Add(comp.Name, comp);
                 }
+                if(string.IsNullOrWhiteSpace(SelectedLanguage.Name))
+                {
+                    MessageBox.Show("Please decalre a name!");
+                    validate = false;
+                }
                 if(validate)
                 {
                     File.Delete($"{Directory.GetCurrentDirectory()}\\Languages\\{o as string}.json");
@@ -140,17 +145,6 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             {
                 SelectedComponent = null;
                 var newVM = new CodeLanguageViewModel(this, SelectedLanguage);
-                newVM.OnSave += (s, e) =>
-                {
-                    File.Delete($"{Directory.GetCurrentDirectory()}\\Languages\\{o as string}.json");
-                    File.WriteAllText($"{Directory.GetCurrentDirectory()}\\Languages\\{(s as CodeLanguageViewModel).Language.Name}.json", JsonSerializer.Serialize(SelectedLanguage));
-                    if(o as string != (s as CodeLanguageViewModel).Language.Name)
-                    {
-                        Languages.Add((s as CodeLanguageViewModel).Language.Name);
-                        SelectedLanguageName = (s as CodeLanguageViewModel).Language.Name;
-                        Languages.Remove(o as string);
-                    }
-                };
                 SelectedViewModel = newVM;
             });
             RemoveLanguageCommand = new RelayCommand(o => 
