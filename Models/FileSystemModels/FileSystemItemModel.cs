@@ -22,6 +22,7 @@ namespace UMLGenerator.Models.FileSystemModels
             get { return isChecked; }
             set { isChecked = value; NotifyPropertyChanged(); }
         }
+        public bool IsChangingCheck { get; set; } = false;  
         #endregion
     }
 }

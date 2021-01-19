@@ -24,10 +24,7 @@ namespace UMLGenerator.Models.CodeModels
             get { return isChecked; }
             set { isChecked = value; NotifyPropertyChanged(); }
         }
-        #endregion
-
-        #region Fields
-        private bool isChangingCheck = false;
+        public bool IsChangingCheck { get; set; } = false;
         #endregion
 
         #region Constructors
@@ -38,19 +35,19 @@ namespace UMLGenerator.Models.CodeModels
             {
                 if (e.PropertyName == "IsChecked")
                 {
-                    isChangingCheck = true;
+                    IsChangingCheck = true;
                     foreach (var item in Children)
                     {
-                        if (IsChecked == true && item.IsChecked != true && !item.isChangingCheck)
+                        if (IsChecked == true && item.IsChecked != true && !item.IsChangingCheck)
                         {
                             item.IsChecked = true;
                         }
-                        else if (IsChecked == false && item.IsChecked != false && !item.isChangingCheck)
+                        else if (IsChecked == false && item.IsChecked != false && !item.IsChangingCheck)
                         {
                             item.IsChecked = false;
                         }
                     }
-                    isChangingCheck = false;
+                    IsChangingCheck = false;
                 }
             };
         }
@@ -109,24 +106,14 @@ namespace UMLGenerator.Models.CodeModels
 
         private void OnItemPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (!isChangingCheck)
+            if (!IsChangingCheck)
             {
                 CodeObjectModel item = sender as CodeObjectModel;
                 if (item != null && e.PropertyName == "IsChecked")
                 {
-                    bool? checkShouldBe;
-                    if (Children.Count(child => child.IsChecked == true) == Children.Count)
-                    {
-                        checkShouldBe = true;
-                    }
-                    else if (Children.Count(child => child.IsChecked == false) == Children.Count)
-                    {
-                        checkShouldBe = false;
-                    }
-                    else
-                    {
-                        checkShouldBe = null;
-                    }
+                    bool? checkShouldBe = 
+                        Children.All(child => child.IsChecked == true) ? true :
+                        Children.All(child => child.IsChecked == false)? false : null;
                     if(IsChecked != checkShouldBe)
                     {
                         IsChecked = checkShouldBe;

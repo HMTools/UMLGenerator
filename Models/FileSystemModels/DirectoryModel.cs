@@ -15,42 +15,36 @@ namespace UMLGenerator.Models.FileSystemModels
         public ObservableCollection<FileSystemItemModel> Items { get; set; }
         #endregion
 
-        #region Fields
-        private int checkedNum = 0;
-        private bool isChangingChecked = false;
-        #endregion
 
         #region Constructors
         public DirectoryModel()
         {
             Items = new ObservableCollection<FileSystemItemModel>();
             Items.CollectionChanged += OnCollectionChanged;
-            this.PropertyChanged += (s, e) =>
+            PropertyChanged += (s, e) =>
             {
-                if(e.PropertyName == "IsChecked")
+                if (e.PropertyName == "IsChecked")
                 {
-                    isChangingChecked = true;
-                    foreach(var item in Items)
+                    IsChangingCheck = true;
+                    foreach (var item in Items)
                     {
-                        if(IsChecked == true && item.IsChecked != true)
+                        if (IsChecked == true && item.IsChecked != true && !item.IsChangingCheck)
                         {
-                            checkedNum++;
                             item.IsChecked = true;
                         }
-                        else if(IsChecked == false && item.IsChecked != false)
+                        else if (IsChecked == false && item.IsChecked != false && !item.IsChangingCheck)
                         {
-                            checkedNum--;
                             item.IsChecked = false;
                         }
                     }
-                    isChangingChecked = false;
+                    IsChangingCheck = false;
                 }
             };
         }
         #endregion
 
         #region Methods
-        void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
@@ -65,32 +59,24 @@ namespace UMLGenerator.Models.FileSystemModels
             {
                 foreach (FileSystemItemModel oldItem in e.OldItems)
                 {
-                    if (oldItem.IsChecked == true)
-                        checkedNum--;
                     oldItem.PropertyChanged -= this.OnItemPropertyChanged;
                 }
             }
         }
 
-        void OnItemPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnItemPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if(!isChangingChecked)
+            if (!IsChangingCheck)
             {
                 FileSystemItemModel item = sender as FileSystemItemModel;
                 if (item != null && e.PropertyName == "IsChecked")
                 {
-                    checkedNum += item.IsChecked == true ? 1 : -1;
-                    if (checkedNum == Items.Count && IsChecked != true)
+                    bool? checkShouldBe =
+                        Items.All(item => item.IsChecked == true) ? true :
+                        Items.All(item => item.IsChecked == false) ? false : null;
+                    if (IsChecked != checkShouldBe)
                     {
-                        IsChecked = true;
-                    }
-                    else if (checkedNum == 0 && IsChecked != false)
-                    {
-                        IsChecked = false;
-                    }
-                    else if (checkedNum < Items.Count && checkedNum > 0 && IsChecked != null)
-                    {
-                        IsChecked = null;
+                        IsChecked = checkShouldBe;
                     }
                 }
             }
