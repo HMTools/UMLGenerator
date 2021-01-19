@@ -28,61 +28,105 @@ namespace UMLGenerator.ViewModels
         #region Methods
         public List<CodeObjectModel> GetLanguageObjects()
         {
-            List<CodeObjectModel> output = new List<CodeObjectModel>();
-            var delimiters = GetDelimitersDict(project.Language.CodeDelimiters);
-            while (currIndex < code.Length)
-            {
-                if (delimiters.ContainsKey(code[currIndex++]))
-                {
-                    var obj = GetComponent(code[currStart..currIndex], project.Language, delimiters[code[currIndex - 1]]);
-                    if (obj != null)
-                        output.Add(obj);
-                    currStart = currIndex;
-                }
-            }
-            return output;
+            //List<CodeObjectModel> output = new List<CodeObjectModel>();
+            //var delimiters = GetDelimitersDict(project.Language.CodeDelimiters);
+            //while (currIndex < code.Length)
+            //{
+            //    if (delimiters.ContainsKey(code[currIndex++]))
+            //    {
+            //        var obj = GetComponent(code[currStart..currIndex], project.Language, delimiters[code[currIndex - 1]]);
+            //        if (obj != null)
+            //            output.Add(obj);
+            //        currStart = currIndex;
+            //    }
+            //}
+            return GetComponentChildren(project.Language, new CodeDelimiterModel());
         }
 
         private CodeObjectModel GetComponent(string statement, CodeComponentTypeModel parentType, CodeDelimiterModel currDelimiter)
         {
-            int openDelimiters = 1;
             var componentType = GetComponentType(statement, parentType);
-            if (componentType == null)
+            if(componentType == null)
             {
-                if(currDelimiter.HasClose)
-                {
-                    while(currIndex < code.Length && openDelimiters > 0)
-                    {
-                        if (currDelimiter.OpenDelimiter == code[currIndex++ - 1])
-                        {
-                            openDelimiters++;
-                        }
-                        else if (currDelimiter.CloseDelimiter == code[currIndex - 1])
-                        {
-                            openDelimiters--;
-                        }
-                    }
-                }
-                currStart = currIndex;
+                SkipComponentContent(currDelimiter);
                 return null;
             }
-            CodeObjectModel output = new CodeObjectModel() { Type = componentType};
-            output.Name = Regex.Match(statement, componentType.NamePattern).Groups["Name"].Value;
-            bool firstCreation = true;
-            if(componentType.IsUniqueCollection)
+            CodeObjectModel output = new CodeObjectModel() { Type = componentType };
+            bool firstCreation = SetComponentFields(statement, ref output, componentType);
+            if(!currDelimiter.HasClose)
+                return firstCreation ? output : null;
+            currStart = currIndex;
+            GetComponentChildren(componentType, currDelimiter).ForEach(child => output.Children.Add(child));            
+            return firstCreation ? output : null;
+
+        }
+        private void SkipComponentContent(CodeDelimiterModel currDelimiter)
+        {
+            if (currDelimiter.HasClose)
             {
-                if(!project.UniqueCollections.ContainsKey(componentType.Name))
+                int openDelimiters = 1;
+                while (currIndex < code.Length && openDelimiters > 0)
+                {
+                    if (currDelimiter.OpenDelimiter == code[currIndex++ - 1])
+                    {
+                        openDelimiters++;
+                    }
+                    else if (currDelimiter.CloseDelimiter == code[currIndex - 1])
+                    {
+                        openDelimiters--;
+                    }
+                }
+            }
+            currStart = currIndex;
+        }
+        private List<CodeObjectModel> GetComponentChildren(CodeComponentTypeModel componentType, CodeDelimiterModel currDelimiter)
+        {
+            List<CodeObjectModel> output = new List<CodeObjectModel>();
+            CodeObjectModel nestedObj;
+            int openDelimiters = 1;            
+            var delimiters = GetDelimitersDict(componentType);
+            while (currIndex < code.Length && (openDelimiters > 0 || componentType is CodeLanguageModel))
+            {
+                if (delimiters.ContainsKey(code[currIndex++]))
+                {
+                    nestedObj = GetComponent(code[currStart..currIndex], componentType, delimiters[code[currIndex - 1]]);
+                    if (nestedObj != null)
+                        output.Add(nestedObj);
+                }
+                else if (currDelimiter.OpenDelimiter == code[currIndex - 1])
+                {
+                    openDelimiters++;
+                }
+                else if (currDelimiter.CloseDelimiter == code[currIndex - 1])
+                {
+                    openDelimiters--;
+                }
+            }
+            nestedObj = GetComponent(code[currStart..currIndex], componentType, new CodeDelimiterModel());
+            if (nestedObj != null)
+                output.Add(nestedObj);
+            currStart = currIndex;
+            return output;
+        }
+
+        private bool SetComponentFields(string statement, ref CodeObjectModel obj, CodeComponentTypeModel componentType)
+        {
+            obj.Name = Regex.Match(statement, componentType.NamePattern).Groups["Value"].Value;
+            obj.FieldsFound.Add("Name", obj.Name);
+            if (componentType.IsUniqueCollection)
+            {
+                if (!project.UniqueCollections.ContainsKey(componentType.Name))
                 {
                     project.UniqueCollections.Add(componentType.Name, new Dictionary<string, CodeObjectModel>());
                 }
-                if(project.UniqueCollections[componentType.Name].ContainsKey(output.Name))
+                if (project.UniqueCollections[componentType.Name].ContainsKey(obj.Name))
                 {
-                    output = project.UniqueCollections[componentType.Name][output.Name];
-                    firstCreation = false;
+                    obj = project.UniqueCollections[componentType.Name][obj.Name];
+                    return false;
                 }
                 else
                 {
-                    project.UniqueCollections[componentType.Name].Add(output.Name, output);
+                    project.UniqueCollections[componentType.Name].Add(obj.Name, obj);
                     #region Get Fields From Statement
                     foreach (var fieldType in componentType.Fields)
                     {
@@ -90,10 +134,10 @@ namespace UMLGenerator.ViewModels
                         switch (fieldType.InputType)
                         {
                             case FieldInputType.Textual:
-                                output.FieldsFound.Add(fieldType.Name, match.Success ? match.Groups["Value"].Value : "");
+                                obj.FieldsFound.Add(fieldType.Name, match.Success ? match.Groups["Value"].Value : "");
                                 break;
                             case FieldInputType.Boolean:
-                                output.FieldsFound.Add(fieldType.Name, match.Success ? fieldType.TrueValue : fieldType.FalseValue);
+                                obj.FieldsFound.Add(fieldType.Name, match.Success ? fieldType.TrueValue : fieldType.FalseValue);
                                 break;
                             case FieldInputType.Switch:
                                 break;
@@ -102,39 +146,8 @@ namespace UMLGenerator.ViewModels
                     #endregion
                 }
             }
-            
-            currStart = currIndex;
-            #region Get Nested Components While Delimiter Not Closed (Run Only If Open)
-            if (!currDelimiter.HasClose)
-                return firstCreation ? output : null;
-            var delimiters = GetDelimitersDict(componentType.CodeDelimiters);
-            CodeObjectModel nestedObj;
-            while (currIndex < code.Length && openDelimiters > 0)
-            {
-                if (delimiters.ContainsKey(code[currIndex++]))
-                {
-                    nestedObj = GetComponent(code[currStart..currIndex], componentType, delimiters[code[currIndex - 1]]);
-                    if (nestedObj != null)
-                        output.Children.Add(nestedObj);
-                }
-                else if(currDelimiter.OpenDelimiter == code[currIndex-1])
-                {
-                    openDelimiters++;
-                }
-                else if(currDelimiter.CloseDelimiter == code[currIndex - 1])
-                {
-                    openDelimiters--;
-                }
-            }
-            #endregion
-            nestedObj = GetComponent(code[currStart..currIndex], componentType, new CodeDelimiterModel() { });
-            if (nestedObj != null)
-                output.Children.Add(nestedObj);
-            currStart = currIndex;
-            return firstCreation ? output : null;
-
+            return true;
         }
-
         private CodeComponentTypeModel GetComponentType(string statement, CodeComponentTypeModel parentType)
         {
             foreach (var childName in parentType.SubComponents)
@@ -169,10 +182,10 @@ namespace UMLGenerator.ViewModels
             return null;
         }
 
-        private Dictionary<char, CodeDelimiterModel> GetDelimitersDict(IEnumerable<CodeDelimiterModel> delimitersOrigin)
+        private Dictionary<char, CodeDelimiterModel> GetDelimitersDict(CodeComponentTypeModel componentType)
         {
             Dictionary<char, CodeDelimiterModel> delimiters = new Dictionary<char, CodeDelimiterModel>();
-            foreach (var delimiter in delimitersOrigin)
+            foreach (var delimiter in componentType.CodeDelimiters)
                 delimiters.Add(delimiter.OpenDelimiter, delimiter);
             return delimiters;
         }
@@ -188,6 +201,6 @@ namespace UMLGenerator.ViewModels
             }
             return res;
         }
-       #endregion
+        #endregion
     }
 }
