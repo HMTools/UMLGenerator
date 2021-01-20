@@ -12,6 +12,9 @@
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource TextBox_Base}"/>
             <Style TargetType="{x:Type DataGrid}" BasedOn="{StaticResource DataGrid_Base}"/>
+            <Style TargetType="{x:Type CheckBox}">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

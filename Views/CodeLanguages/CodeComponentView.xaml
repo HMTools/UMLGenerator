@@ -55,10 +55,7 @@
                         <TextBox Margin="10,0,0,0" Style="{StaticResource TextBox_Base}" Grid.Column="1" Grid.ColumnSpan="3"
                                  Grid.Row="3" Text="{Binding UpdateSourceTrigger=PropertyChanged, Path=Component.NamePattern}"/>
                         <Label Content="Unique Collection :" Style="{StaticResource Label_Property3}" Grid.Row="4"/>
-                        <ComboBox SelectedIndex="0" Grid.Column="1" Margin="10,0,0,0" Grid.Row="4">
-                            <ComboBoxItem Content="false" />
-                            <ComboBoxItem Content="true" IsSelected="{Binding Component.IsUniqueCollection, Mode=TwoWay}" />
-                        </ComboBox>
+                        <CheckBox IsChecked="{Binding Component.IsUniqueCollection, Mode=TwoWay}" Grid.Column="1" Margin="10,0,0,0" Grid.Row="4"/>
                     </Grid>
                 </ScrollViewer>
             </TabItem>

@@ -23,7 +23,8 @@
             <GroupBox.Header>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Language's Details"/>
-                    <Button Margin="10,0,0,0" Width="Auto" Height="Auto" Command="{Binding CreateLanguageCommand}" Content="Create" Style="{StaticResource Button_NoBackground}"/>
+                    <Button Margin="10,0,0,0" Width="Auto" Height="Auto" Command="{Binding CreateLanguageCommand}" Content="Create" Style="{StaticResource Button_NoBackground}"
+                            Visibility="{Binding IsCreating, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
                 </StackPanel>
             </GroupBox.Header>
             <TabControl>

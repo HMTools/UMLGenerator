@@ -33,37 +33,40 @@ namespace UMLGenerator.ViewModels
 
         private CodeObjectModel GetComponent(string statement, CodeComponentTypeModel parentType, CodeDelimiterModel currDelimiter)
         {
+            currStart = currIndex;
             var componentType = GetComponentType(statement, parentType);
             if(componentType == null)
             {
-                SkipComponentContent(currDelimiter);
+                if(currDelimiter.HasClose)
+                    SkipComponentContent(currDelimiter);
                 return null;
             }
             CodeObjectModel output = new CodeObjectModel() { Type = componentType };
             bool firstCreation = SetComponentFields(statement, ref output, componentType);
-            if(!currDelimiter.HasClose)
-                return firstCreation ? output : null;
-            currStart = currIndex;
-            GetComponentChildren(componentType, currDelimiter).ForEach(child => output.Children.Add(child));            
+            if(currDelimiter.HasClose)
+            {
+                if (componentType.SubComponents.Count == 0)
+                    SkipComponentContent(currDelimiter);
+                else
+                    GetComponentChildren(componentType, currDelimiter).ForEach(child => output.Children.Add(child));
+            }
             return firstCreation ? output : null;
 
         }
         private void SkipComponentContent(CodeDelimiterModel currDelimiter)
         {
-            if (currDelimiter.HasClose)
+            int openDelimiters = 1;
+            while (currIndex < code.Length && openDelimiters > 0)
             {
-                int openDelimiters = 1;
-                while (currIndex < code.Length && openDelimiters > 0)
+                if (currDelimiter.OpenDelimiter == code[currIndex])
                 {
-                    if (currDelimiter.OpenDelimiter == code[currIndex++ - 1])
-                    {
-                        openDelimiters++;
-                    }
-                    else if (currDelimiter.CloseDelimiter == code[currIndex - 1])
-                    {
-                        openDelimiters--;
-                    }
+                    openDelimiters++;
                 }
+                else if (currDelimiter.CloseDelimiter == code[currIndex])
+                {
+                    openDelimiters--;
+                }
+                currIndex++;
             }
             currStart = currIndex;
         }
@@ -93,7 +96,6 @@ namespace UMLGenerator.ViewModels
             nestedObj = GetComponent(code[currStart..currIndex], componentType, new CodeDelimiterModel());
             if (nestedObj != null)
                 output.Add(nestedObj);
-            currStart = currIndex;
             return output;
         }
 
@@ -128,15 +130,20 @@ namespace UMLGenerator.ViewModels
                             obj.FieldsFound.Add(fieldType.Name, match.Groups["Value"].Value);
                         break;
                     case FieldInputType.Boolean:
-                        obj.FieldsFound.Add(fieldType.Name, match.Success ? fieldType.TrueValue : fieldType.FalseValue);
+                        obj.FieldsFound.Add(fieldType.Name, match.Success ? 
+                            fieldType.TrueValue.Replace(@"[[{Value}]]", match.Groups["Value"].Value) : 
+                            fieldType.FalseValue.Replace(@"[[{Value}]]", match.Groups["Value"].Value));
                         break;
                     case FieldInputType.Switch:
-                        foreach (var tryCase in fieldType.Cases)
+                        if (match.Success)
                         {
-                            if (Regex.IsMatch(match.Groups["Value"].Value, tryCase.Case))
+                            foreach (var _case in fieldType.SwitchCases)
                             {
-                                obj.FieldsFound.Add(fieldType.Name, tryCase.Value);
-                                break;
+                                if (Regex.IsMatch(match.Groups["Value"].Value, _case.Case))
+                                {
+                                    obj.FieldsFound.Add(fieldType.Name, _case.Value.Replace(@"[[{Value}]]", match.Groups["Value"].Value));
+                                    break;
+                                }
                             }
                         }
                         break;

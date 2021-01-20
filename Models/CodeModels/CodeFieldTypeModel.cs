@@ -21,8 +21,8 @@ namespace UMLGenerator.Models.CodeModels
         public string Pattern { get; set; }
         public string TrueValue { get; set; }
         public string FalseValue { get; set; }
-        public ObservableCollection<CodeCaseModel> Cases { get; set; } = new ObservableCollection<CodeCaseModel>();
-        private FieldInputType inputType;
+        private FieldInputType inputType = FieldInputType.Textual;
+        public ObservableCollection<CodeCaseModel> SwitchCases { get; set; } = new ObservableCollection<CodeCaseModel>();
 
         public FieldInputType InputType
         {

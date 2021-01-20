@@ -5,8 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:UMLGenerator.Views.CodeLanguages"
              xmlns:m="clr-namespace:UMLGenerator.Models.CodeModels"
+             xmlns:freez="clr-namespace:WPFLibrary.Freezables;assembly=WPFLibrary"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <freez:BindingProxy x:Key="VMProxy" Data="{Binding }"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -66,14 +70,13 @@
                                     <Setter.Value>
                                         <StackPanel Orientation="Vertical">
                                             <Button Content="Add New Case" Style="{StaticResource Button_NoBackground}" Command="{Binding AddCaseCommand}"/>
-                                            <ItemsControl ItemsSource="{Binding Field.Cases}" AlternationCount="1000">
+                                            <ItemsControl ItemsSource="{Binding Field.SwitchCases}">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
                                                         <GroupBox>
                                                             <GroupBox.Header>
                                                                 <Button Style="{StaticResource Button_ImageButton}" Width="Auto" Height="Auto"
-                                                Command="{Binding DataContext.RemoveCaseCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" 
-                                                CommandParameter="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}">
+                                                Command="{Binding Data.RemoveCaseCommand, Source={StaticResource VMProxy}}" CommandParameter="{Binding }">
                                                                     <TextBlock Text="x" Style="{StaticResource TextBlock_AsIcon}"/>
                                                                 </Button>
                                                             </GroupBox.Header>

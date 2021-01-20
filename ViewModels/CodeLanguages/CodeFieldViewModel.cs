@@ -35,8 +35,14 @@ namespace UMLGenerator.ViewModels.CodeLanguages
         protected override void AddCommands()
         {
             base.AddCommands();
-            AddCaseCommand = new RelayCommand(o => Field.Cases.Add(new CodeCaseModel()));
-            RemoveCaseCommand = new RelayCommand(index => Field.Cases.RemoveAt((int)index));
+            AddCaseCommand = new RelayCommand(o => 
+            { 
+                Field.SwitchCases.Add(new CodeCaseModel());
+            });
+            RemoveCaseCommand = new RelayCommand(_case => 
+            {
+                    Field.SwitchCases.Remove(_case as CodeCaseModel);
+            });
         }
         #endregion
     }
