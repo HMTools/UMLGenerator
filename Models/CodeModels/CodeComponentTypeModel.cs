@@ -21,7 +21,15 @@ namespace UMLGenerator.Models.CodeModels
         public ObservableCollection<CodePatternModel> TruePatterns { get; set; } = new ObservableCollection<CodePatternModel>();
         public ObservableCollection<CodePatternModel> FalsePatterns { get; set; } = new ObservableCollection<CodePatternModel>();
         public string UMLPattern { get; set; } = "";
-        public bool IsUniqueCollection { get; set; } = false;
+        private bool isInCollection;
+
+        public bool IsInCollection
+        {
+            get { return isInCollection; }
+            set { isInCollection = value; NotifyPropertyChanged(); }
+        }
+
+        public bool IsUnique { get; set; } = false;
 
         public CodeComponentTypeModel()
         {

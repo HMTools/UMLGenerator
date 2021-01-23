@@ -1,0 +1,39 @@
+<SyntaxDefinition name="PlantUMLBuilder"
+        xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+	<Color name="Notations" fontWeight="bold" />
+	<Color name="UMLObjects" foreground="Red" />
+	<Color name="Collections" foreground="Blue"/>
+	<Color name="Components" foreground="Purple"/>
+	<Color name="Fields" foreground="Green" />
+	<Color name="SelfValue" foreground="Red"/>
+
+    <!-- This is the main ruleset. -->
+    <RuleSet>
+		<Span color="Notations">
+			<Begin>\[\[</Begin>
+			<End>\]\]</End>
+			<RuleSet>
+				<Span color="Collections" begin="@Collection\(" end="\w+,\w+,\w+\)@" />
+				<Span color="Components" begin="@Component\(" end="\w+\)@" />
+				<Span color="Fields" begin="@Field\(" end="\w+\)@" />
+				<Span color="SelfValue" begin="\{Value" end="\}" />
+			</RuleSet>
+		</Span>
+		
+		<!-- Objects Keywords -->
+        <Keywords fontWeight="bold" foreground="Blue">
+            <Word> namespace </Word>
+            <Word> class </Word>
+            <Word> interface </Word>
+            <Word> enum </Word>
+        </Keywords>
+		
+		<!-- Relations Keywords -->
+        <Keywords fontWeight="bold" foreground="Green">
+            <Word> extends </Word>
+            <Word> implements </Word>
+        </Keywords>
+
+
+    </RuleSet>
+</SyntaxDefinition>

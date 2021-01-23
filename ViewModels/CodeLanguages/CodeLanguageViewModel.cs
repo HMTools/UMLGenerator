@@ -1,11 +1,15 @@
-﻿using MVVMLibrary.ViewModels;
+﻿using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using MVVMLibrary.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Xml;
 using UMLGenerator.Models.CodeModels;
 using WPFLibrary.Commands;
 
@@ -34,6 +38,13 @@ namespace UMLGenerator.ViewModels.CodeLanguages
         #endregion
 
         #region Properties
+        private IHighlightingDefinition syntax;
+
+        public IHighlightingDefinition Syntax
+        {
+            get { return syntax; }
+            set { syntax = value; NotifyPropertyChanged(); }
+        }
         public CodeLanguageModel Language { get; set; }
         public LanguagesEditorViewModel LanguagesEditor { get; set; }
         public ObservableCollection<CodeFieldViewModel> Fields { get; set; } = new ObservableCollection<CodeFieldViewModel>();
@@ -54,6 +65,7 @@ namespace UMLGenerator.ViewModels.CodeLanguages
         #region Constructor
         public CodeLanguageViewModel(LanguagesEditorViewModel languageEditor, CodeLanguageModel language)
         {
+            SetEditorSyntax();
             LanguagesEditor = languageEditor;
             if (language != null)
             {
@@ -147,6 +159,14 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                         Language.SubComponents.Swap(source, target);
                 }
             });
+        }
+        private void SetEditorSyntax()
+        {
+            string path = $"{Directory.GetCurrentDirectory()}\\Resources\\EditorSyntax\\PlantUMLBuilder.xshd";
+            using (XmlTextReader reader = new XmlTextReader(path))
+            {
+                Syntax = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+            }
         }
         #endregion
     }

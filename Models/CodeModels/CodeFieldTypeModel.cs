@@ -22,6 +22,8 @@ namespace UMLGenerator.Models.CodeModels
         public string TrueValue { get; set; }
         public string FalseValue { get; set; }
         private FieldInputType inputType = FieldInputType.Textual;
+        public string PathAncestor { get; set; }
+        public string PathField { get; set; }
         public ObservableCollection<CodeCaseModel> SwitchCases { get; set; } = new ObservableCollection<CodeCaseModel>();
 
         public FieldInputType InputType
@@ -40,7 +42,8 @@ namespace UMLGenerator.Models.CodeModels
     {
         Textual,
         Boolean,
-        Switch
+        Switch,
+        Path
     }
     #endregion
 

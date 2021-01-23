@@ -41,14 +41,14 @@ namespace UMLGenerator.ViewModels
                     SkipComponentContent(currDelimiter);
                 return null;
             }
-            CodeObjectModel output = new CodeObjectModel() { Type = componentType };
+            CodeObjectModel output = new CodeObjectModel() { Type = componentType};
             bool firstCreation = SetComponentFields(statement, ref output, componentType);
             if(currDelimiter.HasClose)
             {
                 if (componentType.SubComponents.Count == 0)
                     SkipComponentContent(currDelimiter);
                 else
-                    GetComponentChildren(componentType, currDelimiter).ForEach(child => output.Children.Add(child));
+                    GetComponentChildren(componentType, currDelimiter).ForEach(child => { child.Parent = output; output.Children.Add(child); });
             }
             return firstCreation ? output : null;
 
@@ -82,7 +82,9 @@ namespace UMLGenerator.ViewModels
                 {
                     nestedObj = GetComponent(code[currStart..currIndex], componentType, delimiters[code[currIndex - 1]]);
                     if (nestedObj != null)
+                    {
                         output.Add(nestedObj);
+                    }
                 }
                 else if (currDelimiter.OpenDelimiter == code[currIndex - 1])
                 {
@@ -103,20 +105,25 @@ namespace UMLGenerator.ViewModels
         {
             obj.Name = Regex.Match(statement, componentType.NamePattern).Groups["Value"].Value;
             obj.FieldsFound.Add("Name", obj.Name);
-            if (componentType.IsUniqueCollection)
+            if (componentType.IsInCollection)
             {
-                if (!project.UniqueCollections.ContainsKey(componentType.Name))
+                if (!project.Collections.ContainsKey(componentType.Name))
                 {
-                    project.UniqueCollections.Add(componentType.Name, new Dictionary<string, CodeObjectModel>());
+                    project.Collections.Add(componentType.Name, new Dictionary<string, List<CodeObjectModel>>());
                 }
-                if (project.UniqueCollections[componentType.Name].ContainsKey(obj.Name))
+                if(!project.Collections[componentType.Name].ContainsKey(obj.Name))
                 {
-                    obj = project.UniqueCollections[componentType.Name][obj.Name];
+                    project.Collections[componentType.Name].Add(obj.Name, new List<CodeObjectModel>());
+                }
+                if (componentType.IsUnique && project.Collections[componentType.Name][obj.Name].Count == 1)
+                {
+                    obj = project.Collections[componentType.Name][obj.Name][0];
                     return false;
+                    
                 }
                 else
                 {
-                    project.UniqueCollections[componentType.Name].Add(obj.Name, obj);
+                    project.Collections[componentType.Name][obj.Name].Add(obj);
                 }
             }
             #region Get Fields From Statement

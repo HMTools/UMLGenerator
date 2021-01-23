@@ -16,6 +16,7 @@ namespace UMLGenerator.Models.CodeModels
         public string Name { get; set; }
         public Dictionary<string, string> FieldsFound { get; set; } = new Dictionary<string, string>();
         public CodeComponentTypeModel Type { get; set; }
+        public CodeObjectModel Parent { get; set; }
         public ObservableCollection<CodeObjectModel> Children { get; set; } = new ObservableCollection<CodeObjectModel>();
         private bool? isChecked = true;
 
@@ -56,11 +57,12 @@ namespace UMLGenerator.Models.CodeModels
         #region Methods
         public virtual string TransferToUML(int layer)
         {
+            SetPathFields();
             string tab = layer >= 0 ?String.Concat(Enumerable.Repeat("\t", layer)) : "";
             string output = Type.UMLPattern;
 
             #region Replace Fields (Pattern: [[[<Field Name>]]])
-            output = Regex.Replace(output, @"\[\[\*(.+?)\*\]\]", match =>
+            output = Regex.Replace(output, @"\[\[@Field\((.+?)\)@\]\]", match =>
             {
                 var key = match.Groups[1].Value.Trim();
                 if (FieldsFound.ContainsKey(key))
@@ -72,7 +74,7 @@ namespace UMLGenerator.Models.CodeModels
             #endregion
 
             #region Replace Children Components (Pattern: [[|<ComponentType Name>|]])
-            output = Regex.Replace(output, @"\[\[\|(.+?)\|\]\]", match =>
+            output = Regex.Replace(output, @"\[\[@Component\((.+?)\)@\]\]", match =>
             {
                 string ret = "";
                 var typeName = match.Groups[1].Value.Trim();
@@ -82,6 +84,23 @@ namespace UMLGenerator.Models.CodeModels
             });
             #endregion
             return tab + output + Environment.NewLine;
+        }
+
+        private void SetPathFields()
+        {
+            Type.Fields.Where(field => field.InputType == FieldInputType.Path).ToList().ForEach(field => 
+            {
+                var parent = Parent;
+                while (parent != null)
+                {
+                    if (parent.Type.Name == field.PathAncestor && parent.FieldsFound.ContainsKey(field.PathField))
+                    {
+                        FieldsFound.Add(field.Name, parent.FieldsFound[field.PathField]);
+                        break;
+                    }
+                    parent = parent.Parent;
+                }
+            });
         }
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

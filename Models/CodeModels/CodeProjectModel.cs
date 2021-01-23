@@ -12,7 +12,8 @@ namespace UMLGenerator.Models.CodeModels
     {
         #region Properties
         public CodeLanguageModel Language { get; set; }
-        public Dictionary<string, Dictionary<string, CodeObjectModel>> UniqueCollections { get; set; } = new Dictionary<string, Dictionary<string, CodeObjectModel>>();
+        //Collections[ComponentType][ComponentName][List Of Components With That Type And Name]]
+        public Dictionary<string, Dictionary<string, List<CodeObjectModel>>> Collections { get; set; } = new Dictionary<string, Dictionary<string, List<CodeObjectModel>>>();
         public ObservableCollection<CodeObjectModel> Children { get; set; } = new ObservableCollection<CodeObjectModel>();
 
         #endregion
@@ -27,7 +28,7 @@ namespace UMLGenerator.Models.CodeModels
             string output = "@startuml" + Environment.NewLine;
             output += Language.UMLPattern;
             #region Replace Children Components (Pattern: [[|<ComponentType Name>|]])
-            output = Regex.Replace(output, @"\[\[\|(.+)\|\]\]", match =>
+            output = Regex.Replace(output, @"\[\[@Component\((.+)\)@\]\]", match =>
             {
                 string ret = "";
                 var typeName = match.Groups[1].Value.Trim();
@@ -36,8 +37,24 @@ namespace UMLGenerator.Models.CodeModels
                 return ret;
             });
             #endregion
+            output = Regex.Replace(output, @"\[\[@Collection\((?<ComponentType>.+?),(?<ComponentName>.+?),(?<ComponentField>.+?)\)@\]\]", GetCollectionValue);
             return output + "@enduml";
         }
         #endregion
+
+        private string GetCollectionValue(Match collectionQueryMatch)
+        {
+            //\[\[@Collection\((?<ComponentType>.+?),(?<ComponentName>.+?),(?<ComponentField>.+?)\)@\]\]
+            string type = collectionQueryMatch.Groups["ComponentType"].Value;
+            string name = collectionQueryMatch.Groups["ComponentName"].Value;
+            string field = collectionQueryMatch.Groups["ComponentField"].Value;
+            if (!Collections.ContainsKey(type) || !Collections[type].ContainsKey(name))
+                return "";
+            var firstMatchedComponent = Collections[type][name].First(comp => comp.FieldsFound.ContainsKey(field));
+            if (firstMatchedComponent == null)
+                return "";
+            return firstMatchedComponent.FieldsFound[field];
+
+        }
     }
 }

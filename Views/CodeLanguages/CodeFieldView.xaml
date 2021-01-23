@@ -42,6 +42,7 @@
                 <RadioButton Content="Textual" Margin="0,10,0,0" IsChecked="{Binding Field.InputType, Converter={StaticResource EqualityConverter}, ConverterParameter={x:Static m:FieldInputType.Textual}}"/>
                 <RadioButton Content="Boolean" Margin="10,10,0,0" IsChecked="{Binding Field.InputType, Converter={StaticResource EqualityConverter}, ConverterParameter={x:Static m:FieldInputType.Boolean}}"/>
                 <RadioButton Content="Switch" Margin="10,10,0,0" IsChecked="{Binding Field.InputType, Converter={StaticResource EqualityConverter}, ConverterParameter={x:Static m:FieldInputType.Switch}}"/>
+                <RadioButton Content="Path" Margin="10,10,0,0" IsChecked="{Binding Field.InputType, Converter={StaticResource EqualityConverter}, ConverterParameter={x:Static m:FieldInputType.Path}}"/>
             </StackPanel>
             <ContentControl Grid.Row="2" Grid.ColumnSpan="2">
                 <ContentControl.Style>
@@ -97,6 +98,24 @@
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
                                         </StackPanel>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Field.InputType}" Value="3">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Label Content="Ancestor Type :" Style="{StaticResource Label_Property3}"/>
+                                            <TextBox Grid.Column="1" Text="{Binding Field.PathAncestor, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,0"/>
+                                            <Label Content="Ancestor Field Name:" Style="{StaticResource Label_Property3}" Grid.Column="2"/>
+                                            <TextBox Grid.Column="3" Text="{Binding Field.PathField, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </Grid>
                                     </Setter.Value>
                                 </Setter>
                             </DataTrigger>

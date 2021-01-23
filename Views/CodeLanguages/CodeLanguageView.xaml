@@ -10,6 +10,8 @@
              xmlns:v="clr-namespace:UMLGenerator.Views.CodeLanguages"
              xmlns:behav="clr-namespace:WPFLibrary.Behaviors;assembly=WPFLibrary"
              xmlns:freez="clr-namespace:WPFLibrary.Freezables;assembly=WPFLibrary"
+             xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit"
+             xmlns:avalonBehav="clr-namespace:UMLGenerator.Resources.EditorSyntax"
              mc:Ignorable="d" 
     d:DesignHeight="450" d:DesignWidth="800" d:Background="White">
     <UserControl.Resources>
@@ -222,9 +224,12 @@
                     </ScrollViewer>
                 </TabItem>
                 <TabItem Header="PlantUML Builder">
-                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                        <TextBox Text="{Binding Language.UMLPattern, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Top" AcceptsReturn="True" AcceptsTab="True"/>
-                    </ScrollViewer>
+                    <avalon:TextEditor FontSize="18">
+                        <i:Interaction.Behaviors>
+                            <avalonBehav:AvalonEditorAttachSyntaxBehavior Syntax="{Binding Syntax}" 
+                                        BindableText="{Binding Language.UMLPattern, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </i:Interaction.Behaviors>
+                    </avalon:TextEditor>
                 </TabItem>
             </TabControl>
         </GroupBox>
