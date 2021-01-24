@@ -152,19 +152,20 @@
                                                 Command="{Binding Data.RemoveFieldCommand, Source={StaticResource VMProxy}}"
                                                 CommandParameter="{Binding }"/>
 
-                                                <Button Style="{StaticResource Button_ImageButton}" Width="Auto" Height="Auto" Command="{Binding ToggleExpandCommand}">
-                                                    <TextBlock>
-                                                        <TextBlock.Style>
-                                                            <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlock_AsIcon}">
-                                                                <Setter Property="Text" Value="O"/>
+                                                <Button Style="{StaticResource Button_ImageButton}" Margin="0,4,0,0" Width="24" Height="24"
+                                                        Command="{Binding ToggleExpandCommand}">
+                                                    <Image >
+                                                        <Image.Style>
+                                                            <Style TargetType="{x:Type Image}">
+                                                                <Setter Property="Source" Value="/Resources/Images/ExpandIcon.png"/>
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding IsExpanded}" Value="true">
-                                                                        <Setter Property="Text" Value="C"/>
+                                                                        <Setter  Property="Source" Value="/Resources/Images/CollapseIcon.png"/>
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
-                                                        </TextBlock.Style>
-                                                    </TextBlock>
+                                                        </Image.Style>
+                                                    </Image>
                                                 </Button>
                                             </StackPanel>
                                         </GroupBox.Header>
@@ -257,10 +258,10 @@
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="PlantUML Builder">
-                <avalon:TextEditor FontSize="18">
+                <avalon:TextEditor FontSize="18" FontFamily="Times New Roman">
                     <i:Interaction.Behaviors>
                         <avalonBehav:AvalonEditorAttachSyntaxBehavior Syntax="{Binding Syntax}" 
-                                        BindableText="{Binding Language.UMLPattern, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        BindableText="{Binding Component.UMLPattern, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </i:Interaction.Behaviors>
                 </avalon:TextEditor>
             </TabItem>

@@ -101,10 +101,17 @@
                         </Style>
                     </Button.Style>
                     <StackPanel Orientation="Vertical">
-                        <Image Source="/Resources/Images/UMLIcon.png"/>
+                        <Image Source="/Resources/Images/LanguageIcon.png"/>
                         <TextBlock>Languages</TextBlock>
                     </StackPanel>
                 </Button>
+                <TextBlock HorizontalAlignment="Center" FontSize="14" FontWeight="DemiBold">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}Selected : {0}">
+                            <Binding Path="LanguagesVM.SelectedLanguageName" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
                 <Separator/>
                 <Button Command="{Binding ToggleExportCommand}">
                     <StackPanel Orientation="Vertical">

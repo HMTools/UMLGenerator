@@ -10,7 +10,10 @@
                 <ResourceDictionary Source="pack://application:,,,/WPFLibrary;component/Styles/StylesDictionary.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/WPFLibrary;component/ValueConverters/ConvertersDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource TextBox_Base}"/>
+            <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource TextBox_Base}">
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="FontFamily" Value="Times New Roman"/>
+            </Style>
             <Style TargetType="{x:Type DataGrid}" BasedOn="{StaticResource DataGrid_Base}"/>
             <Style TargetType="{x:Type CheckBox}">
                 <Setter Property="VerticalAlignment" Value="Center"/>

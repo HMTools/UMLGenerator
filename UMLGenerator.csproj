@@ -10,8 +10,11 @@
   <ItemGroup>
     <None Remove="Resources\EditorSyntax\PlantUMLBuilder.xshd" />
     <None Remove="Resources\Images\ApiIcon.png" />
+    <None Remove="Resources\Images\CollapseIcon.png" />
     <None Remove="Resources\Images\CopyIcon.png" />
+    <None Remove="Resources\Images\ExpandIcon.png" />
     <None Remove="Resources\Images\ExportIcon.png" />
+    <None Remove="Resources\Images\LanguageIcon.png" />
     <None Remove="Resources\Images\ObjectsTreeIcon.png" />
     <None Remove="Resources\Images\PlantUMLIcon.png" />
     <None Remove="Resources\Images\PNGIcon.png" />
@@ -28,11 +31,20 @@
     <Content Include="Resources\Images\ApiIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Images\CollapseIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Images\CopyIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Images\ExpandIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Images\ExportIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\LanguageIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Images\ObjectsTreeIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

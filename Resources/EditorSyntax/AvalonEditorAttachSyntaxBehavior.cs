@@ -71,7 +71,16 @@ namespace UMLGenerator.Resources.EditorSyntax
                 {
                     var caretOffset = editor.CaretOffset;
                     editor.Document.Text = dependencyPropertyChangedEventArgs.NewValue.ToString();
-                    editor.CaretOffset = caretOffset;
+                    try
+                    {
+                        editor.CaretOffset = caretOffset;
+                    }
+                    catch (Exception exception)
+                    {
+                        editor.CaretOffset = 0;
+                        Console.WriteLine(exception.Message);
+                    }
+                    
                 }
             }
         }

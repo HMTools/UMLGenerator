@@ -118,13 +118,13 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             SaveLanguageCommand = new RelayCommand(o => 
             {
                 SelectedLanguage.Components.Clear();
-                bool validate = true;
+                bool isValid = true;
                 foreach (var comp in Components)
                 {
                     if(SelectedLanguage.Components.ContainsKey(comp.Name))
                     {
                         MessageBox.Show("Language cannot have two or more Components with the same name !");
-                        validate = false;
+                        isValid = false;
                         break;
                     }
                     SelectedLanguage.Components.Add(comp.Name, comp);
@@ -132,13 +132,19 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                 if(string.IsNullOrWhiteSpace(SelectedLanguage.Name))
                 {
                     MessageBox.Show("Please decalre a name!");
-                    validate = false;
+                    isValid = false;
                 }
-                if(validate)
+                if(isValid)
                 {
                     File.Delete($"{Directory.GetCurrentDirectory()}\\Languages\\{o as string}.json");
-                    File.WriteAllText($"{Directory.GetCurrentDirectory()}\\Languages\\{o as string}.json", JsonSerializer.Serialize(SelectedLanguage));
-                    mainVM.SetStatus($"{o as string} language saved", System.Windows.Media.Brushes.Blue, 2000);
+                    File.WriteAllText($"{Directory.GetCurrentDirectory()}\\Languages\\{SelectedLanguage.Name}.json", JsonSerializer.Serialize(SelectedLanguage));
+                    mainVM.SetStatus($"{SelectedLanguage.Name} language saved", System.Windows.Media.Brushes.Blue, 2000);
+                    if(o as string != SelectedLanguage.Name)
+                    {
+                        Languages.Add(SelectedLanguage.Name);
+                        SelectedLanguageName = SelectedLanguage.Name;
+                        Languages.Remove(o as string);
+                    }
                 }
             });
             EditLanguageCommand = new RelayCommand(o => 
@@ -153,6 +159,8 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                 {
                     File.Delete($"{Directory.GetCurrentDirectory()}\\Languages\\{o as string}.json");
                     Languages.Remove(o as string);
+                    if (Languages.Count > 0)
+                        SelectedLanguageName = Languages[0];
                 }
             });
 
