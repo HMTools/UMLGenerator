@@ -48,7 +48,15 @@ namespace UMLGenerator.ViewModels
                 if (componentType.SubComponents.Count == 0)
                     SkipComponentContent(currDelimiter);
                 else
-                    GetComponentChildren(componentType, currDelimiter).ForEach(child => { child.Parent = output; output.Children.Add(child); });
+                    GetComponentChildren(componentType, currDelimiter).ForEach(child => 
+                    { 
+                        child.Parent = output;
+                        App.Current.Dispatcher.Invoke(() => 
+                        {
+                            output.Children.Add(child);
+                        });
+                    }
+                    );
             }
             return firstCreation ? output : null;
 

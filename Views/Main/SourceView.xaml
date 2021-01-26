@@ -73,5 +73,11 @@
         <!--#region Generate Button (Row 2)-->
         <Button Content="Generate Objects Tree" Style="{StaticResource Button_NoBackground}" Command="{Binding GetObjectsTreeCommand}"  Height="40" Grid.Row="2" />
         <!--#endregion-->
+        <Grid Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityCollapsedConverter}}" Grid.RowSpan="3">
+            <Grid.Background>
+                <SolidColorBrush Color="Gray" Opacity="0.5"/>
+            </Grid.Background>
+            <Label Style="{StaticResource Label_Property1}" Content="Loading ..." Foreground="OrangeRed"  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
     </Grid>
 </UserControl>

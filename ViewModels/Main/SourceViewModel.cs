@@ -78,6 +78,14 @@ namespace UMLGenerator.ViewModels.Main
             get { return rootDir; }
             set { rootDir = value; NotifyPropertyChanged(); }
         }
+        private bool isLoading;
+
+        public bool IsLoading
+        {
+            get { return isLoading; }
+            set { isLoading = value; NotifyPropertyChanged(); }
+        }
+
         #endregion
 
         #region Fields
@@ -110,8 +118,11 @@ namespace UMLGenerator.ViewModels.Main
             {
                 try
                 {
+                    IsLoading = true;
                     mainVM.GithubVM.RepostioryID = mainVM.GithubVM.GitClient.Repository.Get(RepositoryOwner, RepositoryName).GetAwaiter().GetResult().Id;
-                    RootDir = GetRepositoryDirectory(mainVM.GithubVM.GitClient, mainVM.GithubVM.RepostioryID, "");
+                    Task.Run(() => RootDir = GetRepositoryDirectory(mainVM.GithubVM.GitClient, mainVM.GithubVM.RepostioryID, "").GetAwaiter().GetResult())
+                    .ContinueWith(t => IsLoading = false);
+                    
                 }
                 catch (Exception exception)
                 {
@@ -145,28 +156,25 @@ namespace UMLGenerator.ViewModels.Main
             return output;
         }
 
-        public DirectoryModel GetRepositoryDirectory(GitHubClient client, long repoId, string path)
+        public async Task<DirectoryModel> GetRepositoryDirectory(GitHubClient client, long repoId, string path)
         {
             var output = new DirectoryModel() { Name = Path.GetFileName(path), FullName = path };
             var contents = path == "" ? 
                 client.Repository.Content.GetAllContents(repoId).GetAwaiter().GetResult():
                 client.Repository.Content.GetAllContents(repoId, path).GetAwaiter().GetResult();
 
-            foreach (var content in contents)
-            {
-                if(content.Type == "dir")
-                {
-                    output.Items.Add(GetRepositoryDirectory(client, repoId, content.Path));
-                }
-                else if(content.Type == "file" && Path.GetExtension(content.Name) == ".cs")
-                {
-                    output.Items.Add(new FileModel() { Name = content.Name, FullName = content.Path });
-                }
-            }
+            contents.Where(content => content.Type == "file" && Path.GetExtension(content.Name) == $".{mainVM.LanguagesVM.SelectedLanguage.FileExtension}")
+                .ToList().ForEach(content => output.Items.Add(new FileModel() { Name = content.Name, FullName = content.Path }));
+
+            List<Task> tasks = new List<Task>();
+            contents.Where(content => content.Type == "dir")
+                .ToList()
+                .ForEach(content => tasks.Add(GetRepositoryDirectory(client, repoId, content.Path)
+                .ContinueWith(t => output.Items.Add(t.Result))));
+            await Task.WhenAll(tasks);
             return output;
+
         }
-
-
 
         public List<FileModel> GetCheckedFileModels(DirectoryModel directory)
         {

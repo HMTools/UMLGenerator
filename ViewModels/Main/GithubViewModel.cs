@@ -97,7 +97,9 @@ namespace UMLGenerator.ViewModels.Main
                 mainVM.SourceVM.SourceType = SourceTypes.Github;
                 mainVM.SourceVM.RepositoryName = repo.Name;
                 mainVM.SourceVM.RepositoryOwner = username;
-                mainVM.SourceVM.RootDir = mainVM.SourceVM.GetRepositoryDirectory(GitClient, RepostioryID, "");
+                mainVM.SourceVM.IsLoading = true;
+                 Task.Run(() => mainVM.SourceVM.RootDir = mainVM.SourceVM.GetRepositoryDirectory(GitClient, RepostioryID, "").GetAwaiter().GetResult())
+                .ContinueWith(t => mainVM.SourceVM.IsLoading = false);
             });
         }
         private void LoadData()

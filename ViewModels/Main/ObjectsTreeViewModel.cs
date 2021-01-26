@@ -29,6 +29,14 @@ namespace UMLGenerator.ViewModels.Main
             get { return codeProject; }
             set { codeProject = value; NotifyPropertyChanged(); }
         }
+        private bool isLoading;
+
+        public bool IsLoading
+        {
+            get { return isLoading; }
+            set { isLoading = value; NotifyPropertyChanged(); }
+        }
+
         #endregion
 
 
@@ -57,11 +65,17 @@ namespace UMLGenerator.ViewModels.Main
             if (mainVM.GithubVM.RepostioryID == 0)
             {
                 RunOnFiles(fileModels);
+                mainVM.UmlVM.UpdateUML(CodeProject.TransferToUML());
             }
             else
-                RunOnFiles(fileModels, mainVM.GithubVM.GitClient, mainVM.GithubVM.RepostioryID);
-
-            mainVM.UmlVM.UpdateUML(CodeProject.TransferToUML());
+            {
+                IsLoading = true;
+                RunOnFiles(fileModels, mainVM.GithubVM.GitClient, mainVM.GithubVM.RepostioryID).ContinueWith(t => 
+                {
+                    IsLoading = false;
+                    mainVM.UmlVM.UpdateUML(CodeProject.TransferToUML());
+                });
+            }
         }
 
         private void RunOnFiles(List<FileModel> fileModels) //local files
@@ -74,16 +88,30 @@ namespace UMLGenerator.ViewModels.Main
             }
         }
 
-        private void RunOnFiles(List<FileModel> fileModels, GitHubClient client, long repositoryId) // github files
+        private async Task RunOnFiles(List<FileModel> fileModels, GitHubClient client, long repositoryId) // github files
         {
             CodeProject = new CodeProjectModel(mainVM.LanguagesVM.SelectedLanguage);
-            foreach (var file in fileModels)
+            List<Task> tasks = new List<Task>();
+            fileModels.ForEach(file => tasks.Add(GetFileContent(file)));
+            await Task.WhenAll(tasks);
+
+            async Task GetFileContent(FileModel file)
             {
                 try
                 {
-                    var code = client.Repository.Content.GetAllContents(repositoryId, file.FullName).GetAwaiter().GetResult()[0].Content;
-                    var vm = new CodeFileViewModel(code, CodeProject);
-                    vm.GetLanguageObjects().ForEach(item => CodeProject.Children.Add(item));
+                    await Task.Run(() =>
+                    {
+                        var code = client.Repository.Content.GetAllContents(repositoryId, file.FullName).GetAwaiter().GetResult()[0].Content;
+                        var vm = new CodeFileViewModel(code, CodeProject);
+                        vm.GetLanguageObjects().ForEach(item =>
+                        {
+                            App.Current.Dispatcher.Invoke(() =>
+                            {
+                                CodeProject.Children.Add(item);
+                            });
+                        });
+                    });
+
                 }
                 catch (Exception exception)
                 {
