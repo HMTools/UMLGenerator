@@ -89,7 +89,7 @@ namespace UMLGenerator.ViewModels.Main
         #endregion
 
         #region Fields
-        private MainViewModel mainVM;
+        private readonly MainViewModel mainVM;
         #endregion
 
         #region Constructors

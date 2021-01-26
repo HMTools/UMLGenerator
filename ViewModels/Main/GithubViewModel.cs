@@ -46,7 +46,7 @@ namespace UMLGenerator.ViewModels.Main
         #endregion
 
         #region Fields
-        private MainViewModel mainVM;
+        private readonly MainViewModel mainVM;
         private string lastWorkedToken;
         #endregion
 
@@ -97,9 +97,10 @@ namespace UMLGenerator.ViewModels.Main
                 mainVM.SourceVM.SourceType = SourceTypes.Github;
                 mainVM.SourceVM.RepositoryName = repo.Name;
                 mainVM.SourceVM.RepositoryOwner = username;
-                mainVM.SourceVM.IsLoading = true;
-                 Task.Run(() => mainVM.SourceVM.RootDir = mainVM.SourceVM.GetRepositoryDirectory(GitClient, RepostioryID, "").GetAwaiter().GetResult())
-                .ContinueWith(t => mainVM.SourceVM.IsLoading = false);
+                mainVM.SourceVM.IsShown = true;
+                mainVM.SourceVM.GetRepositoryCommand.Execute(null);
+                // Task.Run(() => mainVM.SourceVM.RootDir = mainVM.SourceVM.GetRepositoryDirectory(GitClient, RepostioryID, "").GetAwaiter().GetResult())
+                //.ContinueWith(t => mainVM.SourceVM.IsLoading = false);
             });
         }
         private void LoadData()
