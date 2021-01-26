@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -9,12 +10,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 
 namespace UMLGenerator.Libraries
 {
     public static class PlantUMLMethods
     {
-        public static async Task<string> GetSVG(string content)
+        public static async Task<string> GetRemoteSVG(string content)
         {
             var client = new HttpClient();
             content = Uri.UnescapeDataString(content);
@@ -23,13 +25,34 @@ namespace UMLGenerator.Libraries
             return await client.GetStringAsync(str);
         }
 
-        public static async Task<string> GetSVG(string content, CancellationToken cancellationToken)
+        public static async Task<string> GetRemoteSVG(string content, CancellationToken cancellationToken)
         {
             var client = new HttpClient();
             content = Uri.UnescapeDataString(content);
             var bytes = Encode(content);
             var str = $"http://plantuml.com/plantuml/svg/{bytes}";
             return await client.GetStringAsync(str, cancellationToken);
+        }
+
+        public static async Task<string> GetLocalSVG(string content, CancellationToken cancellationToken)
+        {
+            string tempPath = Path.GetTempFileName();
+            File.WriteAllText(tempPath, content);
+
+            Process p = new Process();
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.RedirectStandardInput = true;
+            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.FileName = "cmd.exe";
+            string pathToPlantUML = $"{Directory.GetCurrentDirectory()}\\Resources\\PlantUML\\plantuml.jar";
+            p.StartInfo.Arguments = $"/C type {tempPath} | java -jar {pathToPlantUML} -pipe -tsvg";
+            p.Start();
+            string output = p.StandardOutput.ReadToEnd();
+            p.WaitForExit();
+            if (File.Exists(tempPath))
+                File.Delete(tempPath);
+            return output;
         }
 
         private static string Encode(string content)

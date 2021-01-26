@@ -101,7 +101,8 @@ namespace UMLGenerator.ViewModels.Main
             IsLoading = true;
             try
             {
-                SvgString = await Libraries.PlantUMLMethods.GetSVG(plantUml, cancellationTokenSource.Token);
+                //SvgString = await Libraries.PlantUMLMethods.GetRemoteSVG(plantUml, cancellationTokenSource.Token);
+                SvgString = await Libraries.PlantUMLMethods.GetLocalSVG(plantUml, cancellationTokenSource.Token);
                 await Task.Run(() =>
                 {
                     var svg = Svg.SvgDocument.FromSvg<Svg.SvgDocument>(SvgString);
