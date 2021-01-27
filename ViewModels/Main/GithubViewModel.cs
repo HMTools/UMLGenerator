@@ -99,8 +99,6 @@ namespace UMLGenerator.ViewModels.Main
                 mainVM.SourceVM.RepositoryOwner = username;
                 mainVM.SourceVM.IsShown = true;
                 mainVM.SourceVM.GetRepositoryCommand.Execute(null);
-                // Task.Run(() => mainVM.SourceVM.RootDir = mainVM.SourceVM.GetRepositoryDirectory(GitClient, RepostioryID, "").GetAwaiter().GetResult())
-                //.ContinueWith(t => mainVM.SourceVM.IsLoading = false);
             });
         }
         private void LoadData()

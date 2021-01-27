@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -48,7 +49,28 @@ namespace UMLGenerator.Libraries
             string pathToPlantUML = $"{Directory.GetCurrentDirectory()}\\Resources\\PlantUML\\plantuml.jar";
             p.StartInfo.Arguments = $"/C type {tempPath} | java -jar {pathToPlantUML} -pipe -tsvg";
             p.Start();
-            string output = p.StandardOutput.ReadToEnd();
+            string output = await p.StandardOutput.ReadToEndAsync();
+            p.WaitForExit();
+            if (File.Exists(tempPath))
+                File.Delete(tempPath);
+            return output;
+        }
+
+        public static Bitmap GetLocalPNG(string content, CancellationToken cancellationToken)
+        {
+            string tempPath = Path.GetTempFileName();
+            File.WriteAllText(tempPath, content);
+
+            Process p = new Process();
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.RedirectStandardInput = true;
+            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.FileName = "cmd.exe";
+            string pathToPlantUML = $"{Directory.GetCurrentDirectory()}\\Resources\\PlantUML\\plantuml.jar";
+            p.StartInfo.Arguments = $"/C type {tempPath} | java -DPLANTUML_LIMIT_SIZE=8192 -jar {pathToPlantUML} -pipe -tpng";
+            p.Start();
+            var output = new Bitmap(p.StandardOutput.BaseStream);
             p.WaitForExit();
             if (File.Exists(tempPath))
                 File.Delete(tempPath);

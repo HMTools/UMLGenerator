@@ -23,6 +23,7 @@ namespace UMLGenerator.ViewModels.Main
     {
         #region Commands
         public RelayCommand SwitchViewCommand { get; private set; }
+        public RelayCommand SwitchLocalOrRemoteCommand { get; private set; }
         public RelayCommand CopyToClipboardCommand { get; private set; }
         #endregion
         #region Properties
@@ -57,6 +58,15 @@ namespace UMLGenerator.ViewModels.Main
             get { return message; }
             set { message = value; NotifyPropertyChanged(); }
         }
+        private bool isLocal;
+
+        public bool IsLocal
+        {
+            get { return isLocal; }
+            set { isLocal = value; NotifyPropertyChanged(); }
+        }
+
+
         public bool IsLoading { get; set; } = false;
         public string SvgString { get; set; }
         public Bitmap UMLImage { get; set; }
@@ -64,12 +74,15 @@ namespace UMLGenerator.ViewModels.Main
         #region Fields
         private CancellationTokenSource cancellationTokenSource;
         private MainViewModel mainVM;
+        private bool isJavaInstalled;
         #endregion
 
         #region Constructors
         public UMLViewModel(MainViewModel mainVM) : base(300, new GridLength(1, GridUnitType.Star), false)
         {
             this.mainVM = mainVM;
+            isJavaInstalled = CheckIsJavaInstalled();
+            IsLocal = isJavaInstalled;
         }
         #endregion
 
@@ -77,19 +90,33 @@ namespace UMLGenerator.ViewModels.Main
         protected override void AddCommands()
         {
             base.AddCommands();
-            SwitchViewCommand = new RelayCommand(o =>
-            {
-                IsUmlView = !IsUmlView;
-            });
+            SwitchViewCommand = new RelayCommand(o => IsUmlView = !IsUmlView);
             CopyToClipboardCommand = new RelayCommand(o => 
             {
                 System.Windows.Clipboard.SetText(PlantUml);
                 mainVM.SetStatus("Copy PlantUML To Clipboard | Succeed", System.Windows.Media.Brushes.Blue, 2000);
             });
+            SwitchLocalOrRemoteCommand = new RelayCommand(o => IsLocal = !IsLocal, o => isJavaInstalled);
         }
-        public async void UpdateUML(string plantUml)
+        public async void UpdateUML(string plantUML)
         {
-            PlantUml = plantUml;
+            ResetUMLProperties(plantUML);
+            IsLoading = true;
+            SetUml();
+            IsLoading = false;
+        }
+        private bool CheckIsJavaInstalled()
+        {
+            var key32 = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Registry32)
+                .OpenSubKey("SOFTWARE\\JavaSoft\\Java Runtime Environment");
+            var key64 = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Registry64)
+                .OpenSubKey("SOFTWARE\\JavaSoft\\Java Runtime Environment");
+
+            return key32 != null || key64 != null;
+        }
+        private void ResetUMLProperties(string plantUML)
+        {
+            PlantUml = plantUML;
             if (IsLoading)
             {
                 cancellationTokenSource.Cancel();
@@ -98,26 +125,35 @@ namespace UMLGenerator.ViewModels.Main
             ImageSource = null;
             Message = "Loading ...";
             cancellationTokenSource = new CancellationTokenSource();
-            IsLoading = true;
+        }
+        private void SetUml()
+        {
             try
             {
-                //SvgString = await Libraries.PlantUMLMethods.GetRemoteSVG(plantUml, cancellationTokenSource.Token);
-                SvgString = await Libraries.PlantUMLMethods.GetLocalSVG(plantUml, cancellationTokenSource.Token);
-                await Task.Run(() =>
+                if(IsLocal)
                 {
-                    var svg = Svg.SvgDocument.FromSvg<Svg.SvgDocument>(SvgString);
-                    System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() =>
+                    SvgString = Libraries.PlantUMLMethods.GetLocalSVG(PlantUml, cancellationTokenSource.Token).GetAwaiter().GetResult();
+                    UMLImage = Libraries.PlantUMLMethods.GetLocalPNG(PlantUml, cancellationTokenSource.Token).GetAwaiter().GetResult();
+                    ImageSource = UMLImage.BitmapToImageSource(System.Drawing.Imaging.ImageFormat.Png);
+                }
+                else
+                {
+                    SvgString =  Libraries.PlantUMLMethods.GetRemoteSVG(PlantUml, cancellationTokenSource.Token).GetAwaiter().GetResult();
+                    Task.Run(() =>
                     {
-                        UMLImage = svg.Draw();
-                        ImageSource = UMLImage.BitmapToImageSource(System.Drawing.Imaging.ImageFormat.Png);
+                        var svg = Svg.SvgDocument.FromSvg<Svg.SvgDocument>(SvgString);
+                        System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() =>
+                        {
+                            UMLImage = svg.Draw();
+                            ImageSource = UMLImage.BitmapToImageSource(System.Drawing.Imaging.ImageFormat.Png);
+                        });
                     });
-                });
+                }
             }
             catch (Exception exception)
             {
                 Message = $"Failed Getting UML | {exception.Message}";
             }
-            IsLoading = false;
         }
         #endregion
     }
