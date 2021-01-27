@@ -102,7 +102,7 @@ namespace UMLGenerator.ViewModels
                     UmlVM.UMLImage.Save(dialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
                     SetStatus("Export PNG | Succeed", Brushes.Black, 2000);
                 }
-            }, o => !string.IsNullOrEmpty(UmlVM.SvgString) && UmlVM.IsLoading == false);
+            }, o => UmlVM.UMLImage != null && UmlVM.IsLoading == false);
 
             ExportPlantCommand = new RelayCommand(o =>
             {

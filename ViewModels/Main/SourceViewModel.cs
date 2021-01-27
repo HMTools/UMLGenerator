@@ -136,7 +136,7 @@ namespace UMLGenerator.ViewModels.Main
                 mainVM.ObjectsTreeVM.IsShown = true;
                 mainVM.UmlVM.IsShown = true;
                 IsShown = false;
-                mainVM.ObjectsTreeVM.GenerateObjectsTree(GetCheckedFileModels(RootDir));
+                Task.Run(() => mainVM.ObjectsTreeVM.GenerateObjectsTree(GetCheckedFileModels(RootDir)));
             }, o => RootDir != null);
         }
         private DirectoryModel GetFolderDirectory(string path)

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using UMLGenerator.Models.CodeModels;
 
-namespace UMLGenerator.ViewModels
+namespace UMLGenerator.Libraries
 {
-    public class CodeFileViewModel
+    public class ObjectsTreeLibrary
     {
         #region Fields
         private string code;
@@ -14,10 +16,8 @@ namespace UMLGenerator.ViewModels
         private int currIndex = 0;
         private CodeProjectModel project;
         #endregion
-
-
         #region Constructors
-        public CodeFileViewModel(string code, CodeProjectModel project)
+        private ObjectsTreeLibrary(string code, CodeProjectModel project)
         {
             this.code = code;
             this.project = project;
@@ -26,32 +26,32 @@ namespace UMLGenerator.ViewModels
         #endregion
 
         #region Methods
-        public List<CodeObjectModel> GetLanguageObjects()
+        public static List<CodeObjectModel> GetFileObjects(string code, CodeProjectModel project)
         {
-            return GetComponentChildren(project.Language, new CodeDelimiterModel());
+            var fileModel = new ObjectsTreeLibrary(code, project);
+            return fileModel.GetComponentChildren(project.Language, new CodeDelimiterModel());
         }
-
         private CodeObjectModel GetComponent(string statement, CodeComponentTypeModel parentType, CodeDelimiterModel currDelimiter)
         {
             currStart = currIndex;
             var componentType = GetComponentType(statement, parentType);
-            if(componentType == null)
+            if (componentType == null)
             {
-                if(currDelimiter.HasClose)
+                if (currDelimiter.HasClose)
                     SkipComponentContent(currDelimiter);
                 return null;
             }
-            CodeObjectModel output = new CodeObjectModel() { Type = componentType};
+            CodeObjectModel output = new CodeObjectModel() { Type = componentType };
             bool firstCreation = SetComponentFields(statement, ref output, componentType);
-            if(currDelimiter.HasClose)
+            if (currDelimiter.HasClose)
             {
                 if (componentType.SubComponents.Count == 0)
                     SkipComponentContent(currDelimiter);
                 else
-                    GetComponentChildren(componentType, currDelimiter).ForEach(child => 
-                    { 
+                    GetComponentChildren(componentType, currDelimiter).ForEach(child =>
+                    {
                         child.Parent = output;
-                        App.Current.Dispatcher.Invoke(() => 
+                        App.Current.Dispatcher.Invoke(() =>
                         {
                             output.Children.Add(child);
                         });
@@ -82,7 +82,7 @@ namespace UMLGenerator.ViewModels
         {
             List<CodeObjectModel> output = new List<CodeObjectModel>();
             CodeObjectModel nestedObj;
-            int openDelimiters = 1;            
+            int openDelimiters = 1;
             var delimiters = GetDelimitersDict(componentType);
             while (currIndex < code.Length && (openDelimiters > 0 || componentType is CodeLanguageModel))
             {
@@ -119,7 +119,7 @@ namespace UMLGenerator.ViewModels
                 {
                     project.Collections.Add(componentType.Name, new Dictionary<string, List<CodeObjectModel>>());
                 }
-                if(!project.Collections[componentType.Name].ContainsKey(obj.Name))
+                if (!project.Collections[componentType.Name].ContainsKey(obj.Name))
                 {
                     project.Collections[componentType.Name].Add(obj.Name, new List<CodeObjectModel>());
                 }
@@ -127,7 +127,7 @@ namespace UMLGenerator.ViewModels
                 {
                     obj = project.Collections[componentType.Name][obj.Name][0];
                     return false;
-                    
+
                 }
                 else
                 {
@@ -145,8 +145,8 @@ namespace UMLGenerator.ViewModels
                             obj.FieldsFound.Add(fieldType.Name, match.Groups["Value"].Value);
                         break;
                     case FieldInputType.Boolean:
-                        obj.FieldsFound.Add(fieldType.Name, match.Success ? 
-                            fieldType.TrueValue.Replace(@"[[{Value}]]", match.Groups["Value"].Value) : 
+                        obj.FieldsFound.Add(fieldType.Name, match.Success ?
+                            fieldType.TrueValue.Replace(@"[[{Value}]]", match.Groups["Value"].Value) :
                             fieldType.FalseValue.Replace(@"[[{Value}]]", match.Groups["Value"].Value));
                         break;
                     case FieldInputType.Switch:

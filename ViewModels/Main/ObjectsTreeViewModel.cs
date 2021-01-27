@@ -39,9 +39,8 @@ namespace UMLGenerator.ViewModels.Main
 
         #endregion
 
-
         #region Fields
-        private MainViewModel mainVM;
+        private readonly MainViewModel mainVM;
         #endregion
         #region Constructors
         public ObjectsTreeViewModel(MainViewModel mainVM) : base(300, new GridLength(1, GridUnitType.Star), false)
@@ -62,61 +61,48 @@ namespace UMLGenerator.ViewModels.Main
 
         public void GenerateObjectsTree(List<FileModel> fileModels)
         {
+            IsLoading = true;
+            CodeProject = new CodeProjectModel(mainVM.LanguagesVM.SelectedLanguage);
+            List<string> filesContent = GetFilesContent(fileModels);
+            RunOnFiles(filesContent);
+            IsLoading = false;
+            GenerateUMLCommand.Execute(null);
+        }
+        private List<string> GetFilesContent(List<FileModel> fileModels)
+        {
             if (mainVM.GithubVM.RepostioryID == 0)
             {
-                RunOnFiles(fileModels);
-                mainVM.UmlVM.UpdateUML(CodeProject.TransferToUML());
+                return fileModels.Select(file => System.IO.File.ReadAllText(file.FullName)).ToList();
             }
             else
             {
-                IsLoading = true;
-                RunOnFiles(fileModels, mainVM.GithubVM.GitClient, mainVM.GithubVM.RepostioryID).ContinueWith(t => 
+                return Task.WhenAll(fileModels.Select(file => GetGithubFileContent(file))).GetAwaiter().GetResult().ToList();
+            }
+        }
+        private void RunOnFiles(List<string> filesContent)
+        {
+            filesContent.ForEach(code => 
+            {
+                var items = Libraries.ObjectsTreeLibrary.GetFileObjects(code, CodeProject);
+                App.Current.Dispatcher.Invoke(() =>
                 {
-                    IsLoading = false;
-                    mainVM.UmlVM.UpdateUML(CodeProject.TransferToUML());
+                    items.ForEach(item => CodeProject.Children.Add(item));
                 });
-            }
+                
+            });        
         }
 
-        private void RunOnFiles(List<FileModel> fileModels) //local files
+        private async Task<string> GetGithubFileContent(FileModel file)
         {
-            CodeProject = new CodeProjectModel(mainVM.LanguagesVM.SelectedLanguage);
-            foreach (var file in fileModels)
+            try
             {
-                var vm = new CodeFileViewModel(System.IO.File.ReadAllText(file.FullName), CodeProject);
-                vm.GetLanguageObjects().ForEach(item => CodeProject.Children.Add(item));
+                return (await mainVM.GithubVM.GitClient.Repository.Content
+                    .GetAllContents(mainVM.GithubVM.RepostioryID, file.FullName))[0].Content;
             }
-        }
-
-        private async Task RunOnFiles(List<FileModel> fileModels, GitHubClient client, long repositoryId) // github files
-        {
-            CodeProject = new CodeProjectModel(mainVM.LanguagesVM.SelectedLanguage);
-            List<Task> tasks = new List<Task>();
-            fileModels.ForEach(file => tasks.Add(GetFileContent(file)));
-            await Task.WhenAll(tasks);
-
-            async Task GetFileContent(FileModel file)
+            catch (Exception exception)
             {
-                try
-                {
-                    await Task.Run(() =>
-                    {
-                        var code = client.Repository.Content.GetAllContents(repositoryId, file.FullName).GetAwaiter().GetResult()[0].Content;
-                        var vm = new CodeFileViewModel(code, CodeProject);
-                        vm.GetLanguageObjects().ForEach(item =>
-                        {
-                            App.Current.Dispatcher.Invoke(() =>
-                            {
-                                CodeProject.Children.Add(item);
-                            });
-                        });
-                    });
-
-                }
-                catch (Exception exception)
-                {
-                    MessageBox.Show(exception.Message);
-                }
+                MessageBox.Show(exception.Message);
+                return "";
             }
         }
         #endregion
