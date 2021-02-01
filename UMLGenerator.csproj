@@ -15,9 +15,11 @@
     <None Remove="Resources\Images\ExpandIcon.png" />
     <None Remove="Resources\Images\ExportIcon.png" />
     <None Remove="Resources\Images\LanguageIcon.png" />
+    <None Remove="Resources\Images\LocalIcon.png" />
     <None Remove="Resources\Images\ObjectsTreeIcon.png" />
     <None Remove="Resources\Images\PlantUMLIcon.png" />
     <None Remove="Resources\Images\PNGIcon.png" />
+    <None Remove="Resources\Images\RemoteIcon.png" />
     <None Remove="Resources\Images\SourceIcon.png" />
     <None Remove="Resources\Images\TextIcon.png" />
     <None Remove="Resources\Images\UmlGraphIcon.png" />
@@ -47,6 +49,9 @@
     <Content Include="Resources\Images\LanguageIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Images\LocalIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Images\ObjectsTreeIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -55,6 +60,9 @@
     </Content>
     <Content Include="Resources\Images\PNGIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\RemoteIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Images\SourceIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
