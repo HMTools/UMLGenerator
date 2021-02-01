@@ -108,7 +108,6 @@ namespace UMLGenerator.Libraries
                 output.Add(nestedObj);
             return output;
         }
-
         private bool SetComponentFields(string statement, ref CodeObjectModel obj, CodeComponentTypeModel componentType)
         {
             obj.Name = Regex.Match(statement, componentType.NamePattern).Groups["Value"].Value;
@@ -200,7 +199,6 @@ namespace UMLGenerator.Libraries
             }
             return null;
         }
-
         private Dictionary<char, CodeDelimiterModel> GetDelimitersDict(CodeComponentTypeModel componentType)
         {
             Dictionary<char, CodeDelimiterModel> delimiters = new Dictionary<char, CodeDelimiterModel>();
@@ -209,7 +207,26 @@ namespace UMLGenerator.Libraries
             return delimiters;
         }
 
-
+        public static void SetPathFields(IEnumerable<CodeObjectModel> objects)
+        {
+            foreach(var obj in objects)
+            {
+                foreach(var field in obj.Type.Fields.Where(field => field.InputType == FieldInputType.Path))
+                {
+                    var parent = obj.Parent;
+                    while (parent != null)
+                    {
+                        if (parent.Type.Name == field.PathAncestor && parent.FieldsFound.ContainsKey(field.PathField))
+                        {
+                            obj.FieldsFound.Add(field.Name, parent.FieldsFound[field.PathField]);
+                            break;
+                        }
+                        parent = parent.Parent;
+                    }
+                }
+                SetPathFields(obj.Children);
+            }
+        }
         private string GetOnlyRelevantCode(string str)
         {
             string res = str;

@@ -88,8 +88,8 @@ namespace UMLGenerator.ViewModels.Main
                 {
                     items.ForEach(item => CodeProject.Children.Add(item));
                 });
-                
-            });        
+            });
+            Libraries.ObjectsTreeLibrary.SetPathFields(CodeProject.Children);
         }
 
         private async Task<string> GetGithubFileContent(FileModel file)

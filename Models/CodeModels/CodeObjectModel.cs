@@ -57,7 +57,6 @@ namespace UMLGenerator.Models.CodeModels
         #region Methods
         public virtual string TransferToUML(int layer)
         {
-            SetPathFields();
             string tab = layer >= 0 ?String.Concat(Enumerable.Repeat("\t", layer)) : "";
             string output = Type.UMLPattern;
 
@@ -86,30 +85,12 @@ namespace UMLGenerator.Models.CodeModels
             return tab + output + Environment.NewLine;
         }
 
-        private void SetPathFields()
-        {
-            Type.Fields.Where(field => field.InputType == FieldInputType.Path).ToList().ForEach(field => 
-            {
-                var parent = Parent;
-                while (parent != null)
-                {
-                    if (parent.Type.Name == field.PathAncestor && parent.FieldsFound.ContainsKey(field.PathField))
-                    {
-                        FieldsFound.Add(field.Name, parent.FieldsFound[field.PathField]);
-                        break;
-                    }
-                    parent = parent.Parent;
-                }
-            });
-        }
-
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
                 foreach (CodeObjectModel newItem in e.NewItems)
                 {
-                    //Add listener for each item on PropertyChanged event
                     newItem.PropertyChanged += this.OnItemPropertyChanged;
                 }
             }

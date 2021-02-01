@@ -109,7 +109,7 @@ namespace UMLGenerator.ViewModels.Main
                 dialog.ShowDialog();
                 if (dialog.SelectedPath != "")
                 {
-                    RootDir = GetFolderDirectory(dialog.SelectedPath);
+                    Task.Run(() => RootDir = GetDirectory(dialog.SelectedPath).GetAwaiter().GetResult());
                     mainVM.GithubVM.RepostioryID = 0;
                 }
             });
@@ -120,7 +120,7 @@ namespace UMLGenerator.ViewModels.Main
                 {
                     IsLoading = true;
                     mainVM.GithubVM.RepostioryID = mainVM.GithubVM.GitClient.Repository.Get(RepositoryOwner, RepositoryName).GetAwaiter().GetResult().Id;
-                    Task.Run(() => RootDir = GetRepositoryDirectory(mainVM.GithubVM.GitClient, mainVM.GithubVM.RepostioryID, "").GetAwaiter().GetResult())
+                    Task.Run(() => RootDir = GetDirectory("").GetAwaiter().GetResult())
                     .ContinueWith(t => IsLoading = false);
                     
                 }
@@ -139,42 +139,46 @@ namespace UMLGenerator.ViewModels.Main
                 Task.Run(() => mainVM.ObjectsTreeVM.GenerateObjectsTree(GetCheckedFileModels(RootDir)));
             }, o => RootDir != null);
         }
-        private DirectoryModel GetFolderDirectory(string path)
+
+        private async Task<DirectoryModel> GetDirectory(string path)
         {
             var output = new DirectoryModel() { Name = Path.GetFileName(path), FullName = path };
-            foreach (var dir in Directory.GetDirectories(path))
+            List<string> subDirs = new List<string>();
+            if (SourceType == SourceTypes.Folder)
             {
-                output.Items.Add(GetFolderDirectory(dir));
-            }
-            foreach (var file in Directory.GetFiles(path))
-            {
-                if (Path.GetExtension(file) == $".{mainVM.LanguagesVM.SelectedLanguage.FileExtension}")
+                foreach (var file in Directory.GetFiles(path))
                 {
-                    output.Items.Add(new FileModel() { Name = Path.GetFileName(file), FullName = file });
+                    if (Path.GetExtension(file) == $".{mainVM.LanguagesVM.SelectedLanguage.FileExtension}")
+                    {
+                        output.Items.Add(new FileModel() { Name = Path.GetFileName(file), FullName = file });
+                    }
+                }
+                foreach (var dir in Directory.GetDirectories(path))
+                {
+                    subDirs.Add(dir);
                 }
             }
-            return output;
-        }
-
-        public async Task<DirectoryModel> GetRepositoryDirectory(GitHubClient client, long repoId, string path)
-        {
-            var output = new DirectoryModel() { Name = Path.GetFileName(path), FullName = path };
-            var contents = path == "" ? 
-                client.Repository.Content.GetAllContents(repoId).GetAwaiter().GetResult():
-                client.Repository.Content.GetAllContents(repoId, path).GetAwaiter().GetResult();
-
-            contents.Where(content => content.Type == "file" && Path.GetExtension(content.Name) == $".{mainVM.LanguagesVM.SelectedLanguage.FileExtension}")
-                .ToList().ForEach(content => output.Items.Add(new FileModel() { Name = content.Name, FullName = content.Path }));
-
-            List<Task> tasks = new List<Task>();
-            contents.Where(content => content.Type == "dir")
-                .ToList()
-                .ForEach(content => tasks.Add(GetRepositoryDirectory(client, repoId, content.Path)
-                .ContinueWith(t => output.Items.Add(t.Result))));
-            await Task.WhenAll(tasks);
+            else
+            {
+                var contents = path == "" ?
+                    await mainVM.GithubVM.GitClient.Repository.Content.GetAllContents(mainVM.GithubVM.RepostioryID) :
+                    await mainVM.GithubVM.GitClient.Repository.Content.GetAllContents(mainVM.GithubVM.RepostioryID, path);
+                    
+                foreach(var file in contents.Where(content => content.Type == "file" && Path.GetExtension(content.Name) == $".{mainVM.LanguagesVM.SelectedLanguage.FileExtension}"))
+                {
+                    output.Items.Add(new FileModel() { Name = file.Name, FullName = file.Path });
+                }
+                subDirs = contents.Where(dir => dir.Type == "dir").Select(dir => dir.Path).ToList();
+            }
+            foreach(var dir in Task.WhenAll(subDirs.Select(dir => GetDirectory(dir))).GetAwaiter().GetResult())
+            {
+                output.Items.Add(dir);
+            }
             return output;
 
         }
+
+
 
         public List<FileModel> GetCheckedFileModels(DirectoryModel directory)
         {
