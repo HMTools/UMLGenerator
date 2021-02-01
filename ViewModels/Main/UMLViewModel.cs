@@ -32,7 +32,7 @@ namespace UMLGenerator.ViewModels.Main
         public string PlantUml
         {
             get { return plantUml; }
-            set { plantUml = value; NotifyPropertyChanged(); }
+            set { plantUml = value; NotifyPropertyChanged();}
         }
 
         private bool isUmlView = true;
@@ -68,7 +68,14 @@ namespace UMLGenerator.ViewModels.Main
 
 
         public bool IsLoading { get; set; } = false;
-        public string SvgString { get; set; }
+        private string svgString;
+
+        public string SvgString
+        {
+            get { return svgString; }
+            set { svgString = value; NotifyPropertyChanged(); }
+        }
+
         public Bitmap UMLImage { get; set; }
         #endregion
         #region Fields
@@ -78,7 +85,7 @@ namespace UMLGenerator.ViewModels.Main
         #endregion
 
         #region Constructors
-        public UMLViewModel(MainViewModel mainVM) : base(300, new GridLength(1, GridUnitType.Star), false)
+        public UMLViewModel(MainViewModel mainVM) : base(300, new GridLength(1, GridUnitType.Star), false, true)
         {
             this.mainVM = mainVM;
             isJavaInstalled = CheckIsJavaInstalled();
@@ -125,6 +132,7 @@ namespace UMLGenerator.ViewModels.Main
         private void ResetUMLProperties(string plantUML)
         {
             PlantUml = plantUML;
+            
             if (IsLoading)
             {
                 cancellationTokenSource.Cancel();
