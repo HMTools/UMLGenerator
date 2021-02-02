@@ -33,6 +33,9 @@
                     <Button Style="{StaticResource Button_ImageButton}" Command="{Binding AddLanguageCommand}" Margin="10,0,0,0" Width="Auto" Height="Auto">
                         <TextBlock Text="Add"/>
                     </Button>
+                    <Button Style="{StaticResource Button_ImageButton}" Command="{Binding OpenLanguagesFolderCommand}" Margin="10,0,0,0" Width="Auto" Height="Auto">
+                        <TextBlock Text="Folder"/>
+                    </Button>
                 </StackPanel>
             </GroupBox.Header>
             <ListBox ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguageName}" Width="300" MinHeight="150">

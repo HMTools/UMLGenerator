@@ -17,6 +17,7 @@ namespace UMLGenerator.ViewModels.CodeLanguages
     public class LanguagesEditorViewModel : BaseGridColumnViewModel
     {
         #region Commands
+        public RelayCommand OpenLanguagesFolderCommand { get; private set; }
         public RelayCommand AddLanguageCommand { get; private set; }
         public RelayCommand EditLanguageCommand { get; private set; }
         public RelayCommand SaveLanguageCommand { get; private set; }
@@ -101,6 +102,17 @@ namespace UMLGenerator.ViewModels.CodeLanguages
         protected override void AddCommands()
         {
             base.AddCommands();
+            OpenLanguagesFolderCommand = new RelayCommand(o => 
+            {
+                try
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", $"{Directory.GetCurrentDirectory()}\\Languages\\");
+                }
+                catch (System.ComponentModel.Win32Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                }
+            });
             #region Languages Commands
             AddLanguageCommand = new RelayCommand(o =>
             {
