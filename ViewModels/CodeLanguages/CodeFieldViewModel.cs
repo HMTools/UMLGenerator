@@ -39,9 +39,9 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             { 
                 Field.SwitchCases.Add(new CodeCaseModel());
             });
-            RemoveCaseCommand = new RelayCommand(_case => 
+            RemoveCaseCommand = new RelayCommand(o => 
             {
-                    Field.SwitchCases.Remove(_case as CodeCaseModel);
+                Field.SwitchCases.Remove(o as CodeCaseModel);
             });
         }
         #endregion

@@ -24,7 +24,6 @@ namespace UMLGenerator.ViewModels.CodeLanguages
         #region Commands
 
         public RelayCommand CreateLanguageCommand { get; private set; }
-        public RelayCommand SaveLanguageCommand { get; private set; }
         public RelayCommand AddFieldCommand { get; private set; }
         public RelayCommand RemoveFieldCommand { get; private set; }
         public RelayCommand AddDelimiterCommand { get; private set; }
@@ -56,10 +55,6 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             get { return isCreating; }
             set { isCreating = value; NotifyPropertyChanged(); }
         }
-
-        
-
-
         #endregion
 
         #region Constructor
@@ -99,6 +94,7 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                     OnCreate?.Invoke(this, EventArgs.Empty);
                 }
             });
+            #region Fields Commands
             AddFieldCommand = new RelayCommand(o =>
             {
                 var field = new CodeFieldTypeModel();
@@ -111,6 +107,8 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                 Fields.Remove(fieldVM);
                 Language.Fields.Remove(fieldVM.Field);
             });
+            #endregion
+            #region Delimiter Commands
             AddDelimiterCommand = new RelayCommand(o =>
             {
                 Language.CodeDelimiters.Add(new CodeDelimiterModel());
@@ -119,6 +117,8 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             {
                 Language.CodeDelimiters.Remove(o as CodeDelimiterModel);
             });
+            #endregion
+            #region Cleanup Commands
             AddCleanupCommand = new RelayCommand(o =>
             {
                 Language.CleanupModels.Add(new CodeCleanupModel());
@@ -127,6 +127,8 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             {
                 Language.CleanupModels.Remove(o as CodeCleanupModel);
             });
+            #endregion
+            #region SubComponents Commands
             AddSubComponentCommand = new RelayCommand(o =>
             {
                 var (s, t) = o as Tuple<object, object>;
@@ -135,7 +137,6 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                     CodeComponentTypeModel source = s as CodeComponentTypeModel;
                     if (!Language.SubComponents.Contains(source.Name))
                         Language.SubComponents.Add(source.Name);
-
                 }
             });
             RemoveSubComponentCommand = new RelayCommand(o =>
@@ -146,7 +147,6 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                     string source = s as string;
                     if (Language.SubComponents.Contains(source))
                         Language.SubComponents.Remove(source);
-
                 }
             });
             SwapSubComponentCommand = new RelayCommand(o =>
@@ -159,6 +159,7 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                         Language.SubComponents.Swap(source, target);
                 }
             });
+            #endregion
         }
         private void SetEditorSyntax()
         {

@@ -17,7 +17,6 @@ namespace UMLGenerator.ViewModels.CodeLanguages
     public class LanguagesEditorViewModel : BaseGridColumnViewModel
     {
         #region Commands
-
         public RelayCommand AddLanguageCommand { get; private set; }
         public RelayCommand EditLanguageCommand { get; private set; }
         public RelayCommand SaveLanguageCommand { get; private set; }
@@ -44,8 +43,6 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                 NotifyPropertyChanged();
             }
         }
-
-
         private CodeLanguageModel selectedLanguage;
 
         public CodeLanguageModel SelectedLanguage
@@ -89,7 +86,7 @@ namespace UMLGenerator.ViewModels.CodeLanguages
         #endregion
 
         #region Fields
-        private MainViewModel mainVM;
+        private readonly MainViewModel mainVM;
         #endregion
 
         #region Constructors
@@ -104,7 +101,8 @@ namespace UMLGenerator.ViewModels.CodeLanguages
         protected override void AddCommands()
         {
             base.AddCommands();
-            AddLanguageCommand = new RelayCommand(o => 
+            #region Languages Commands
+            AddLanguageCommand = new RelayCommand(o =>
             {
                 var newVM = new CodeLanguageViewModel(this, null);
                 newVM.OnCreate += (s, e) =>
@@ -115,47 +113,19 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                 };
                 SelectedViewModel = newVM;
             });
-            SaveLanguageCommand = new RelayCommand(o => 
+            SaveLanguageCommand = new RelayCommand(o =>
             {
-                SelectedLanguage.Components.Clear();
-                bool isValid = true;
-                foreach (var comp in Components)
-                {
-                    if(SelectedLanguage.Components.ContainsKey(comp.Name))
-                    {
-                        MessageBox.Show("Language cannot have two or more Components with the same name !");
-                        isValid = false;
-                        break;
-                    }
-                    SelectedLanguage.Components.Add(comp.Name, comp);
-                }
-                if(string.IsNullOrWhiteSpace(SelectedLanguage.Name))
-                {
-                    MessageBox.Show("Please decalre a name!");
-                    isValid = false;
-                }
-                if(isValid)
-                {
-                    File.Delete($"{Directory.GetCurrentDirectory()}\\Languages\\{o as string}.json");
-                    File.WriteAllText($"{Directory.GetCurrentDirectory()}\\Languages\\{SelectedLanguage.Name}.json", JsonSerializer.Serialize(SelectedLanguage));
-                    mainVM.SetStatus($"{SelectedLanguage.Name} language saved", System.Windows.Media.Brushes.Blue, 2000);
-                    if(o as string != SelectedLanguage.Name)
-                    {
-                        Languages.Add(SelectedLanguage.Name);
-                        SelectedLanguageName = SelectedLanguage.Name;
-                        Languages.Remove(o as string);
-                    }
-                }
+                SaveLanguage(o as string);
             });
-            EditLanguageCommand = new RelayCommand(o => 
+            EditLanguageCommand = new RelayCommand(o =>
             {
                 SelectedComponent = null;
                 var newVM = new CodeLanguageViewModel(this, SelectedLanguage);
                 SelectedViewModel = newVM;
             });
-            RemoveLanguageCommand = new RelayCommand(o => 
-            { 
-                if(MessageBox.Show($"Are you sure you want to delete {o as string}?", "Delete Language", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            RemoveLanguageCommand = new RelayCommand(o =>
+            {
+                if (MessageBox.Show($"Are you sure you want to delete {o as string}?", "Delete Language", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     File.Delete($"{Directory.GetCurrentDirectory()}\\Languages\\{o as string}.json");
                     Languages.Remove(o as string);
@@ -163,8 +133,9 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                         SelectedLanguageName = Languages[0];
                 }
             });
-
-            AddComponentCommand = new RelayCommand(o => 
+            #endregion
+            #region Components Commands
+            AddComponentCommand = new RelayCommand(o =>
             {
                 var newVM = new CodeComponentViewModel(this, null);
                 newVM.OnCreate += (s, e) =>
@@ -176,10 +147,42 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             RemoveComponentCommand = new RelayCommand(o =>
             {
                 Components.Remove(o as CodeComponentTypeModel);
-            }
-            );
+            });
+            #endregion
         }
+        private void SaveLanguage(string originalLanguageName)
+        {
+            //SelectedLanguage.Components.Clear();
+            if(string.IsNullOrWhiteSpace(SelectedLanguage.Name))
+            {
+                MessageBox.Show("Please decalre a name!");
+                return;
+            }
+            if(originalLanguageName != SelectedLanguage.Name && Languages.Contains(SelectedLanguage.Name))
+            {
+                MessageBox.Show("There is already a language object with the same name!");
+                return;
+            }
+            if(Components.GroupBy(comp => comp.Name).Any(group => group.Count() > 1))
+            {
+                MessageBox.Show("Language object cannot have two or more components with the same name !");
+                return;
+            }
 
+            SelectedLanguage.Components.Clear();
+            foreach (var comp in Components)
+                SelectedLanguage.Components.Add(comp.Name, comp);
+
+            File.Delete($"{Directory.GetCurrentDirectory()}\\Languages\\{originalLanguageName}.json");
+            File.WriteAllText($"{Directory.GetCurrentDirectory()}\\Languages\\{SelectedLanguage.Name}.json", JsonSerializer.Serialize(SelectedLanguage));
+            mainVM.SetStatus($"{SelectedLanguage.Name} language saved", System.Windows.Media.Brushes.Blue, 2000);
+            if (originalLanguageName != SelectedLanguage.Name)
+            {
+                Languages.Add(SelectedLanguage.Name);
+                SelectedLanguageName = SelectedLanguage.Name;
+                Languages.Remove(originalLanguageName);
+            }
+        }
         private void LoadData()
         {
             Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}\\Languages");
