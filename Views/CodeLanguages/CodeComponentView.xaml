@@ -140,7 +140,7 @@
                         </Grid.RowDefinitions>
                         <Button Content="Add Field" Command="{Binding AddFieldCommand}"/>
                         <Label Style="{StaticResource Label_Property3}" Grid.Column="1" Content="Add Common Field"/>
-                        <ComboBox ItemsSource="{Binding LanguageEditor.SelectedLanguage.Fields}" SelectedValue="{Binding SelectedCommonField, Mode=OneWayToSource}" DisplayMemberPath="Name" Grid.Column="2" Width="200"/>
+                        <ComboBox ItemsSource="{Binding LanguageEditor.SelectedLanguage.Fields}" SelectedValue="{Binding SelectedCommonField, Mode=TwoWay}" DisplayMemberPath="Name" Grid.Column="2" Width="200"/>
                         <ItemsControl ItemsSource="{Binding Fields}" Grid.ColumnSpan="4" Grid.Row="1">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>

@@ -55,14 +55,10 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             set { syntax = value; NotifyPropertyChanged(); }
         }
 
-
-
-        public CodeComponentTypeModel Component { get; set; }
-        public ObservableCollection<CodeFieldViewModel> Fields { get; set; } = new ObservableCollection<CodeFieldViewModel>();
-        public LanguagesEditorViewModel LanguageEditor { get; set; }
         public CodeFieldTypeModel SelectedCommonField
         {
-            set
+            get { return null; }
+            set 
             {
                 if (value != null)
                 {
@@ -72,6 +68,10 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                 }
             }
         }
+
+        public CodeComponentTypeModel Component { get; set; }
+        public ObservableCollection<CodeFieldViewModel> Fields { get; set; } = new ObservableCollection<CodeFieldViewModel>();
+        public LanguagesEditorViewModel LanguageEditor { get; set; }
         #endregion
 
 
@@ -79,7 +79,7 @@ namespace UMLGenerator.ViewModels.CodeLanguages
         public CodeComponentViewModel(LanguagesEditorViewModel languageEditor, CodeComponentTypeModel component)
         {
             SetEditorSyntax();
-            this.LanguageEditor = languageEditor;
+            LanguageEditor = languageEditor;
             if(component != null)
             {
                 IsCreating = false;
@@ -110,27 +110,30 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                 }
                 else
                 {
-                    
                     MessageBox.Show("Component name cannot be empty!");
                 }
             });
-
+            #region True | False Patterns Commands
             AddTruePatternCommand = new RelayCommand(o => Component.TruePatterns.Add(new CodePatternModel()));
             AddFalsePatternCommand = new RelayCommand(o => Component.FalsePatterns.Add(new CodePatternModel()));
-            RemoveTruePatternCommand = new RelayCommand(o =>  Component.TruePatterns.RemoveAt((int)o));
+            RemoveTruePatternCommand = new RelayCommand(o => Component.TruePatterns.RemoveAt((int)o));
             RemoveFalsePatternCommand = new RelayCommand(o => Component.FalsePatterns.RemoveAt((int)o));
+            #endregion
+            #region Fields Commands
             AddFieldCommand = new RelayCommand(o =>
             {
                 var field = new CodeFieldTypeModel();
                 Component.Fields.Add(field);
                 Fields.Add(new CodeFieldViewModel(field));
             });
-            RemoveFieldCommand = new RelayCommand(o => 
+            RemoveFieldCommand = new RelayCommand(o =>
             {
                 var fieldVM = o as CodeFieldViewModel;
                 Fields.Remove(fieldVM);
                 Component.Fields.Remove(fieldVM.Field);
             });
+            #endregion
+            #region Delimiter Commands
             AddDelimiterCommand = new RelayCommand(o =>
             {
                 Component.CodeDelimiters.Add(new CodeDelimiterModel());
@@ -139,10 +142,12 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             {
                 Component.CodeDelimiters.Remove(o as CodeDelimiterModel);
             });
-            AddSubCommand = new RelayCommand(o => 
+            #endregion
+            #region SubComponents Commands
+            AddSubCommand = new RelayCommand(o =>
             {
                 var (s, t) = o as Tuple<object, object>;
-                if(s is CodeComponentTypeModel && t is CodeComponentViewModel)
+                if (s is CodeComponentTypeModel && t is CodeComponentViewModel)
                 {
                     CodeComponentTypeModel source = s as CodeComponentTypeModel;
                     if (!Component.SubComponents.Contains(source.Name))
@@ -161,16 +166,17 @@ namespace UMLGenerator.ViewModels.CodeLanguages
 
                 }
             });
-            SwapSubCommand = new RelayCommand(o => 
+            SwapSubCommand = new RelayCommand(o =>
             {
                 var (s, t) = o as Tuple<object, object>;
-                if(s is string && t is string)
+                if (s is string && t is string)
                 {
                     string source = s as string, target = t as string;
-                    if(Component.SubComponents.Contains(source))
+                    if (Component.SubComponents.Contains(source))
                         Component.SubComponents.Swap(source, target);
                 }
             });
+            #endregion
         }
         private void SetEditorSyntax()
         {
