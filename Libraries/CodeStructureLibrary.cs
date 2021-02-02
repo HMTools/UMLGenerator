@@ -8,7 +8,7 @@ using UMLGenerator.Models.CodeModels;
 
 namespace UMLGenerator.Libraries
 {
-    public class ObjectsTreeLibrary
+    public class CodeStructureLibrary
     {
         #region Fields
         private string code;
@@ -17,7 +17,7 @@ namespace UMLGenerator.Libraries
         private CodeProjectModel project;
         #endregion
         #region Constructors
-        private ObjectsTreeLibrary(string code, CodeProjectModel project)
+        private CodeStructureLibrary(string code, CodeProjectModel project)
         {
             this.code = code;
             this.project = project;
@@ -28,7 +28,7 @@ namespace UMLGenerator.Libraries
         #region Methods
         public static List<CodeObjectModel> GetFileObjects(string code, CodeProjectModel project)
         {
-            var fileModel = new ObjectsTreeLibrary(code, project);
+            var fileModel = new CodeStructureLibrary(code, project);
             return fileModel.GetComponentChildren(project.Language, new CodeDelimiterModel());
         }
         private CodeObjectModel GetComponent(string statement, CodeComponentTypeModel parentType, CodeDelimiterModel currDelimiter)

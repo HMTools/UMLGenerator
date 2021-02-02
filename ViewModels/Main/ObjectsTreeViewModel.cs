@@ -43,7 +43,7 @@ namespace UMLGenerator.ViewModels.Main
         private readonly MainViewModel mainVM;
         #endregion
         #region Constructors
-        public ObjectsTreeViewModel(MainViewModel mainVM) : base(300, new GridLength(1, GridUnitType.Star), false)
+        public ObjectsTreeViewModel(MainViewModel mainVM) : base(300, new GridLength(1, GridUnitType.Star), false, true)
         {
             this.mainVM = mainVM;
         }
@@ -71,25 +71,21 @@ namespace UMLGenerator.ViewModels.Main
         private List<string> GetFilesContent(List<FileModel> fileModels)
         {
             if (mainVM.SourceVM.SourceType == SourceTypes.Folder)
-            {
                 return fileModels.Select(file => System.IO.File.ReadAllText(file.FullName)).ToList();
-            }
             else
-            {
                 return Task.WhenAll(fileModels.Select(file => GetGithubFileContent(file))).GetAwaiter().GetResult().ToList();
-            }
         }
         private void RunOnFiles(List<string> filesContent)
         {
             filesContent.ForEach(code => 
             {
-                var items = Libraries.ObjectsTreeLibrary.GetFileObjects(code, CodeProject);
-                App.Current.Dispatcher.Invoke(() =>
+                var items = Libraries.CodeStructureLibrary.GetFileObjects(code, CodeProject);
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
                     items.ForEach(item => CodeProject.Children.Add(item));
                 });
             });
-            Libraries.ObjectsTreeLibrary.SetPathFields(CodeProject.Children);
+            Libraries.CodeStructureLibrary.SetPathFields(CodeProject.Children);
         }
 
         private async Task<string> GetGithubFileContent(FileModel file)

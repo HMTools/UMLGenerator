@@ -57,6 +57,9 @@ namespace UMLGenerator.Models.CodeModels
         #region Methods
         public virtual string TransferToUML(int layer)
         {
+            if (IsChecked == false)
+                return "";
+
             string tab = layer >= 0 ?String.Concat(Enumerable.Repeat("\t", layer)) : "";
             string output = Type.UMLPattern;
 
