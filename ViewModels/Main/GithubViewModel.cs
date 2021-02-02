@@ -31,7 +31,6 @@ namespace UMLGenerator.ViewModels.Main
             set { apiToken = value; NotifyPropertyChanged(); }
         }
 
-
         private string username;
 
         public string Username
@@ -42,7 +41,7 @@ namespace UMLGenerator.ViewModels.Main
         public GitHubClient GitClient { get; set; }
         public long RepostioryID { get; set; }
 
-        public ObservableCollection<object> Repos { get; set; }
+        public ObservableCollection<object> Repos { get; set; } = new ObservableCollection<object>();
         #endregion
 
         #region Fields
@@ -54,8 +53,7 @@ namespace UMLGenerator.ViewModels.Main
         public GithubViewModel(MainViewModel mainVM) : base(300, new GridLength(1, GridUnitType.Star), false)
         {
             this.mainVM = mainVM;
-            Repos = new ObservableCollection<object>();
-            LoadData();
+            Task.Run(LoadData);
         }
         #endregion
 
@@ -63,57 +61,63 @@ namespace UMLGenerator.ViewModels.Main
         protected override void AddCommands()
         {
             base.AddCommands();
-            UpdateTokenCommand = new RelayCommand(o =>
-            {
-                if (!string.IsNullOrWhiteSpace(ApiToken) && ApiToken != ConfigurationManager.AppSettings["GitApiToken"])
-                {
-                    var client = GetGithubClient(ApiToken);
-                    if (client != null)
-                    {
-                        lastWorkedToken = ApiToken;
-                        GitClient = client;
-                        Libraries.Configurations.AddOrUpdateAppSettings("GitApiToken", ApiToken);
-                        Username = GitClient.User.Current().GetAwaiter().GetResult().Login;
-
-                        Repos.Clear();
-                        foreach (var repo in GitClient.Repository.GetAllForCurrent().GetAwaiter().GetResult())
-                        {
-                            Repos.Add(new { repo.Name, repo.Private, repo.Language , repo.Id});
-                        }
-                        mainVM.SetStatus($"Set Github Token | Succeed | Username: {Username}", Brushes.Blue, 2000);
-                    }
-                    else
-                    {
-                        ApiToken = lastWorkedToken;
-                        mainVM.SetStatus($"Set Github Token | Failed!", Brushes.Red, 3000);
-                    }
-                }
-            });
-            GetSelectedRepositoryCommand = new RelayCommand(o => 
-            {
-                IsShown = false;
-                dynamic repo = o;
-                RepostioryID = repo.Id;
-                mainVM.SourceVM.SourceType = SourceTypes.Github;
-                mainVM.SourceVM.RepositoryName = repo.Name;
-                mainVM.SourceVM.RepositoryOwner = username;
-                mainVM.SourceVM.IsShown = true;
-                mainVM.SourceVM.GetRepositoryCommand.Execute(null);
-            });
+            UpdateTokenCommand = new RelayCommand(o => Task.Run(UpdateToken));
+            GetSelectedRepositoryCommand = new RelayCommand(GetSelectedRepository);
         }
-        private void LoadData()
+        private async Task LoadData()
         {
             ApiToken = ConfigurationManager.AppSettings["GitApiToken"];
-            GitClient = GetGithubClient(ApiToken);
-            if (GitClient != null)
+            await SetClient();
+        }
+        private async Task UpdateToken()
+        {
+            if (ApiToken != ConfigurationManager.AppSettings["GitApiToken"])
             {
-                lastWorkedToken = ApiToken;
-                Username = GitClient.User.Current().GetAwaiter().GetResult().Login;
-                foreach (var repo in GitClient.Repository.GetAllForCurrent().GetAwaiter().GetResult())
+                if(await SetClient())
                 {
-                    Repos.Add(new { repo.Name, repo.Private, repo.Language, repo.Id });
+                    Libraries.Configurations.AddOrUpdateAppSettings("GitApiToken", ApiToken);
+                    mainVM.SetStatus($"Set Github Token | Succeed | Username: {Username}", Brushes.Blue, 2000);
+                }
+                else
+                {
+                    ApiToken = lastWorkedToken;
+                    mainVM.SetStatus($"Set Github Token | Failed!", Brushes.Red, 3000);
                 }
             }
+        }
+        private async Task<bool> SetClient()
+        {
+            if(!string.IsNullOrWhiteSpace(ApiToken))
+            {
+                var client = GetGithubClient(ApiToken);
+                if (client != null)
+                {
+                    lastWorkedToken = ApiToken;
+                    GitClient = client;
+                    Username = (await GitClient.User.Current()).Login;
+                    await Task.Run(SetUserRepositories);
+                    return true;
+                }
+            }
+            return false;
+        }
+        private async Task SetUserRepositories()
+        {
+            Repos.Clear();
+            foreach (var repo in await GitClient.Repository.GetAllForCurrent())
+            {
+                Repos.Add(new { repo.Name, repo.Private, repo.Language, repo.Id });
+            }
+        }
+        private void GetSelectedRepository(dynamic repo)
+        {
+            IsShown = false;
+            RepostioryID = repo.Id;
+            mainVM.SourceVM.SourceType = SourceTypes.Github;
+            mainVM.SourceVM.RepositoryName = repo.Name;
+            mainVM.SourceVM.RepositoryOwner = username;
+            mainVM.SourceVM.IsShown = true;
+            mainVM.SourceVM.SetRootDir("");
         }
         private static GitHubClient GetGithubClient(string token)
         {
@@ -129,10 +133,7 @@ namespace UMLGenerator.ViewModels.Main
                 }
                 catch (Exception ex)
                 {
-                    if (ex.Message == "Bad credentials")
-                    {
-                        return null;
-                    }
+                    Console.WriteLine(ex.Message);
                 }
             }
 

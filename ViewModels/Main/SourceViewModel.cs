@@ -35,12 +35,16 @@ namespace UMLGenerator.ViewModels.Main
                     {
                         mainVM.GithubVM.IsShown = true;
                         if(mainVM.GithubVM.GitClient != null)
+                        {
+                            RootDir = null;
                             sourceType = value; NotifyPropertyChanged();
+                        }
                     }
                     return;
                 }
                 else
                 {
+                    RootDir = null;
                     sourceType = value; NotifyPropertyChanged();
                 }
                 
@@ -109,26 +113,14 @@ namespace UMLGenerator.ViewModels.Main
                 dialog.ShowDialog();
                 if (dialog.SelectedPath != "")
                 {
-                    Task.Run(() => RootDir = GetDirectory(dialog.SelectedPath).GetAwaiter().GetResult());
-                    mainVM.GithubVM.RepostioryID = 0;
-                }
+                    SetRootDir(dialog.SelectedPath);
+                 }
             });
 
             GetRepositoryCommand = new RelayCommand(o =>
             {
-                try
-                {
-                    IsLoading = true;
-                    mainVM.GithubVM.RepostioryID = mainVM.GithubVM.GitClient.Repository.Get(RepositoryOwner, RepositoryName).GetAwaiter().GetResult().Id;
-                    Task.Run(() => RootDir = GetDirectory("").GetAwaiter().GetResult())
-                    .ContinueWith(t => IsLoading = false);
-                    
-                }
-                catch (Exception exception)
-                {
-                    MessageBox.Show(exception.Message);
-                }
-
+                mainVM.GithubVM.RepostioryID = mainVM.GithubVM.GitClient.Repository.Get(RepositoryOwner, RepositoryName).GetAwaiter().GetResult().Id;
+                SetRootDir("");
             });
 
             GetObjectsTreeCommand = new RelayCommand(o => 
@@ -138,6 +130,13 @@ namespace UMLGenerator.ViewModels.Main
                 IsShown = false;
                 Task.Run(() => mainVM.ObjectsTreeVM.GenerateObjectsTree(GetCheckedFileModels(RootDir)));
             }, o => RootDir != null);
+        }
+
+        public void SetRootDir(string path)
+        {
+            IsLoading = true;
+            /* Todo Maybe async await  */
+            Task.Run(() => RootDir = GetDirectory(path).GetAwaiter().GetResult()).ContinueWith(t => IsLoading = false);
         }
 
         private async Task<DirectoryModel> GetDirectory(string path)
@@ -177,8 +176,6 @@ namespace UMLGenerator.ViewModels.Main
             return output;
 
         }
-
-
 
         public List<FileModel> GetCheckedFileModels(DirectoryModel directory)
         {

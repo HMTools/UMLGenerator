@@ -70,7 +70,7 @@ namespace UMLGenerator.ViewModels.Main
         }
         private List<string> GetFilesContent(List<FileModel> fileModels)
         {
-            if (mainVM.GithubVM.RepostioryID == 0)
+            if (mainVM.SourceVM.SourceType == SourceTypes.Folder)
             {
                 return fileModels.Select(file => System.IO.File.ReadAllText(file.FullName)).ToList();
             }
