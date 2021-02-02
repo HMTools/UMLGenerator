@@ -65,9 +65,15 @@ namespace UMLGenerator.ViewModels.Main
             get { return isLocal; }
             set { isLocal = value; NotifyPropertyChanged(); }
         }
+        private bool isLoading = false;
+
+        public bool IsLoading
+        {
+            get { return isLoading; }
+            set { isLoading = value; NotifyPropertyChanged(); }
+        }
 
 
-        public bool IsLoading { get; set; } = false;
         private string svgString;
 
         public string SvgString
@@ -75,13 +81,19 @@ namespace UMLGenerator.ViewModels.Main
             get { return svgString; }
             set { svgString = value; NotifyPropertyChanged(); }
         }
+        private Bitmap umlImage;
 
-        public Bitmap UMLImage { get; set; }
+        public Bitmap UMLImage
+        {
+            get { return umlImage; }
+            set { umlImage = value; NotifyPropertyChanged();}
+        }
+
         #endregion
         #region Fields
         private CancellationTokenSource cancellationTokenSource;
         private readonly MainViewModel mainVM;
-        private bool isJavaInstalled;
+        private readonly bool isJavaInstalled;
         #endregion
 
         #region Constructors
@@ -119,7 +131,7 @@ namespace UMLGenerator.ViewModels.Main
             SetUml();
             IsLoading = false;
         }
-        private bool CheckIsJavaInstalled()
+        private static bool CheckIsJavaInstalled()
         {
             var javaEnvironmentVar = Environment.GetEnvironmentVariable("JAVA_HOME");
             var key32 = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Registry32)
@@ -132,34 +144,33 @@ namespace UMLGenerator.ViewModels.Main
         private void ResetUMLProperties(string plantUML)
         {
             PlantUml = plantUML;
-            
             if (IsLoading)
             {
                 cancellationTokenSource.Cancel();
                 while (IsLoading) ;
             }
+            UMLImage = null;
             ImageSource = null;
+            SvgString = "";
             Message = "Loading ...";
             cancellationTokenSource = new CancellationTokenSource();
         }
         private void SetUml()
         {
-            Task.Run(() => 
+            Task.Run(async () => 
             {
                 try
                 {
                     if (IsLocal)
                     {
-                        Task.Run(async () => {
-                            SvgString = await Libraries.PlantUMLMethods.GetLocalSVG(PlantUml, cancellationTokenSource.Token);
-                        });
+                        SvgString = await Libraries.PlantUMLMethods.GetLocalSVG(PlantUml, cancellationTokenSource.Token);
 
                         UMLImage = Libraries.PlantUMLMethods.GetLocalPNG(PlantUml, cancellationTokenSource.Token);
                         ImageSource = UMLImage.BitmapToImageSource(System.Drawing.Imaging.ImageFormat.Png);
                     }
                     else
                     {
-                        SvgString = Libraries.PlantUMLMethods.GetRemoteSVG(PlantUml, cancellationTokenSource.Token).GetAwaiter().GetResult();
+                        SvgString = await Libraries.PlantUMLMethods.GetRemoteSVG(PlantUml, cancellationTokenSource.Token);
                         var svg = Svg.SvgDocument.FromSvg<Svg.SvgDocument>(SvgString);
                         System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() =>
                         {
