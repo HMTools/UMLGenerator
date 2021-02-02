@@ -82,40 +82,42 @@ namespace UMLGenerator.ViewModels
         {
             base.AddCommands();
             ToggleExportCommand = new RelayCommand(o => IsShowExport = !IsShowExport);
-            ExportSVGCommand = new RelayCommand(o => 
-            {
-                SaveFileDialog dialog = new SaveFileDialog() { Filter = "SVG file (*.svg)|*.svg" };
-                dialog.ShowDialog();
-                if (dialog.FileName != "")
-                {
-                    File.WriteAllText(dialog.FileName, UmlVM.SvgString);
-                    SetStatus("Export SVG | Succeed", Brushes.Black, 2000);
-                }
-            }, o => !string.IsNullOrEmpty(UmlVM.SvgString) && UmlVM.IsLoading == false);
+            ExportSVGCommand = new RelayCommand(o => Export("SVG"), o => !string.IsNullOrEmpty(UmlVM.SvgString) && UmlVM.IsLoading == false);
 
-            ExportPNGCommand = new RelayCommand(o =>
-            {
-                SaveFileDialog dialog = new SaveFileDialog() { Filter = "PNG file (*.png)|*.png" };
-                dialog.ShowDialog();
-                if (dialog.FileName != "")
-                {
-                    UmlVM.UMLImage.Save(dialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
-                    SetStatus("Export PNG | Succeed", Brushes.Black, 2000);
-                }
-            }, o => UmlVM.UMLImage != null && UmlVM.IsLoading == false);
+            ExportPNGCommand = new RelayCommand(o => Export("PNG"), o => UmlVM.UMLImage != null && UmlVM.IsLoading == false);
 
-            ExportPlantCommand = new RelayCommand(o =>
-            {
-                SaveFileDialog dialog = new SaveFileDialog() { Filter = "PlantUML file (*.wsd)|*.wsd" };
-                dialog.ShowDialog();
-                if (dialog.FileName != "")
-                {
-                    File.WriteAllText(dialog.FileName, UmlVM.PlantUml);
-                    SetStatus("Export PlantUML | Succeed", Brushes.Black, 2000);
-                }
-            }, (o) => !string.IsNullOrWhiteSpace(UmlVM.PlantUml));
+            ExportPlantCommand = new RelayCommand(o => Export("PlantUML"), (o) => !string.IsNullOrWhiteSpace(UmlVM.PlantUml));
         }
         
+        private void Export(string type)
+        {
+            var filter = type switch
+            {
+                "SVG" => "SVG file (*.svg)|*.svg",
+                "PNG" => "PNG file (*.png)|*.png",
+                "PlantUML" => "PlantUML file (*.wsd)|*.wsd",
+                _ => throw new NotImplementedException()
+            };
+            SaveFileDialog dialog = new SaveFileDialog() { Filter = filter };
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                switch(type)
+                {
+                    case "SVG":
+                        File.WriteAllText(dialog.FileName, UmlVM.SvgString);
+                        break;
+                    case "PNG":
+                        UmlVM.UMLImage.Save(dialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
+                        break;
+                    case "PlantUML":
+                        File.WriteAllText(dialog.FileName, UmlVM.PlantUml);
+                        break;
+                }            
+                SetStatus($"Export {type} | Succeed", Brushes.Black, 2000);
+            }
+
+        }
+
         public void SetStatus(string message, Brush color, int milliSeconds)
         {
             StatusColor = color;
