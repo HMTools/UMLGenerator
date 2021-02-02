@@ -73,7 +73,7 @@ namespace UMLGenerator.ViewModels.Main
         {
             if (ApiToken != ConfigurationManager.AppSettings["GitApiToken"])
             {
-                if(await SetClient())
+                if (await SetClient())
                 {
                     Libraries.Configurations.AddOrUpdateAppSettings("GitApiToken", ApiToken);
                     mainVM.SetStatus($"Set Github Token | Succeed | Username: {Username}", Brushes.Blue, 2000);
@@ -87,15 +87,15 @@ namespace UMLGenerator.ViewModels.Main
         }
         private async Task<bool> SetClient()
         {
-            if(!string.IsNullOrWhiteSpace(ApiToken))
+            if (!string.IsNullOrWhiteSpace(ApiToken))
             {
-                var client = GetGithubClient(ApiToken);
+                var client = await GetGithubClient(ApiToken);
                 if (client != null)
                 {
                     lastWorkedToken = ApiToken;
                     GitClient = client;
                     Username = (await GitClient.User.Current()).Login;
-                    await Task.Run(SetUserRepositories);
+                    await SetUserRepositories();
                     return true;
                 }
             }
@@ -103,12 +103,16 @@ namespace UMLGenerator.ViewModels.Main
         }
         private async Task SetUserRepositories()
         {
-            Repos.Clear();
-            foreach (var repo in await GitClient.Repository.GetAllForCurrent())
+            await System.Windows.Application.Current.Dispatcher.Invoke(async () =>
             {
-                Repos.Add(new { repo.Name, repo.Private, repo.Language, repo.Id });
-            }
+                Repos.Clear();
+                foreach (var repo in await GitClient.Repository.GetAllForCurrent())
+                {
+                    Repos.Add(new { repo.Name, repo.Private, repo.Language, repo.Id });
+                }
+            });
         }
+ 
         private void GetSelectedRepository(dynamic repo)
         {
             IsShown = false;
@@ -117,9 +121,9 @@ namespace UMLGenerator.ViewModels.Main
             mainVM.SourceVM.RepositoryName = repo.Name;
             mainVM.SourceVM.RepositoryOwner = username;
             mainVM.SourceVM.IsShown = true;
-            mainVM.SourceVM.SetRootDir("");
+            Task.Run(() => mainVM.SourceVM.SetRootDir(""));
         }
-        private static GitHubClient GetGithubClient(string token)
+        private async Task<GitHubClient> GetGithubClient(string token)
         {
             if (!string.IsNullOrEmpty(token))
             {
@@ -128,7 +132,7 @@ namespace UMLGenerator.ViewModels.Main
                 var client = new GitHubClient(productInformation) { Credentials = credentials };
                 try
                 {
-                    var user = client.User.Current().GetAwaiter().GetResult();
+                    var user = await client.User.Current();
                     return client;
                 }
                 catch (Exception ex)

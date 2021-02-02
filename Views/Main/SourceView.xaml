@@ -61,7 +61,7 @@
                         <Label Content="{Binding Name}"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
-                <DataTemplate DataType="{x:Type m:FileModel}">
+                <DataTemplate DataType="{x:Type m:FileSystemItemModel}">
                     <StackPanel Orientation="Horizontal">
                         <CheckBox IsChecked="{Binding IsChecked}" Margin="0,6,0,0"/>
                         <Label Content="{Binding Name}"/>

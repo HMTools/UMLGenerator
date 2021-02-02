@@ -56,10 +56,10 @@ namespace UMLGenerator.ViewModels.Main
             GenerateUMLCommand = new RelayCommand((o) =>
             {
                 mainVM.UmlVM.UpdateUML(CodeProject.TransferToUML());
-            }, o => CodeProject != null && CodeProject.Children.Count > 0);
+            }, o => CodeProject != null && CodeProject.Children.Count > 0  && CodeProject.Children.Any(child => child.IsChecked != false));
         }
 
-        public void GenerateObjectsTree(List<FileModel> fileModels)
+        public void GenerateObjectsTree(List<FileSystemItemModel> fileModels)
         {
             IsLoading = true;
             CodeProject = new CodeProjectModel(mainVM.LanguagesVM.SelectedLanguage);
@@ -68,7 +68,7 @@ namespace UMLGenerator.ViewModels.Main
             IsLoading = false;
             GenerateUMLCommand.Execute(null);
         }
-        private List<string> GetFilesContent(List<FileModel> fileModels)
+        private List<string> GetFilesContent(List<FileSystemItemModel> fileModels)
         {
             if (mainVM.SourceVM.SourceType == SourceTypes.Folder)
                 return fileModels.Select(file => System.IO.File.ReadAllText(file.FullName)).ToList();
@@ -88,7 +88,7 @@ namespace UMLGenerator.ViewModels.Main
             Libraries.CodeStructureLibrary.SetPathFields(CodeProject.Children);
         }
 
-        private async Task<string> GetGithubFileContent(FileModel file)
+        private async Task<string> GetGithubFileContent(FileSystemItemModel file)
         {
             try
             {

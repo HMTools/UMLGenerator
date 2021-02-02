@@ -80,7 +80,7 @@ namespace UMLGenerator.ViewModels.Main
         public DirectoryModel RootDir
         {
             get { return rootDir; }
-            set { rootDir = value; NotifyPropertyChanged(); }
+            set { rootDir = value; NotifyPropertyChanged(); RefreshCommands(); }
         }
         private bool isLoading;
 
@@ -110,33 +110,35 @@ namespace UMLGenerator.ViewModels.Main
             SelectFolderCommand = new RelayCommand(o =>
             {
                 var dialog = new VistaFolderBrowserDialog();
-                dialog.ShowDialog();
-                if (dialog.SelectedPath != "")
+                if (dialog.ShowDialog() == true)
                 {
-                    SetRootDir(dialog.SelectedPath);
+                    Task.Run(() => SetRootDir(dialog.SelectedPath));
                  }
             });
 
             GetRepositoryCommand = new RelayCommand(o =>
             {
-                mainVM.GithubVM.RepostioryID = mainVM.GithubVM.GitClient.Repository.Get(RepositoryOwner, RepositoryName).GetAwaiter().GetResult().Id;
-                SetRootDir("");
-            });
+                Task.Run(async () => 
+                {
+                    mainVM.GithubVM.RepostioryID = (await mainVM.GithubVM.GitClient.Repository.Get(RepositoryOwner, RepositoryName)).Id;
+                    await SetRootDir(""); 
+                });
+            }, o => !string.IsNullOrWhiteSpace(RepositoryOwner) && !string.IsNullOrWhiteSpace(RepositoryName));
 
             GetObjectsTreeCommand = new RelayCommand(o => 
             {
                 mainVM.ObjectsTreeVM.IsShown = true;
                 mainVM.UmlVM.IsShown = true;
                 IsShown = false;
-                Task.Run(() => mainVM.ObjectsTreeVM.GenerateObjectsTree(GetCheckedFileModels(RootDir)));
-            }, o => RootDir != null);
+                Task.Run(async () => mainVM.ObjectsTreeVM.GenerateObjectsTree(await GetCheckedFileModels(RootDir)));
+            }, o => RootDir != null && RootDir.Items.Any(item => item.IsChecked != false));
         }
 
-        public void SetRootDir(string path)
+        public async Task SetRootDir(string path)
         {
             IsLoading = true;
-            /* Todo Maybe async await  */
-            Task.Run(() => RootDir = GetDirectory(path).GetAwaiter().GetResult()).ContinueWith(t => IsLoading = false);
+            RootDir = await GetDirectory(path);
+            IsLoading = false;
         }
 
         private async Task<DirectoryModel> GetDirectory(string path)
@@ -149,7 +151,7 @@ namespace UMLGenerator.ViewModels.Main
                 {
                     if (Path.GetExtension(file) == $".{mainVM.LanguagesVM.SelectedLanguage.FileExtension}")
                     {
-                        output.Items.Add(new FileModel() { Name = Path.GetFileName(file), FullName = file });
+                        output.Items.Add(new FileSystemItemModel() { Name = Path.GetFileName(file), FullName = file });
                     }
                 }
                 foreach (var dir in Directory.GetDirectories(path))
@@ -165,11 +167,11 @@ namespace UMLGenerator.ViewModels.Main
                     
                 foreach(var file in contents.Where(content => content.Type == "file" && Path.GetExtension(content.Name) == $".{mainVM.LanguagesVM.SelectedLanguage.FileExtension}"))
                 {
-                    output.Items.Add(new FileModel() { Name = file.Name, FullName = file.Path });
+                    output.Items.Add(new FileSystemItemModel() { Name = file.Name, FullName = file.Path });
                 }
                 subDirs = contents.Where(dir => dir.Type == "dir").Select(dir => dir.Path).ToList();
             }
-            foreach(var dir in Task.WhenAll(subDirs.Select(dir => GetDirectory(dir))).GetAwaiter().GetResult())
+            foreach(var dir in await Task.WhenAll(subDirs.Select(dir => GetDirectory(dir))))
             {
                 output.Items.Add(dir);
             }
@@ -177,22 +179,20 @@ namespace UMLGenerator.ViewModels.Main
 
         }
 
-        public List<FileModel> GetCheckedFileModels(DirectoryModel directory)
+        public async Task<List<FileSystemItemModel>> GetCheckedFileModels(DirectoryModel directory)
         {
-            List<FileModel> output = new List<FileModel>();
-            foreach (var item in directory.Items)
+            List<FileSystemItemModel> output = new List<FileSystemItemModel>();
+            foreach(var file in directory.Items.Where(item => item is not DirectoryModel && item.IsChecked == true))
             {
-                switch (item)
-                {
-                    case FileModel file:
-                        if (file.IsChecked == true)
-                            output.Add(file);
-                        break;
-                    case DirectoryModel dir:
-                        output.AddRange(GetCheckedFileModels(dir));
-                        break;
-                }
+                output.Add(file);
             }
+            foreach (var dirFiles in await Task
+                .WhenAll(directory.Items
+                .Where(item => item is DirectoryModel && item.IsChecked != false)
+                .Select(item => GetCheckedFileModels(item as DirectoryModel))))
+            {
+                output.AddRange(dirFiles);
+            };
             return output;
         }
         #endregion
