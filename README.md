@@ -35,16 +35,8 @@ And I'll try to handle it as fast as I can.***
 - AvalonEdit (Syntax Highlighting) - https://github.com/icsharpcode/AvalonEdit
 - Extended.Wpf.Toolkit (ColorPicker) - https://github.com/xceedsoftware/wpftoolkit
 
-## Usage Examples
-### Generate Diagram
-![](ReadMeResources/GenerateDiagram.gif)
-### PlantUML
-![](https://user-images.githubusercontent.com/42064794/106743892-9f75fe80-6627-11eb-91ee-03afbdc14fb0.gif)
-### Select Specific Objects From Objects Tree
-![](ReadMeResources/ObjectsTree.gif)
-### Diagram View
-![](ReadMeResources/DiagramManipulating.gif)
-
+## Usage Example
+![](https://user-images.githubusercontent.com/42064794/106755003-4b264b00-6636-11eb-98f5-1bc6d4722001.gif)
 
 ## Creating Github API Token
 https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token
