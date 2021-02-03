@@ -13,19 +13,9 @@ And I'll try to handle it as fast as I can.***
 - Github Integration
 - Objects Tree allows generate easily UML from specific parts of the code
 - Export (SVG | PNG | PlantUML)
-- Recognize many types
-	- Namespaces
-	- Classes
-	- Interfaces
-	- Properties
-	- Fields
-	- Methods
-	- Enums
-- UML Features
-	- Inherit
-	- Extend
-	- Namespace
-	- Access Modifier
+- Multiple Languages :
+	- Built in: C#
+	- Language Editor to add new languages.
 
 ## Credits
 - OOki.Dialog.Wpf (Open Folder Dialog) - https://github.com/augustoproiete/ookii-dialogs-wpf
@@ -34,6 +24,7 @@ And I'll try to handle it as fast as I can.***
 - Vivek Maskara (Zoom And Panning Image) - http://windowsapptutorials.com/wpf/zoom-image-wpf-app/
 - AvalonEdit (Syntax Highlighting) - https://github.com/icsharpcode/AvalonEdit
 - Extended.Wpf.Toolkit (ColorPicker) - https://github.com/xceedsoftware/wpftoolkit
+- PlantUML - 
 
 ## Usage Example
 ![](https://user-images.githubusercontent.com/42064794/106755003-4b264b00-6636-11eb-98f5-1bc6d4722001.gif)
