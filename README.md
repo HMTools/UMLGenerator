@@ -39,7 +39,7 @@ And I'll try to handle it as fast as I can.***
 ### Generate Diagram
 ![](ReadMeResources/GenerateDiagram.gif)
 ### PlantUML
-![](ReadMeResources/SeePlantUml.gif)
+![](https://user-images.githubusercontent.com/42064794/106743892-9f75fe80-6627-11eb-91ee-03afbdc14fb0.gif)
 ### Select Specific Objects From Objects Tree
 ![](ReadMeResources/ObjectsTree.gif)
 ### Diagram View
