@@ -18,6 +18,13 @@ And I'll try to handle it as fast as I can.***
 	- Language Editor to add new languages.
 ## Usage Example
 ![](https://user-images.githubusercontent.com/42064794/106755003-4b264b00-6636-11eb-98f5-1bc6d4722001.gif)
+## GenerateUML Project's UML Diagram
+### Full
+![UMLGenerator_Full](https://user-images.githubusercontent.com/42064794/106758026-b4f42400-6639-11eb-940f-254cff508b12.png)
+### ViewModels
+![UMLGenerator_VM](https://user-images.githubusercontent.com/42064794/106758033-b6bde780-6639-11eb-90f7-231efeb72f44.png)
+### Models
+![UMLGenerator_M](https://user-images.githubusercontent.com/42064794/106758034-b7567e00-6639-11eb-8ca9-7354f4476ed8.png)
 
 ## Credits
 - OOki.Dialog.Wpf (Open Folder Dialog) - https://github.com/augustoproiete/ookii-dialogs-wpf
@@ -27,15 +34,6 @@ And I'll try to handle it as fast as I can.***
 - AvalonEdit (Syntax Highlighting) - https://github.com/icsharpcode/AvalonEdit
 - Extended.Wpf.Toolkit (ColorPicker) - https://github.com/xceedsoftware/wpftoolkit
 - PlantUML (Generate Diagrams)- https://github.com/plantuml
-
-## GenerateUML Project's UML Diagram
-### Full
-![UMLGenerator_Full](https://user-images.githubusercontent.com/42064794/106758026-b4f42400-6639-11eb-940f-254cff508b12.png)
-### ViewModels
-![UMLGenerator_VM](https://user-images.githubusercontent.com/42064794/106758033-b6bde780-6639-11eb-90f7-231efeb72f44.png)
-### Models
-![UMLGenerator_M](https://user-images.githubusercontent.com/42064794/106758034-b7567e00-6639-11eb-8ca9-7354f4476ed8.png)
-
 
 ## Creating Github API Token
 https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token
