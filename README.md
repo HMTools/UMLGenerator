@@ -28,11 +28,19 @@ And I'll try to handle it as fast as I can.***
 - Extended.Wpf.Toolkit (ColorPicker) - https://github.com/xceedsoftware/wpftoolkit
 - PlantUML (Generate Diagrams)- https://github.com/plantuml
 
+## GenerateUML Project's UML Diagram
+### Full
+![UMLGenerator_Full](https://user-images.githubusercontent.com/42064794/106758026-b4f42400-6639-11eb-940f-254cff508b12.png)
+### ViewModels
+![UMLGenerator_VM](https://user-images.githubusercontent.com/42064794/106758033-b6bde780-6639-11eb-90f7-231efeb72f44.png)
+### Models
+![UMLGenerator_M](https://user-images.githubusercontent.com/42064794/106758034-b7567e00-6639-11eb-8ca9-7354f4476ed8.png)
+
 
 ## Creating Github API Token
 https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token
 <br/>
 ***In Step 7 check only "public_repo" and "repo" <br/>
 (check "repo" only if you need to have access to your private repositories)***
-## GenerateUML Project's UML Diagrams
+
 
