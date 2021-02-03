@@ -11,7 +11,7 @@ And I'll try to handle it as fast as I can.***
 ## Features
 - Import project (Local Folder | Github Repository)
 - Github Integration
-- Objects Tree allows generate easily UML from specific parts of the code
+- Objects Tree allows generate UML diagramms easily from specific parts of the code.
 - Export (SVG | PNG | PlantUML)
 - Multiple Languages :
 	- Built in: C#
