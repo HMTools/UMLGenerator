@@ -13,7 +13,7 @@ And I'll try to handle it as fast as I can.***
 - Github Integration
 - Objects Tree allows generate easily UML from specific parts of the code
 - Export (SVG | PNG | PlantUML)
-- Recognize many types:
+- Recognize many types
 	- Namespaces
 	- Classes
 	- Interfaces
@@ -21,7 +21,7 @@ And I'll try to handle it as fast as I can.***
 	- Fields
 	- Methods
 	- Enums
-- UML Features:
+- UML Features
 	- Inherit
 	- Extend
 	- Namespace
