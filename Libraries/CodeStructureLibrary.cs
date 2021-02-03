@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using UMLGenerator.Models.CodeModels;
 
 namespace UMLGenerator.Libraries
@@ -11,26 +9,33 @@ namespace UMLGenerator.Libraries
     public class CodeStructureLibrary
     {
         #region Fields
+
         private string code;
         private int currStart = 0;
         private int currIndex = 0;
         private CodeProjectModel project;
-        #endregion
+
+        #endregion Fields
+
         #region Constructors
+
         private CodeStructureLibrary(string code, CodeProjectModel project)
         {
             this.code = code;
             this.project = project;
             this.code = GetOnlyRelevantCode(this.code);
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Methods
+
         public static List<CodeObjectModel> GetFileObjects(string code, CodeProjectModel project)
         {
             var fileModel = new CodeStructureLibrary(code, project);
             return fileModel.GetComponentChildren(project.Language, new CodeDelimiterModel());
         }
+
         private CodeObjectModel GetComponent(string statement, CodeComponentTypeModel parentType, CodeDelimiterModel currDelimiter)
         {
             currStart = currIndex;
@@ -59,8 +64,8 @@ namespace UMLGenerator.Libraries
                     );
             }
             return firstCreation ? output : null;
-
         }
+
         private void SkipComponentContent(CodeDelimiterModel currDelimiter)
         {
             int openDelimiters = 1;
@@ -78,6 +83,7 @@ namespace UMLGenerator.Libraries
             }
             currStart = currIndex;
         }
+
         private List<CodeObjectModel> GetComponentChildren(CodeComponentTypeModel componentType, CodeDelimiterModel currDelimiter)
         {
             List<CodeObjectModel> output = new List<CodeObjectModel>();
@@ -108,6 +114,7 @@ namespace UMLGenerator.Libraries
                 output.Add(nestedObj);
             return output;
         }
+
         private bool SetComponentFields(string statement, ref CodeObjectModel obj, CodeComponentTypeModel componentType)
         {
             obj.Name = Regex.Match(statement, componentType.NamePattern).Groups["Value"].Value;
@@ -126,14 +133,15 @@ namespace UMLGenerator.Libraries
                 {
                     obj = project.Collections[componentType.Name][obj.Name][0];
                     return false;
-
                 }
                 else
                 {
                     project.Collections[componentType.Name][obj.Name].Add(obj);
                 }
             }
+
             #region Get Fields From Statement
+
             foreach (var fieldType in componentType.Fields)
             {
                 var match = Regex.Match(statement, fieldType.Pattern);
@@ -143,11 +151,13 @@ namespace UMLGenerator.Libraries
                         if (match.Success)
                             obj.FieldsFound.Add(fieldType.Name, match.Groups["Value"].Value);
                         break;
+
                     case FieldInputType.Boolean:
                         obj.FieldsFound.Add(fieldType.Name, match.Success ?
                             fieldType.TrueValue.Replace(@"[[{Value}]]", match.Groups["Value"].Value) :
                             fieldType.FalseValue.Replace(@"[[{Value}]]", match.Groups["Value"].Value));
                         break;
+
                     case FieldInputType.Switch:
                         if (match.Success)
                         {
@@ -163,9 +173,12 @@ namespace UMLGenerator.Libraries
                         break;
                 }
             }
-            #endregion
+
+            #endregion Get Fields From Statement
+
             return true;
         }
+
         private CodeComponentTypeModel GetComponentType(string statement, CodeComponentTypeModel parentType)
         {
             foreach (var childName in parentType.SubComponents)
@@ -179,7 +192,6 @@ namespace UMLGenerator.Libraries
                         found = true;
                         break;
                     }
-
                 }
                 if (!found)
                     continue;
@@ -199,6 +211,7 @@ namespace UMLGenerator.Libraries
             }
             return null;
         }
+
         private Dictionary<char, CodeDelimiterModel> GetDelimitersDict(CodeComponentTypeModel componentType)
         {
             Dictionary<char, CodeDelimiterModel> delimiters = new Dictionary<char, CodeDelimiterModel>();
@@ -209,9 +222,9 @@ namespace UMLGenerator.Libraries
 
         public static void SetPathFields(IEnumerable<CodeObjectModel> objects)
         {
-            foreach(var obj in objects)
+            foreach (var obj in objects)
             {
-                foreach(var field in obj.Type.Fields.Where(field => field.InputType == FieldInputType.Path))
+                foreach (var field in obj.Type.Fields.Where(field => field.InputType == FieldInputType.Path))
                 {
                     var parent = obj.Parent;
                     while (parent != null)
@@ -227,6 +240,7 @@ namespace UMLGenerator.Libraries
                 SetPathFields(obj.Children);
             }
         }
+
         private string GetOnlyRelevantCode(string str)
         {
             string res = str;
@@ -237,6 +251,7 @@ namespace UMLGenerator.Libraries
             }
             return res;
         }
-        #endregion
+
+        #endregion Methods
     }
 }

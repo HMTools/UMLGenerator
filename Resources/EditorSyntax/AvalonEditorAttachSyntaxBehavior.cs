@@ -2,17 +2,12 @@
 using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.Xaml.Behaviors;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace UMLGenerator.Resources.EditorSyntax
 {
     public class AvalonEditorAttachSyntaxBehavior : Behavior<TextEditor>
     {
-
         public static readonly DependencyProperty SyntaxProperty =
         DependencyProperty.Register("Syntax", typeof(IHighlightingDefinition), typeof(AvalonEditorAttachSyntaxBehavior),
         new FrameworkPropertyMetadata(default(IHighlightingDefinition), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, SyntaxPropertyChangedCallback));
@@ -26,6 +21,7 @@ namespace UMLGenerator.Resources.EditorSyntax
         public static readonly DependencyProperty BindableTextProperty =
         DependencyProperty.Register("BindableText", typeof(string), typeof(AvalonEditorAttachSyntaxBehavior),
         new FrameworkPropertyMetadata(default(string), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, BindableTextPropertyChangedCallback));
+
         public string BindableText
         {
             get { return (string)GetValue(BindableTextProperty); }
@@ -80,10 +76,10 @@ namespace UMLGenerator.Resources.EditorSyntax
                         editor.CaretOffset = 0;
                         Console.WriteLine(exception.Message);
                     }
-                    
                 }
             }
         }
+
         private static void SyntaxPropertyChangedCallback(
             DependencyObject dependencyObject,
             DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
@@ -94,6 +90,5 @@ namespace UMLGenerator.Resources.EditorSyntax
                 behavior.AssociatedObject.SyntaxHighlighting = dependencyPropertyChangedEventArgs.NewValue as IHighlightingDefinition;
             }
         }
-
     }
 }

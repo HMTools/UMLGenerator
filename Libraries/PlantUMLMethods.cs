@@ -4,14 +4,10 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Forms;
 
 namespace UMLGenerator.Libraries
 {
@@ -134,6 +130,5 @@ namespace UMLGenerator.Libraries
                 return '_';
             return '?';
         }
-
     }
 }

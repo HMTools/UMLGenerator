@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UMLGenerator.Models.CodeModels
+﻿namespace UMLGenerator.Models.CodeModels
 {
     public class CodeCleanupModel : BaseModel
     {
         #region Properties
+
         private string name = "";
 
         public string Name
@@ -21,6 +16,6 @@ namespace UMLGenerator.Models.CodeModels
         public bool ReplaceWithNewLine { get; set; }
         public bool RegexSignleLine { get; set; }
 
-        #endregion
+        #endregion Properties
     }
 }

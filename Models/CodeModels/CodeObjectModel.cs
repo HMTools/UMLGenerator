@@ -4,15 +4,14 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace UMLGenerator.Models.CodeModels
 {
     public class CodeObjectModel : BaseModel
     {
         #region Properties
+
         public string Name { get; set; }
         public Dictionary<string, string> FieldsFound { get; set; } = new Dictionary<string, string>();
         public CodeComponentTypeModel Type { get; set; }
@@ -25,10 +24,13 @@ namespace UMLGenerator.Models.CodeModels
             get { return isChecked; }
             set { isChecked = value; NotifyPropertyChanged(); }
         }
+
         public bool IsChangingCheck { get; set; } = false;
-        #endregion
+
+        #endregion Properties
 
         #region Constructors
+
         public CodeObjectModel()
         {
             Children.CollectionChanged += OnCollectionChanged;
@@ -52,18 +54,21 @@ namespace UMLGenerator.Models.CodeModels
                 }
             };
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Methods
+
         public virtual string TransferToUML(int layer)
         {
             if (IsChecked == false)
                 return "";
 
-            string tab = layer >= 0 ?String.Concat(Enumerable.Repeat("\t", layer)) : "";
+            string tab = layer >= 0 ? String.Concat(Enumerable.Repeat("\t", layer)) : "";
             string output = Type.UMLPattern;
 
             #region Replace Fields (Pattern: [[[<Field Name>]]])
+
             output = Regex.Replace(output, @"\[\[@Field\((.+?)\)@\]\]", match =>
             {
                 var key = match.Groups[1].Value.Trim();
@@ -73,9 +78,11 @@ namespace UMLGenerator.Models.CodeModels
                 }
                 return "";
             });
-            #endregion
+
+            #endregion Replace Fields (Pattern: [[[<Field Name>]]])
 
             #region Replace Children Components (Pattern: [[|<ComponentType Name>|]])
+
             output = Regex.Replace(output, @"\[\[@Component\((.+?)\)@\]\]", match =>
             {
                 string ret = "";
@@ -84,7 +91,9 @@ namespace UMLGenerator.Models.CodeModels
                 .ForEach(child => ret += $"{child.TransferToUML(layer + 1)}");
                 return ret;
             });
-            #endregion
+
+            #endregion Replace Children Components (Pattern: [[|<ComponentType Name>|]])
+
             return tab + output + Environment.NewLine;
         }
 
@@ -114,16 +123,17 @@ namespace UMLGenerator.Models.CodeModels
                 CodeObjectModel item = sender as CodeObjectModel;
                 if (item != null && e.PropertyName == "IsChecked")
                 {
-                    bool? checkShouldBe = 
+                    bool? checkShouldBe =
                         Children.All(child => child.IsChecked == true) ? true :
-                        Children.All(child => child.IsChecked == false)? false : null;
-                    if(IsChecked != checkShouldBe)
+                        Children.All(child => child.IsChecked == false) ? false : null;
+                    if (IsChecked != checkShouldBe)
                     {
                         IsChecked = checkShouldBe;
                     }
                 }
             }
         }
-        #endregion
+
+        #endregion Methods
     }
 }

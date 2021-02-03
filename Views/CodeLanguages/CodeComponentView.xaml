@@ -1,30 +1,29 @@
 ﻿<UserControl x:Class="UMLGenerator.Views.CodeLanguages.CodeComponentView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:UMLGenerator.Views.CodeLanguages"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:m="clr-namespace:UMLGenerator.Models.CodeModels"
+             xmlns:avalonBehav="clr-namespace:UMLGenerator.Resources.EditorSyntax"
              xmlns:vm="clr-namespace:UMLGenerator.ViewModels.CodeLanguages"
              xmlns:v="clr-namespace:UMLGenerator.Views.CodeLanguages"
-             xmlns:m="clr-namespace:UMLGenerator.Models.CodeModels"
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:freez="clr-namespace:WPFLibrary.Freezables;assembly=WPFLibrary"
              xmlns:behav="clr-namespace:WPFLibrary.Behaviors;assembly=WPFLibrary"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-             xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit"
-             xmlns:avalonBehav="clr-namespace:UMLGenerator.Resources.EditorSyntax"
-             mc:Ignorable="d" 
+             xmlns:freez="clr-namespace:WPFLibrary.Freezables;assembly=WPFLibrary"
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <freez:BindingProxy x:Key="VMProxy" Data="{Binding }"/>
+        <freez:BindingProxy x:Key="VMProxy" Data="{Binding }" />
         <DataTemplate DataType="{x:Type vm:CodeFieldViewModel}">
-            <v:CodeFieldView DataContext="{Binding }"/>
+            <v:CodeFieldView DataContext="{Binding }" />
         </DataTemplate>
     </UserControl.Resources>
     <GroupBox>
         <GroupBox.Header>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Component's Details"/>
+                <TextBlock Text="Component's Details" />
                 <Button Command="{Binding CreateComponentCommand}" Style="{StaticResource Button_NoBackground}" Margin="10,0,0,0" Width="Auto" Height="Auto"
                         Visibility="{Binding IsCreating, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                     <TextBlock Text="Create" />
@@ -36,33 +35,33 @@
                 <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Label Content="Component Name :" Style="{StaticResource Label_Property3}"/>
+                        <Label Content="Component Name :" Style="{StaticResource Label_Property3}" />
                         <TextBox Margin="10,0,0,0" Grid.ColumnSpan="3" Style="{StaticResource TextBox_Base}"
-                                 Grid.Column="1" Text="{Binding UpdateSourceTrigger=PropertyChanged, Path=Component.Name}"/>
-                        <Label Content="Tag :" Style="{StaticResource Label_Property3}" Grid.Row="1"/>
-                        <TextBox Margin="10,0,0,0" Grid.Column="1" Grid.Row="1" Text="{Binding Component.Tag, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="3"/>
-                        <Label Content="Tag Color:" Style="{StaticResource Label_Property3}" Grid.Row="2"/>
+                                 Grid.Column="1" Text="{Binding UpdateSourceTrigger=PropertyChanged, Path=Component.Name}" />
+                        <Label Content="Tag :" Style="{StaticResource Label_Property3}" Grid.Row="1" />
+                        <TextBox Margin="10,0,0,0" Grid.Column="1" Grid.Row="1" Text="{Binding Component.Tag, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="3" />
+                        <Label Content="Tag Color:" Style="{StaticResource Label_Property3}" Grid.Row="2" />
                         <xctk:ColorPicker Margin="10,0,0,0" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3"
-                                          SelectedColor="{Binding Component.TagColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                        <Label Content="Name Pattern :" Style="{StaticResource Label_Property3}" Grid.Row="3"/>
+                                          SelectedColor="{Binding Component.TagColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        <Label Content="Name Pattern :" Style="{StaticResource Label_Property3}" Grid.Row="3" />
                         <TextBox Margin="10,0,0,0" Style="{StaticResource TextBox_Base}" Grid.Column="1" Grid.ColumnSpan="3"
-                                 Grid.Row="3" Text="{Binding UpdateSourceTrigger=PropertyChanged, Path=Component.NamePattern}"/>
-                        <Label Content="Component In Collection :" Style="{StaticResource Label_Property3}" Grid.Row="4"/>
-                        <CheckBox IsChecked="{Binding Component.IsInCollection}" Grid.Column="1" Margin="10,0,0,0" Grid.Row="4"/>
-                        <Label Content="Unique In Collection :" Style="{StaticResource Label_Property3}" Margin="10,0,0,0" Grid.Column="2" Grid.Row="4"/>
-                        <CheckBox IsEnabled="{Binding Component.IsInCollection}" IsChecked="{Binding Component.IsUnique}" Grid.Column="3" Margin="10,0,0,0" Grid.Row="4"/>
+                                 Grid.Row="3" Text="{Binding UpdateSourceTrigger=PropertyChanged, Path=Component.NamePattern}" />
+                        <Label Content="Component In Collection :" Style="{StaticResource Label_Property3}" Grid.Row="4" />
+                        <CheckBox IsChecked="{Binding Component.IsInCollection}" Grid.Column="1" Margin="10,0,0,0" Grid.Row="4" />
+                        <Label Content="Unique In Collection :" Style="{StaticResource Label_Property3}" Margin="10,0,0,0" Grid.Column="2" Grid.Row="4" />
+                        <CheckBox IsEnabled="{Binding Component.IsInCollection}" IsChecked="{Binding Component.IsUnique}" Grid.Column="3" Margin="10,0,0,0" Grid.Row="4" />
                     </Grid>
                 </ScrollViewer>
             </TabItem>
@@ -70,41 +69,40 @@
                 <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="10"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="10"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="10"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Label Content="Should Return True Patterns :" Style="{StaticResource Label_Property3}"/>
+                        <Label Content="Should Return True Patterns :" Style="{StaticResource Label_Property3}" />
                         <Button Content="Add Pattern" Grid.Column="1" Width="100" Style="{StaticResource Button_NoBackground}"
-                            Command="{Binding AddTruePatternCommand}" HorizontalAlignment="Left"/>
+                            Command="{Binding AddTruePatternCommand}" HorizontalAlignment="Left" />
                         <ItemsControl ItemsSource="{Binding Component.TruePatterns}" Grid.Row="2" Grid.ColumnSpan="2" AlternationCount="100">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <GroupBox BorderThickness="2" BorderBrush="LightGreen">
                                         <GroupBox.Header>
                                             <Button Style="{StaticResource Button_ImageButton}" Width="Auto" Height="Auto" Content="X"
-                                                Command="{Binding Data.RemoveTruePatternCommand, Source={StaticResource VMProxy}}" 
+                                                Command="{Binding Data.RemoveTruePatternCommand, Source={StaticResource VMProxy}}"
                                                 CommandParameter="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}">
                                             </Button>
                                         </GroupBox.Header>
                                         <GroupBox.Content>
-                                            <TextBox Text="{Binding Path=Pattern, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBox_Base}"/>
+                                            <TextBox Text="{Binding Path=Pattern, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBox_Base}" />
                                         </GroupBox.Content>
                                     </GroupBox>
-
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                        <Label Content="Should Return False Patterns :" Style="{StaticResource Label_Property3}" Grid.Row="4"/>
-                        <Button Content="Add Pattern" Grid.Column="1" Width="100" Style="{StaticResource Button_NoBackground}" Grid.Row="4" HorizontalAlignment="Left" Command="{Binding AddFalsePatternCommand}"/>
+                        <Label Content="Should Return False Patterns :" Style="{StaticResource Label_Property3}" Grid.Row="4" />
+                        <Button Content="Add Pattern" Grid.Column="1" Width="100" Style="{StaticResource Button_NoBackground}" Grid.Row="4" HorizontalAlignment="Left" Command="{Binding AddFalsePatternCommand}" />
                         <ItemsControl ItemsSource="{Binding Component.FalsePatterns}" Grid.Row="6" Grid.ColumnSpan="2" AlternationCount="1000">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -116,7 +114,7 @@
                                             </Button>
                                         </GroupBox.Header>
                                         <GroupBox.Content>
-                                            <TextBox Text="{Binding Path=Pattern, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBox_Base}"/>
+                                            <TextBox Text="{Binding Path=Pattern, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBox_Base}" />
                                         </GroupBox.Content>
                                     </GroupBox>
                                 </DataTemplate>
@@ -129,38 +127,38 @@
                 <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Button Content="Add Field" Command="{Binding AddFieldCommand}"/>
-                        <Label Style="{StaticResource Label_Property3}" Grid.Column="1" Content="Add Common Field"/>
-                        <ComboBox ItemsSource="{Binding LanguageEditor.SelectedLanguage.Fields}" SelectedValue="{Binding SelectedCommonField, Mode=TwoWay}" DisplayMemberPath="Name" Grid.Column="2" Width="200"/>
+                        <Button Content="Add Field" Command="{Binding AddFieldCommand}" />
+                        <Label Style="{StaticResource Label_Property3}" Grid.Column="1" Content="Add Common Field" />
+                        <ComboBox ItemsSource="{Binding LanguageEditor.SelectedLanguage.Fields}" SelectedValue="{Binding SelectedCommonField, Mode=TwoWay}" DisplayMemberPath="Name" Grid.Column="2" Width="200" />
                         <ItemsControl ItemsSource="{Binding Fields}" Grid.ColumnSpan="4" Grid.Row="1">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <GroupBox BorderThickness="2" BorderBrush="CadetBlue">
                                         <GroupBox.Header>
                                             <StackPanel Orientation="Horizontal">
-                                                <Label Content="{Binding Field.Name}"/>
+                                                <Label Content="{Binding Field.Name}" />
                                                 <Button Style="{StaticResource Button_ImageButton}" Width="Auto" Height="Auto" Content="X" Foreground="Red"
                                                 Command="{Binding Data.RemoveFieldCommand, Source={StaticResource VMProxy}}"
-                                                CommandParameter="{Binding }"/>
+                                                CommandParameter="{Binding }" />
 
                                                 <Button Style="{StaticResource Button_ImageButton}" Margin="0,4,0,0" Width="24" Height="24"
                                                         Command="{Binding ToggleExpandCommand}">
-                                                    <Image >
+                                                    <Image>
                                                         <Image.Style>
                                                             <Style TargetType="{x:Type Image}">
-                                                                <Setter Property="Source" Value="/Resources/Images/ExpandIcon.png"/>
+                                                                <Setter Property="Source" Value="/Resources/Images/ExpandIcon.png" />
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding IsExpanded}" Value="true">
-                                                                        <Setter  Property="Source" Value="/Resources/Images/CollapseIcon.png"/>
+                                                                        <Setter  Property="Source" Value="/Resources/Images/CollapseIcon.png" />
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
@@ -169,7 +167,7 @@
                                                 </Button>
                                             </StackPanel>
                                         </GroupBox.Header>
-                                        <ContentControl Content="{Binding }"/>
+                                        <ContentControl Content="{Binding }" />
                                     </GroupBox>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -181,19 +179,19 @@
                 <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <GroupBox Header="Selected   (The order is important for the PlantUML parsing)">
                             <ListBox ItemsSource="{Binding Component.SubComponents}" BorderThickness="1" BorderBrush="Black">
                                 <i:Interaction.Behaviors>
                                     <behav:DraggableListBoxItemBehavior  Effect="Move" AllowControlDropTarget="True" AllowItemDropTarget="True" VisualizeOnOver="True"
                                         DropCommand="{Binding Source={StaticResource VMProxy}, Path=Data.AddSubCommand}"
-                                        DragEnterCommand="{Binding Source={StaticResource VMProxy}, Path=Data.SwapSubCommand}"/>
+                                        DragEnterCommand="{Binding Source={StaticResource VMProxy}, Path=Data.SwapSubCommand}" />
                                 </i:Interaction.Behaviors>
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="{x:Type ListBoxItem}">
-                                        <Setter Property="Content" Value="{Binding }"/>
+                                        <Setter Property="Content" Value="{Binding }" />
                                     </Style>
                                 </ListBox.ItemContainerStyle>
                             </ListBox>
@@ -202,11 +200,11 @@
                             <ListBox ItemsSource="{Binding LanguageEditor.Components}" BorderThickness="1" BorderBrush="Black">
                                 <i:Interaction.Behaviors>
                                     <behav:DraggableListBoxItemBehavior Effect="Copy" AllowControlDropTarget="True" VisualizeOnOver="True"
-                                                                        DropCommand="{Binding Source={StaticResource VMProxy}, Path=Data.RemoveSubCommand}"/>
+                                                                        DropCommand="{Binding Source={StaticResource VMProxy}, Path=Data.RemoveSubCommand}" />
                                 </i:Interaction.Behaviors>
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="{x:Type ListBoxItem}">
-                                        <Setter Property="Content" Value="{Binding Name}"/>
+                                        <Setter Property="Content" Value="{Binding Name}" />
                                     </Style>
                                 </ListBox.ItemContainerStyle>
                             </ListBox>
@@ -217,10 +215,10 @@
             <TabItem>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Delimiters"/>
+                        <TextBlock Text="Delimiters" />
                         <Button Style="{StaticResource Button_ImageButton}" Width="Auto" Height="Auto" Content="+" FontSize="16" FontWeight="Bold" Foreground="Blue"
                                     Command="{Binding Data.AddDelimiterCommand, Source={StaticResource VMProxy}}"
-                                    CommandParameter="{Binding }"/>
+                                    CommandParameter="{Binding }" />
                     </StackPanel>
                 </TabItem.Header>
                 <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
@@ -231,25 +229,25 @@
                                     <GroupBox.Header>
                                         <Button Style="{StaticResource Button_ImageButton}" Width="Auto" Height="Auto" Content="X" Foreground="Red"
                                                 Command="{Binding Data.RemoveDelimiterCommand, Source={StaticResource VMProxy}}"
-                                                CommandParameter="{Binding }"/>
+                                                CommandParameter="{Binding }" />
                                     </GroupBox.Header>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
-                                        <Label Style="{StaticResource Label_Property3}" Content="Open Delimiter :"/>
-                                        <TextBox Text="{Binding OpenDelimiter, UpdateSourceTrigger=PropertyChanged}" MaxLength="1" Grid.Column="1"/>
-                                        <CheckBox Content="Has Close" IsChecked="{Binding HasClose, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Grid.Column="2"/>
+                                        <Label Style="{StaticResource Label_Property3}" Content="Open Delimiter :" />
+                                        <TextBox Text="{Binding OpenDelimiter, UpdateSourceTrigger=PropertyChanged}" MaxLength="1" Grid.Column="1" />
+                                        <CheckBox Content="Has Close" IsChecked="{Binding HasClose, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Grid.Column="2" />
                                         <Label Style="{StaticResource Label_Property3}" Content="Close Delimiter :" Grid.Row="1"
-                                               Visibility="{Binding HasClose, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+                                               Visibility="{Binding HasClose, Converter={StaticResource BoolToVisibilityCollapsedConverter}}" />
                                         <TextBox Text="{Binding CloseDelimiter, UpdateSourceTrigger=PropertyChanged}" MaxLength="1"  Grid.Column="1"  Grid.Row="1"
-                                                 Visibility="{Binding HasClose, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+                                                 Visibility="{Binding HasClose, Converter={StaticResource BoolToVisibilityCollapsedConverter}}" />
                                     </Grid>
                                 </GroupBox>
                             </DataTemplate>
@@ -260,8 +258,8 @@
             <TabItem Header="PlantUML Builder">
                 <avalon:TextEditor FontSize="18" FontFamily="Times New Roman">
                     <i:Interaction.Behaviors>
-                        <avalonBehav:AvalonEditorAttachSyntaxBehavior Syntax="{Binding Syntax}" 
-                                        BindableText="{Binding Component.UMLPattern, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <avalonBehav:AvalonEditorAttachSyntaxBehavior Syntax="{Binding Syntax}"
+                                        BindableText="{Binding Component.UMLPattern, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </i:Interaction.Behaviors>
                 </avalon:TextEditor>
             </TabItem>

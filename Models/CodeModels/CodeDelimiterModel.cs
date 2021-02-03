@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UMLGenerator.Models.CodeModels
+﻿namespace UMLGenerator.Models.CodeModels
 {
     public class CodeDelimiterModel : BaseModel
     {
         #region Properties
+
         private char openDelimiter;
 
         public char OpenDelimiter
@@ -16,6 +11,7 @@ namespace UMLGenerator.Models.CodeModels
             get { return openDelimiter; }
             set { openDelimiter = value; NotifyPropertyChanged(); }
         }
+
         private char closeDelimiter;
 
         public char CloseDelimiter
@@ -31,6 +27,7 @@ namespace UMLGenerator.Models.CodeModels
             get { return hasClose; }
             set { hasClose = value; NotifyPropertyChanged(); }
         }
-        #endregion
+
+        #endregion Properties
     }
 }

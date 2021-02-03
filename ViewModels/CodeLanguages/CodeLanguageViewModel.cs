@@ -2,12 +2,8 @@
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using MVVMLibrary.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
 using UMLGenerator.Models.CodeModels;
@@ -18,8 +14,10 @@ namespace UMLGenerator.ViewModels.CodeLanguages
     public class CodeLanguageViewModel : BaseViewModel
     {
         #region Events
+
         public event EventHandler OnCreate;
-        #endregion
+
+        #endregion Events
 
         #region Commands
 
@@ -34,9 +32,10 @@ namespace UMLGenerator.ViewModels.CodeLanguages
         public RelayCommand RemoveSubComponentCommand { get; private set; }
         public RelayCommand SwapSubComponentCommand { get; private set; }
 
-        #endregion
+        #endregion Commands
 
         #region Properties
+
         private IHighlightingDefinition syntax;
 
         public IHighlightingDefinition Syntax
@@ -44,6 +43,7 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             get { return syntax; }
             set { syntax = value; NotifyPropertyChanged(); }
         }
+
         public CodeLanguageModel Language { get; set; }
         public LanguagesEditorViewModel LanguagesEditor { get; set; }
         public ObservableCollection<CodeFieldViewModel> Fields { get; set; } = new ObservableCollection<CodeFieldViewModel>();
@@ -55,9 +55,11 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             get { return isCreating; }
             set { isCreating = value; NotifyPropertyChanged(); }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Constructor
+
         public CodeLanguageViewModel(LanguagesEditorViewModel languageEditor, CodeLanguageModel language)
         {
             SetEditorSyntax();
@@ -77,15 +79,17 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                 IsCreating = true;
             }
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Methods
+
         protected override void AddCommands()
         {
             base.AddCommands();
-            CreateLanguageCommand = new RelayCommand(o => 
+            CreateLanguageCommand = new RelayCommand(o =>
             {
-                if(string.IsNullOrWhiteSpace(Language.Name))
+                if (string.IsNullOrWhiteSpace(Language.Name))
                 {
                     MessageBox.Show("Please decalre a name!");
                 }
@@ -94,7 +98,9 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                     OnCreate?.Invoke(this, EventArgs.Empty);
                 }
             });
+
             #region Fields Commands
+
             AddFieldCommand = new RelayCommand(o =>
             {
                 var field = new CodeFieldTypeModel();
@@ -107,8 +113,11 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                 Fields.Remove(fieldVM);
                 Language.Fields.Remove(fieldVM.Field);
             });
-            #endregion
+
+            #endregion Fields Commands
+
             #region Delimiter Commands
+
             AddDelimiterCommand = new RelayCommand(o =>
             {
                 Language.CodeDelimiters.Add(new CodeDelimiterModel());
@@ -117,8 +126,11 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             {
                 Language.CodeDelimiters.Remove(o as CodeDelimiterModel);
             });
-            #endregion
+
+            #endregion Delimiter Commands
+
             #region Cleanup Commands
+
             AddCleanupCommand = new RelayCommand(o =>
             {
                 Language.CleanupModels.Add(new CodeCleanupModel());
@@ -127,8 +139,11 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             {
                 Language.CleanupModels.Remove(o as CodeCleanupModel);
             });
-            #endregion
+
+            #endregion Cleanup Commands
+
             #region SubComponents Commands
+
             AddSubComponentCommand = new RelayCommand(o =>
             {
                 var (s, t) = o as Tuple<object, object>;
@@ -159,8 +174,10 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                         Language.SubComponents.Swap(source, target);
                 }
             });
-            #endregion
+
+            #endregion SubComponents Commands
         }
+
         private void SetEditorSyntax()
         {
             string path = $"{Directory.GetCurrentDirectory()}\\Resources\\EditorSyntax\\PlantUMLBuilder.xshd";
@@ -169,6 +186,7 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                 Syntax = HighlightingLoader.Load(reader, HighlightingManager.Instance);
             }
         }
-        #endregion
+
+        #endregion Methods
     }
 }

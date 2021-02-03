@@ -1,15 +1,10 @@
 ﻿using MVVMLibrary.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
 using UMLGenerator.Models.CodeModels;
-using UMLGenerator.ViewModels.Main;
 using WPFLibrary.Commands;
 
 namespace UMLGenerator.ViewModels.CodeLanguages
@@ -17,6 +12,7 @@ namespace UMLGenerator.ViewModels.CodeLanguages
     public class LanguagesEditorViewModel : BaseGridColumnViewModel
     {
         #region Commands
+
         public RelayCommand OpenLanguagesFolderCommand { get; private set; }
         public RelayCommand AddLanguageCommand { get; private set; }
         public RelayCommand EditLanguageCommand { get; private set; }
@@ -25,9 +21,10 @@ namespace UMLGenerator.ViewModels.CodeLanguages
         public RelayCommand AddComponentCommand { get; private set; }
         public RelayCommand RemoveComponentCommand { get; private set; }
 
-        #endregion
+        #endregion Commands
 
         #region Properties
+
         public ObservableCollection<string> Languages { get; set; } = new ObservableCollection<string>();
         public ObservableCollection<CodeComponentTypeModel> Components { get; set; } = new ObservableCollection<CodeComponentTypeModel>();
 
@@ -39,11 +36,12 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             set
             {
                 selectedLanguageName = value;
-                if(value != null)
+                if (value != null)
                     SelectedLanguage = JsonSerializer.Deserialize<CodeLanguageModel>(File.ReadAllText($"{Directory.GetCurrentDirectory()}\\Languages\\{value}.json"));
                 NotifyPropertyChanged();
             }
         }
+
         private CodeLanguageModel selectedLanguage;
 
         public CodeLanguageModel SelectedLanguage
@@ -53,7 +51,7 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             {
                 selectedLanguage = value;
                 Components.Clear();
-                foreach(var comp in value.Components)
+                foreach (var comp in value.Components)
                 {
                     Components.Add(comp.Value);
                 }
@@ -67,14 +65,15 @@ namespace UMLGenerator.ViewModels.CodeLanguages
         public CodeComponentTypeModel SelectedComponent
         {
             get { return selectedComponent; }
-            set 
-            { 
+            set
+            {
                 selectedComponent = value;
-                if(value != null)
+                if (value != null)
                     SelectedViewModel = new CodeComponentViewModel(this, value);
-                NotifyPropertyChanged(); 
+                NotifyPropertyChanged();
             }
         }
+
         private BaseViewModel selectedViewModel;
 
         public BaseViewModel SelectedViewModel
@@ -83,26 +82,30 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             set { selectedViewModel = value; NotifyPropertyChanged(); }
         }
 
-
-        #endregion
+        #endregion Properties
 
         #region Fields
+
         private readonly MainViewModel mainVM;
-        #endregion
+
+        #endregion Fields
 
         #region Constructors
+
         public LanguagesEditorViewModel(MainViewModel mainVM) : base(300, new System.Windows.GridLength(1, System.Windows.GridUnitType.Star))
         {
             this.mainVM = mainVM;
             LoadData();
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Methods
+
         protected override void AddCommands()
         {
             base.AddCommands();
-            OpenLanguagesFolderCommand = new RelayCommand(o => 
+            OpenLanguagesFolderCommand = new RelayCommand(o =>
             {
                 try
                 {
@@ -113,7 +116,9 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                     MessageBox.Show(e.Message);
                 }
             });
+
             #region Languages Commands
+
             AddLanguageCommand = new RelayCommand(o =>
             {
                 var newVM = new CodeLanguageViewModel(this, null);
@@ -145,8 +150,11 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                         SelectedLanguageName = Languages[0];
                 }
             });
-            #endregion
+
+            #endregion Languages Commands
+
             #region Components Commands
+
             AddComponentCommand = new RelayCommand(o =>
             {
                 var newVM = new CodeComponentViewModel(this, null);
@@ -160,22 +168,24 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             {
                 Components.Remove(o as CodeComponentTypeModel);
             });
-            #endregion
+
+            #endregion Components Commands
         }
+
         private void SaveLanguage(string originalLanguageName)
         {
             //SelectedLanguage.Components.Clear();
-            if(string.IsNullOrWhiteSpace(SelectedLanguage.Name))
+            if (string.IsNullOrWhiteSpace(SelectedLanguage.Name))
             {
                 MessageBox.Show("Please decalre a name!");
                 return;
             }
-            if(originalLanguageName != SelectedLanguage.Name && Languages.Contains(SelectedLanguage.Name))
+            if (originalLanguageName != SelectedLanguage.Name && Languages.Contains(SelectedLanguage.Name))
             {
                 MessageBox.Show("There is already a language object with the same name!");
                 return;
             }
-            if(Components.GroupBy(comp => comp.Name).Any(group => group.Count() > 1))
+            if (Components.GroupBy(comp => comp.Name).Any(group => group.Count() > 1))
             {
                 MessageBox.Show("Language object cannot have two or more components with the same name !");
                 return;
@@ -195,6 +205,7 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                 Languages.Remove(originalLanguageName);
             }
         }
+
         private void LoadData()
         {
             Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}\\Languages");
@@ -204,8 +215,8 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             }
             if (Languages.Count > 0)
                 SelectedLanguageName = Languages[0];
-
         }
-        #endregion
+
+        #endregion Methods
     }
 }

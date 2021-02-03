@@ -1,11 +1,10 @@
 ﻿<UserControl x:Class="UMLGenerator.Views.Main.UMLView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:UMLGenerator.Views"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:zoom="clr-namespace:UMLGenerator.Libraries"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800" d:Background="White">
     <Grid>
         <ContentControl>
@@ -14,17 +13,17 @@
                     <Setter Property="Content">
                         <Setter.Value>
                             <Grid>
-                                <TextBox Text="{Binding PlantUml}"/>
+                                <TextBox Text="{Binding PlantUml}" />
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,10,10,0">
                                     <Button Style="{StaticResource Button_ImageButton}" Command="{Binding CopyToClipboardCommand}">
                                         <StackPanel Orientation="Vertical">
-                                            <Image Source="/Resources/Images/CopyIcon.png" Stretch="None"/>
+                                            <Image Source="/Resources/Images/CopyIcon.png" Stretch="None" />
                                             <TextBlock HorizontalAlignment="Center">Copy</TextBlock>
                                         </StackPanel>
                                     </Button>
                                     <Button Style="{StaticResource Button_ImageButton}" Command="{Binding SwitchViewCommand}">
                                         <StackPanel Orientation="Vertical">
-                                            <Image Source="/Resources/Images/UmlGraphIcon.png" Stretch="None"/>
+                                            <Image Source="/Resources/Images/UmlGraphIcon.png" Stretch="None" />
                                             <TextBlock  HorizontalAlignment="Center">UML</TextBlock>
                                         </StackPanel>
                                     </Button>
@@ -44,7 +43,7 @@
                                                         <Setter.Value>
                                                             <Grid>
                                                                 <zoom:ZoomBorder x:Name="border" ClipToBounds="True" Background="White">
-                                                                    <Image Source="{Binding ImageSource}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto"/>
+                                                                    <Image Source="{Binding ImageSource}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" />
                                                                 </zoom:ZoomBorder>
                                                             </Grid>
                                                         </Setter.Value>
@@ -54,7 +53,7 @@
                                                             <Setter Property="Content">
                                                                 <Setter.Value>
                                                                     <Grid>
-                                                                        <Label Content="{Binding Message}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold"/>
+                                                                        <Label Content="{Binding Message}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold" />
                                                                     </Grid>
                                                                 </Setter.Value>
                                                             </Setter>
@@ -70,11 +69,11 @@
                                                         <Image.Style>
                                                             <Style TargetType="{x:Type Image}">
                                                                 <Style.Setters>
-                                                                    <Setter Property="Source" Value="/Resources/Images/RemoteIcon.png"/>
+                                                                    <Setter Property="Source" Value="/Resources/Images/RemoteIcon.png" />
                                                                 </Style.Setters>
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding IsLocal}" Value="true">
-                                                                        <Setter Property="Source" Value="/Resources/Images/LocalIcon.png"/>
+                                                                        <Setter Property="Source" Value="/Resources/Images/LocalIcon.png" />
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
@@ -83,10 +82,10 @@
                                                     <TextBlock  HorizontalAlignment="Center">
                                                         <TextBlock.Style>
                                                             <Style TargetType="TextBlock">
-                                                                <Setter Property="Text" Value="Remote"/>
+                                                                <Setter Property="Text" Value="Remote" />
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding IsLocal}" Value="true">
-                                                                        <Setter Property="Text" Value="Local"/>
+                                                                        <Setter Property="Text" Value="Local" />
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
@@ -96,13 +95,11 @@
                                             </Button>
                                             <Button VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,10,10,0" Style="{StaticResource Button_ImageButton}" Command="{Binding SwitchViewCommand}">
                                                 <StackPanel Orientation="Vertical">
-                                                    <Image Source="/Resources/Images/TextIcon.png" Stretch="None"/>
+                                                    <Image Source="/Resources/Images/TextIcon.png" Stretch="None" />
                                                     <TextBlock  HorizontalAlignment="Center">PlantUML</TextBlock>
                                                 </StackPanel>
                                             </Button>
-                                            
                                         </StackPanel>
-                                       
                                     </Grid>
                                 </Setter.Value>
                             </Setter>

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -125,7 +121,7 @@ namespace UMLGenerator.Libraries
             }
         }
 
-        void child_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        private void child_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.Reset();
         }
@@ -144,6 +140,6 @@ namespace UMLGenerator.Libraries
             }
         }
 
-        #endregion
+        #endregion Child Events
     }
 }

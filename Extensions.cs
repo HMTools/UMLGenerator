@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Media.Imaging;
 
 namespace UMLGenerator
@@ -10,13 +9,16 @@ namespace UMLGenerator
     public static class Extensions
     {
         #region array
+
         public static bool Contains(this Array arr, object item)
         {
             return Array.IndexOf(arr, item) > -1;
         }
-        #endregion
+
+        #endregion array
 
         #region Bitmap
+
         public static BitmapImage BitmapToImageSource(this Bitmap bitmap, System.Drawing.Imaging.ImageFormat format, bool freeze = true)
         {
             using (MemoryStream memory = new MemoryStream())
@@ -33,11 +35,9 @@ namespace UMLGenerator
                 return bitmapimage;
             }
         }
-        #endregion
 
-        #region MyRegion
+        #endregion Bitmap
 
-        #endregion
         public static void Swap<T>(this IList<T> list, T obj1, T obj2)
         {
             var indexA = list.IndexOf(obj1);

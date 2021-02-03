@@ -2,22 +2,25 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace UMLGenerator.Models.CodeModels
 {
     public class CodeProjectModel : BaseModel
     {
         #region Properties
+
         public CodeLanguageModel Language { get; set; }
+
         //Collections[ComponentType][ComponentName][List Of Components With That Type And Name]]
         public Dictionary<string, Dictionary<string, List<CodeObjectModel>>> Collections { get; set; } = new Dictionary<string, Dictionary<string, List<CodeObjectModel>>>();
+
         public ObservableCollection<CodeObjectModel> Children { get; set; } = new ObservableCollection<CodeObjectModel>();
 
-        #endregion
+        #endregion Properties
+
         #region Constructors
+
         public CodeProjectModel(CodeLanguageModel language)
         {
             Language = language;
@@ -27,7 +30,9 @@ namespace UMLGenerator.Models.CodeModels
         {
             string output = "@startuml" + Environment.NewLine;
             output += Language.UMLPattern;
+
             #region Replace Children Components (Pattern: [[|<ComponentType Name>|]])
+
             output = Regex.Replace(output, @"\[\[@Component\((.+)\)@\]\]", match =>
             {
                 string ret = "";
@@ -36,11 +41,14 @@ namespace UMLGenerator.Models.CodeModels
                 .ForEach(child => ret += $"{child.TransferToUML(0)}\n");
                 return ret;
             });
-            #endregion
+
+            #endregion Replace Children Components (Pattern: [[|<ComponentType Name>|]])
+
             output = Regex.Replace(output, @"\[\[@Collection\((?<ComponentType>.+?),(?<ComponentName>.+?),(?<ComponentField>.+?)\)@\]\]", GetCollectionValue);
             return output + "@enduml";
         }
-        #endregion
+
+        #endregion Constructors
 
         private string GetCollectionValue(Match collectionQueryMatch)
         {
@@ -54,7 +62,6 @@ namespace UMLGenerator.Models.CodeModels
             if (firstMatchedComponent == null)
                 return "";
             return firstMatchedComponent.FieldsFound[field];
-
         }
     }
 }

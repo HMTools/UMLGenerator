@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UMLGenerator.Models.FileSystemModels
 {
     public class DirectoryModel : FileSystemItemModel
     {
         #region Properties
-        public ObservableCollection<FileSystemItemModel> Items { get; set; }
-        #endregion
 
+        public ObservableCollection<FileSystemItemModel> Items { get; set; }
+
+        #endregion Properties
 
         #region Constructors
+
         public DirectoryModel()
         {
             Items = new ObservableCollection<FileSystemItemModel>();
@@ -41,9 +39,11 @@ namespace UMLGenerator.Models.FileSystemModels
                 }
             };
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Methods
+
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -68,8 +68,7 @@ namespace UMLGenerator.Models.FileSystemModels
         {
             if (!IsChangingCheck)
             {
-                FileSystemItemModel item = sender as FileSystemItemModel;
-                if (item != null && e.PropertyName == "IsChecked")
+                if (sender is FileSystemItemModel item && e.PropertyName == "IsChecked")
                 {
                     bool? checkShouldBe =
                         Items.All(item => item.IsChecked == true) ? true :
@@ -81,6 +80,7 @@ namespace UMLGenerator.Models.FileSystemModels
                 }
             }
         }
-        #endregion
+
+        #endregion Methods
     }
 }

@@ -1,11 +1,8 @@
 ﻿using MVVMLibrary.ViewModels;
 using Octokit;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -15,14 +12,15 @@ namespace UMLGenerator.ViewModels.Main
 {
     public class GithubViewModel : BaseGridColumnViewModel
     {
-
         #region Commands
+
         public RelayCommand UpdateTokenCommand { get; private set; }
         public RelayCommand GetSelectedRepositoryCommand { get; private set; }
 
-        #endregion
+        #endregion Commands
 
         #region Properties
+
         private string apiToken;
 
         public string ApiToken
@@ -38,37 +36,46 @@ namespace UMLGenerator.ViewModels.Main
             get { return username; }
             set { username = value; NotifyPropertyChanged(); }
         }
+
         public GitHubClient GitClient { get; set; }
         public long RepostioryID { get; set; }
 
         public ObservableCollection<object> Repos { get; set; } = new ObservableCollection<object>();
-        #endregion
+
+        #endregion Properties
 
         #region Fields
+
         private readonly MainViewModel mainVM;
         private string lastWorkedToken;
-        #endregion
+
+        #endregion Fields
 
         #region Constructors
+
         public GithubViewModel(MainViewModel mainVM) : base(300, new GridLength(1, GridUnitType.Star), false)
         {
             this.mainVM = mainVM;
             Task.Run(LoadData);
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Methods
+
         protected override void AddCommands()
         {
             base.AddCommands();
             UpdateTokenCommand = new RelayCommand(o => Task.Run(UpdateToken));
             GetSelectedRepositoryCommand = new RelayCommand(GetSelectedRepository);
         }
+
         private async Task LoadData()
         {
             ApiToken = ConfigurationManager.AppSettings["GitApiToken"];
             await SetClient();
         }
+
         private async Task UpdateToken()
         {
             if (ApiToken != ConfigurationManager.AppSettings["GitApiToken"])
@@ -85,6 +92,7 @@ namespace UMLGenerator.ViewModels.Main
                 }
             }
         }
+
         private async Task<bool> SetClient()
         {
             if (!string.IsNullOrWhiteSpace(ApiToken))
@@ -101,6 +109,7 @@ namespace UMLGenerator.ViewModels.Main
             }
             return false;
         }
+
         private async Task SetUserRepositories()
         {
             await System.Windows.Application.Current.Dispatcher.Invoke(async () =>
@@ -112,7 +121,7 @@ namespace UMLGenerator.ViewModels.Main
                 }
             });
         }
- 
+
         private void GetSelectedRepository(dynamic repo)
         {
             IsShown = false;
@@ -123,6 +132,7 @@ namespace UMLGenerator.ViewModels.Main
             mainVM.SourceVM.IsShown = true;
             Task.Run(() => mainVM.SourceVM.SetRootDir(""));
         }
+
         private async Task<GitHubClient> GetGithubClient(string token)
         {
             if (!string.IsNullOrEmpty(token))
@@ -143,6 +153,7 @@ namespace UMLGenerator.ViewModels.Main
 
             return null;
         }
-        #endregion
+
+        #endregion Methods
     }
 }

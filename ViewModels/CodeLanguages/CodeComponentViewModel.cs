@@ -2,16 +2,11 @@
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using MVVMLibrary.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
 using UMLGenerator.Models.CodeModels;
-using WPFLibrary;
 using WPFLibrary.Commands;
 
 namespace UMLGenerator.ViewModels.CodeLanguages
@@ -19,10 +14,13 @@ namespace UMLGenerator.ViewModels.CodeLanguages
     public class CodeComponentViewModel : BaseViewModel
     {
         #region Events
+
         public event EventHandler OnCreate;
-        #endregion
+
+        #endregion Events
 
         #region Commands
+
         public RelayCommand CreateComponentCommand { get; private set; }
         public RelayCommand AddTruePatternCommand { get; private set; }
         public RelayCommand AddFalsePatternCommand { get; private set; }
@@ -36,9 +34,10 @@ namespace UMLGenerator.ViewModels.CodeLanguages
         public RelayCommand RemoveSubCommand { get; private set; }
         public RelayCommand SwapSubCommand { get; private set; }
 
+        #endregion Commands
 
-        #endregion
         #region Properties
+
         private bool isCreating;
 
         public bool IsCreating
@@ -58,7 +57,7 @@ namespace UMLGenerator.ViewModels.CodeLanguages
         public CodeFieldTypeModel SelectedCommonField
         {
             get { return null; }
-            set 
+            set
             {
                 if (value != null)
                 {
@@ -72,15 +71,16 @@ namespace UMLGenerator.ViewModels.CodeLanguages
         public CodeComponentTypeModel Component { get; set; }
         public ObservableCollection<CodeFieldViewModel> Fields { get; set; } = new ObservableCollection<CodeFieldViewModel>();
         public LanguagesEditorViewModel LanguageEditor { get; set; }
-        #endregion
 
+        #endregion Properties
 
         #region Constructors
+
         public CodeComponentViewModel(LanguagesEditorViewModel languageEditor, CodeComponentTypeModel component)
         {
             SetEditorSyntax();
             LanguageEditor = languageEditor;
-            if(component != null)
+            if (component != null)
             {
                 IsCreating = false;
                 Component = component;
@@ -95,9 +95,11 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                 Component = new CodeComponentTypeModel();
             }
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Methods
+
         protected override void AddCommands()
         {
             base.AddCommands();
@@ -113,13 +115,18 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                     MessageBox.Show("Component name cannot be empty!");
                 }
             });
+
             #region True | False Patterns Commands
+
             AddTruePatternCommand = new RelayCommand(o => Component.TruePatterns.Add(new CodePatternModel()));
             AddFalsePatternCommand = new RelayCommand(o => Component.FalsePatterns.Add(new CodePatternModel()));
             RemoveTruePatternCommand = new RelayCommand(o => Component.TruePatterns.RemoveAt((int)o));
             RemoveFalsePatternCommand = new RelayCommand(o => Component.FalsePatterns.RemoveAt((int)o));
-            #endregion
+
+            #endregion True | False Patterns Commands
+
             #region Fields Commands
+
             AddFieldCommand = new RelayCommand(o =>
             {
                 var field = new CodeFieldTypeModel();
@@ -132,8 +139,11 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                 Fields.Remove(fieldVM);
                 Component.Fields.Remove(fieldVM.Field);
             });
-            #endregion
+
+            #endregion Fields Commands
+
             #region Delimiter Commands
+
             AddDelimiterCommand = new RelayCommand(o =>
             {
                 Component.CodeDelimiters.Add(new CodeDelimiterModel());
@@ -142,8 +152,11 @@ namespace UMLGenerator.ViewModels.CodeLanguages
             {
                 Component.CodeDelimiters.Remove(o as CodeDelimiterModel);
             });
-            #endregion
+
+            #endregion Delimiter Commands
+
             #region SubComponents Commands
+
             AddSubCommand = new RelayCommand(o =>
             {
                 var (s, t) = o as Tuple<object, object>;
@@ -152,7 +165,6 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                     CodeComponentTypeModel source = s as CodeComponentTypeModel;
                     if (!Component.SubComponents.Contains(source.Name))
                         Component.SubComponents.Add(source.Name);
-
                 }
             });
             RemoveSubCommand = new RelayCommand(o =>
@@ -163,7 +175,6 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                     string source = s as string;
                     if (Component.SubComponents.Contains(source))
                         Component.SubComponents.Remove(source);
-
                 }
             });
             SwapSubCommand = new RelayCommand(o =>
@@ -176,8 +187,10 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                         Component.SubComponents.Swap(source, target);
                 }
             });
-            #endregion
+
+            #endregion SubComponents Commands
         }
+
         private void SetEditorSyntax()
         {
             string path = $"{Directory.GetCurrentDirectory()}\\Resources\\EditorSyntax\\PlantUMLBuilder.xshd";
@@ -186,7 +199,7 @@ namespace UMLGenerator.ViewModels.CodeLanguages
                 Syntax = HighlightingLoader.Load(reader, HighlightingManager.Instance);
             }
         }
-        #endregion
 
+        #endregion Methods
     }
 }

@@ -1,13 +1,9 @@
 ﻿using MVVMLibrary.ViewModels;
-using Octokit;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using UMLGenerator.Interfaces;
 using UMLGenerator.Models.CodeModels;
 using UMLGenerator.Models.FileSystemModels;
 using WPFLibrary.Commands;
@@ -16,12 +12,14 @@ namespace UMLGenerator.ViewModels.Main
 {
     public class ObjectsTreeViewModel : BaseGridColumnViewModel
     {
-
         #region Commands
+
         public RelayCommand GenerateUMLCommand { get; private set; }
-        #endregion
+
+        #endregion Commands
 
         #region Properties
+
         private CodeProjectModel codeProject;
 
         public CodeProjectModel CodeProject
@@ -29,6 +27,7 @@ namespace UMLGenerator.ViewModels.Main
             get { return codeProject; }
             set { codeProject = value; NotifyPropertyChanged(); }
         }
+
         private bool isLoading;
 
         public bool IsLoading
@@ -37,26 +36,32 @@ namespace UMLGenerator.ViewModels.Main
             set { isLoading = value; NotifyPropertyChanged(); }
         }
 
-        #endregion
+        #endregion Properties
 
         #region Fields
+
         private readonly MainViewModel mainVM;
-        #endregion
+
+        #endregion Fields
+
         #region Constructors
+
         public ObjectsTreeViewModel(MainViewModel mainVM) : base(300, new GridLength(1, GridUnitType.Star), false, true)
         {
             this.mainVM = mainVM;
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Methods
+
         protected override void AddCommands()
         {
             base.AddCommands();
             GenerateUMLCommand = new RelayCommand((o) =>
             {
                 mainVM.UmlVM.UpdateUML(CodeProject.TransferToUML());
-            }, o => CodeProject != null && CodeProject.Children.Count > 0  && CodeProject.Children.Any(child => child.IsChecked != false));
+            }, o => CodeProject != null && CodeProject.Children.Count > 0 && CodeProject.Children.Any(child => child.IsChecked != false));
         }
 
         public void GenerateObjectsTree(List<FileSystemItemModel> fileModels)
@@ -68,6 +73,7 @@ namespace UMLGenerator.ViewModels.Main
             IsLoading = false;
             GenerateUMLCommand.Execute(null);
         }
+
         private List<string> GetFilesContent(List<FileSystemItemModel> fileModels)
         {
             if (mainVM.SourceVM.SourceType == SourceTypes.Folder)
@@ -75,9 +81,10 @@ namespace UMLGenerator.ViewModels.Main
             else
                 return Task.WhenAll(fileModels.Select(file => GetGithubFileContent(file))).GetAwaiter().GetResult().ToList();
         }
+
         private void RunOnFiles(List<string> filesContent)
         {
-            filesContent.ForEach(code => 
+            filesContent.ForEach(code =>
             {
                 var items = Libraries.CodeStructureLibrary.GetFileObjects(code, CodeProject);
                 System.Windows.Application.Current.Dispatcher.Invoke(() =>
@@ -101,6 +108,7 @@ namespace UMLGenerator.ViewModels.Main
                 return "";
             }
         }
-        #endregion
+
+        #endregion Methods
     }
 }

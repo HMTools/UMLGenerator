@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UMLGenerator.Interfaces;
+﻿using System.Collections.ObjectModel;
 
 namespace UMLGenerator.Models.CodeModels
 {
-    public class CodeComponentTypeModel : BaseModel, IUMLTransferable
+    public class CodeComponentTypeModel : BaseModel
     {
         #region Properties
+
         public string Name { get; set; } = "";
         public string Tag { get; set; } = "";
         public System.Windows.Media.Color TagColor { get; set; }
@@ -35,11 +30,7 @@ namespace UMLGenerator.Models.CodeModels
         {
             TagColor = System.Windows.Media.Colors.Blue;
         }
-        public string TransferToUML(int layer, Dictionary<string, List<string>> classesDict, Dictionary<string, List<string>> interfacesDict)
-        {
-            throw new NotImplementedException();
-        }
 
-        #endregion
+        #endregion Properties
     }
 }

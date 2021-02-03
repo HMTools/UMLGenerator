@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace UMLGenerator.Models.CodeModels
 {
     public class CodeFieldTypeModel : BaseModel
     {
         #region Properties
+
         private string name;
 
         public string Name
@@ -29,15 +25,18 @@ namespace UMLGenerator.Models.CodeModels
         public FieldInputType InputType
         {
             get { return inputType; }
-            set { 
+            set
+            {
                 inputType = value;
-                NotifyPropertyChanged(); }
+                NotifyPropertyChanged();
+            }
         }
 
-        #endregion
+        #endregion Properties
     }
 
     #region Enums
+
     public enum FieldInputType
     {
         Textual,
@@ -45,6 +44,6 @@ namespace UMLGenerator.Models.CodeModels
         Switch,
         Path
     }
-    #endregion
 
+    #endregion Enums
 }

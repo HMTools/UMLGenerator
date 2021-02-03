@@ -1,20 +1,10 @@
 ﻿using MVVMLibrary.ViewModels;
-using Octokit;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Media.Imaging;
-using UMLGenerator.Interfaces;
-using UMLGenerator.Models.CodeModels;
-using UMLGenerator.Models.FileSystemModels;
 using WPFLibrary.Commands;
 
 namespace UMLGenerator.ViewModels.Main
@@ -22,17 +12,21 @@ namespace UMLGenerator.ViewModels.Main
     public class UMLViewModel : BaseGridColumnViewModel
     {
         #region Commands
+
         public RelayCommand SwitchViewCommand { get; private set; }
         public RelayCommand SwitchLocalOrRemoteCommand { get; private set; }
         public RelayCommand CopyToClipboardCommand { get; private set; }
-        #endregion
+
+        #endregion Commands
+
         #region Properties
+
         private string plantUml;
 
         public string PlantUml
         {
             get { return plantUml; }
-            set { plantUml = value; NotifyPropertyChanged();}
+            set { plantUml = value; NotifyPropertyChanged(); }
         }
 
         private bool isUmlView = true;
@@ -58,6 +52,7 @@ namespace UMLGenerator.ViewModels.Main
             get { return message; }
             set { message = value; NotifyPropertyChanged(); }
         }
+
         private bool isLocal;
 
         public bool IsLocal
@@ -65,6 +60,7 @@ namespace UMLGenerator.ViewModels.Main
             get { return isLocal; }
             set { isLocal = value; NotifyPropertyChanged(); }
         }
+
         private bool isLoading = false;
 
         public bool IsLoading
@@ -73,7 +69,6 @@ namespace UMLGenerator.ViewModels.Main
             set { isLoading = value; NotifyPropertyChanged(); }
         }
 
-
         private string svgString;
 
         public string SvgString
@@ -81,41 +76,48 @@ namespace UMLGenerator.ViewModels.Main
             get { return svgString; }
             set { svgString = value; NotifyPropertyChanged(); }
         }
+
         private Bitmap umlImage;
 
         public Bitmap UMLImage
         {
             get { return umlImage; }
-            set { umlImage = value; NotifyPropertyChanged();}
+            set { umlImage = value; NotifyPropertyChanged(); }
         }
 
-        #endregion
+        #endregion Properties
+
         #region Fields
+
         private CancellationTokenSource cancellationTokenSource;
         private readonly MainViewModel mainVM;
         private readonly bool isJavaInstalled;
-        #endregion
+
+        #endregion Fields
 
         #region Constructors
+
         public UMLViewModel(MainViewModel mainVM) : base(300, new GridLength(1, GridUnitType.Star), false, true)
         {
             this.mainVM = mainVM;
             isJavaInstalled = CheckIsJavaInstalled();
             IsLocal = isJavaInstalled;
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Methods
+
         protected override void AddCommands()
         {
             base.AddCommands();
             SwitchViewCommand = new RelayCommand(o => IsUmlView = !IsUmlView);
-            CopyToClipboardCommand = new RelayCommand(o => 
+            CopyToClipboardCommand = new RelayCommand(o =>
             {
                 System.Windows.Clipboard.SetText(PlantUml);
                 mainVM.SetStatus("Copy PlantUML To Clipboard | Succeed", System.Windows.Media.Brushes.Blue, 2000);
             });
-            SwitchLocalOrRemoteCommand = new RelayCommand(o => 
+            SwitchLocalOrRemoteCommand = new RelayCommand(o =>
             {
                 if (isJavaInstalled)
                     IsLocal = !IsLocal;
@@ -124,6 +126,7 @@ namespace UMLGenerator.ViewModels.Main
                     ("Changing to local UML generating Failed : Java isn't installed or ain't registered in the environment variables!!");
             });
         }
+
         public void UpdateUML(string plantUML)
         {
             ResetUMLProperties(plantUML);
@@ -131,6 +134,7 @@ namespace UMLGenerator.ViewModels.Main
             SetUml();
             IsLoading = false;
         }
+
         private static bool CheckIsJavaInstalled()
         {
             var javaEnvironmentVar = Environment.GetEnvironmentVariable("JAVA_HOME");
@@ -141,6 +145,7 @@ namespace UMLGenerator.ViewModels.Main
 
             return (key32 != null || key64 != null) && javaEnvironmentVar != null;
         }
+
         private void ResetUMLProperties(string plantUML)
         {
             PlantUml = plantUML;
@@ -155,9 +160,10 @@ namespace UMLGenerator.ViewModels.Main
             Message = "Loading ...";
             cancellationTokenSource = new CancellationTokenSource();
         }
+
         private void SetUml()
         {
-            Task.Run(async () => 
+            Task.Run(async () =>
             {
                 try
                 {
@@ -184,8 +190,8 @@ namespace UMLGenerator.ViewModels.Main
                     Message = $"Failed Getting UML | {exception.Message}";
                 }
             });
-            
         }
-        #endregion
+
+        #endregion Methods
     }
 }
