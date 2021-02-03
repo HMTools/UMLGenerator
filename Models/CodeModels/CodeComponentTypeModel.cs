@@ -8,7 +8,7 @@ namespace UMLGenerator.Models.CodeModels
 
         public string Name { get; set; } = "";
         public string Tag { get; set; } = "";
-        public System.Windows.Media.Color TagColor { get; set; }
+        public System.Windows.Media.Color TagColor { get; set; } = System.Windows.Media.Colors.Blue;
         public ObservableCollection<string> SubComponents { get; set; } = new ObservableCollection<string>();
         public ObservableCollection<CodeFieldTypeModel> Fields { get; set; } = new ObservableCollection<CodeFieldTypeModel>();
         public ObservableCollection<CodeDelimiterModel> CodeDelimiters { get; set; } = new ObservableCollection<CodeDelimiterModel>();
@@ -25,11 +25,6 @@ namespace UMLGenerator.Models.CodeModels
         }
 
         public bool IsUnique { get; set; } = false;
-
-        public CodeComponentTypeModel()
-        {
-            TagColor = System.Windows.Media.Colors.Blue;
-        }
 
         #endregion Properties
     }

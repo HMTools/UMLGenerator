@@ -31,7 +31,7 @@ namespace UMLGenerator.Libraries
             return await client.GetStringAsync(str, cancellationToken);
         }
 
-        public static async Task<string> GetLocalSVG(string content, CancellationToken cancellationToken)
+        public static async Task<string> GetLocalSVG(string content)
         {
             string tempPath = Path.GetTempFileName();
             File.WriteAllText(tempPath, content);
@@ -52,7 +52,7 @@ namespace UMLGenerator.Libraries
             return output;
         }
 
-        public static Bitmap GetLocalPNG(string content, CancellationToken cancellationToken)
+        public static Bitmap GetLocalPNG(string content)
         {
             string tempPath = Path.GetTempFileName();
             File.WriteAllText(tempPath, content);
@@ -75,12 +75,10 @@ namespace UMLGenerator.Libraries
 
         private static string Encode(string content)
         {
-            using (var output = new MemoryStream())
-            {
-                using (var writer = new StreamWriter(new DeflateStream(output, CompressionLevel.Optimal), Encoding.UTF8))
-                    writer.Write(content);
-                return Encode(output.ToArray());
-            }
+            using var output = new MemoryStream();
+            using (var writer = new StreamWriter(new DeflateStream(output, CompressionLevel.Optimal), Encoding.UTF8))
+                writer.Write(content);
+            return Encode(output.ToArray());
         }
 
         private static string Encode(IReadOnlyList<byte> bytes)

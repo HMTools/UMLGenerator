@@ -47,8 +47,7 @@ namespace UMLGenerator.Resources.EditorSyntax
 
         private void AssociatedObjectOnTextChanged(object sender, EventArgs eventArgs)
         {
-            var textEditor = sender as TextEditor;
-            if (textEditor != null)
+            if (sender is TextEditor textEditor)
             {
                 if (textEditor.Document != null)
                     BindableText = textEditor.Document.Text;

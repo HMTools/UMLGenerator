@@ -10,10 +10,10 @@ namespace UMLGenerator.Libraries
     {
         #region Fields
 
-        private string code;
+        private readonly string code;
+        private readonly CodeProjectModel project;
         private int currStart = 0;
         private int currIndex = 0;
-        private CodeProjectModel project;
 
         #endregion Fields
 
@@ -212,7 +212,7 @@ namespace UMLGenerator.Libraries
             return null;
         }
 
-        private Dictionary<char, CodeDelimiterModel> GetDelimitersDict(CodeComponentTypeModel componentType)
+        private static Dictionary<char, CodeDelimiterModel> GetDelimitersDict(CodeComponentTypeModel componentType)
         {
             Dictionary<char, CodeDelimiterModel> delimiters = new Dictionary<char, CodeDelimiterModel>();
             foreach (var delimiter in componentType.CodeDelimiters)

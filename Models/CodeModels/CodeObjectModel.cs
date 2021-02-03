@@ -120,8 +120,7 @@ namespace UMLGenerator.Models.CodeModels
         {
             if (!IsChangingCheck)
             {
-                CodeObjectModel item = sender as CodeObjectModel;
-                if (item != null && e.PropertyName == "IsChecked")
+                if (sender is CodeObjectModel item && e.PropertyName == "IsChecked")
                 {
                     bool? checkShouldBe =
                         Children.All(child => child.IsChecked == true) ? true :

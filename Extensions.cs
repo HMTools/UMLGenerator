@@ -21,19 +21,17 @@ namespace UMLGenerator
 
         public static BitmapImage BitmapToImageSource(this Bitmap bitmap, System.Drawing.Imaging.ImageFormat format, bool freeze = true)
         {
-            using (MemoryStream memory = new MemoryStream())
-            {
-                bitmap.Save(memory, format);
-                memory.Position = 0;
-                BitmapImage bitmapimage = new BitmapImage();
-                bitmapimage.BeginInit();
-                bitmapimage.StreamSource = memory;
-                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapimage.EndInit();
-                if (freeze)
-                    bitmapimage.Freeze();
-                return bitmapimage;
-            }
+            using MemoryStream memory = new MemoryStream();
+            bitmap.Save(memory, format);
+            memory.Position = 0;
+            BitmapImage bitmapimage = new BitmapImage();
+            bitmapimage.BeginInit();
+            bitmapimage.StreamSource = memory;
+            bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+            bitmapimage.EndInit();
+            if (freeze)
+                bitmapimage.Freeze();
+            return bitmapimage;
         }
 
         #endregion Bitmap

@@ -194,10 +194,8 @@ namespace UMLGenerator.ViewModels.CodeLanguages
         private void SetEditorSyntax()
         {
             string path = $"{Directory.GetCurrentDirectory()}\\Resources\\EditorSyntax\\PlantUMLBuilder.xshd";
-            using (XmlTextReader reader = new XmlTextReader(path))
-            {
-                Syntax = HighlightingLoader.Load(reader, HighlightingManager.Instance);
-            }
+            using XmlTextReader reader = new XmlTextReader(path);
+            Syntax = HighlightingLoader.Load(reader, HighlightingManager.Instance);
         }
 
         #endregion Methods

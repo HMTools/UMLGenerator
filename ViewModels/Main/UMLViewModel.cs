@@ -169,9 +169,9 @@ namespace UMLGenerator.ViewModels.Main
                 {
                     if (IsLocal)
                     {
-                        SvgString = await Libraries.PlantUMLMethods.GetLocalSVG(PlantUml, cancellationTokenSource.Token);
+                        SvgString = await Libraries.PlantUMLMethods.GetLocalSVG(PlantUml);
 
-                        UMLImage = Libraries.PlantUMLMethods.GetLocalPNG(PlantUml, cancellationTokenSource.Token);
+                        UMLImage = Libraries.PlantUMLMethods.GetLocalPNG(PlantUml);
                         ImageSource = UMLImage.BitmapToImageSource(System.Drawing.Imaging.ImageFormat.Png);
                     }
                     else
