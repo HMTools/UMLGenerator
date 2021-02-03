@@ -2,7 +2,7 @@
 
 # UMLGenerator
 ## About
-Generate UML Diagrams from local and github projects.
+Generate UML Diagrams from local and GitHub projects.
 
 ## Note
 ***Please add an issue on this repository, for every bug fix or additional feature that you wish I'll add.</br>
