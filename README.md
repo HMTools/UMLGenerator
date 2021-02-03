@@ -16,6 +16,8 @@ And I'll try to handle it as fast as I can.***
 - Multiple Languages :
 	- Built in: C#
 	- Language Editor to add new languages.
+## Usage Example
+![](https://user-images.githubusercontent.com/42064794/106755003-4b264b00-6636-11eb-98f5-1bc6d4722001.gif)
 
 ## Credits
 - OOki.Dialog.Wpf (Open Folder Dialog) - https://github.com/augustoproiete/ookii-dialogs-wpf
@@ -24,10 +26,8 @@ And I'll try to handle it as fast as I can.***
 - Vivek Maskara (Zoom And Panning Image) - http://windowsapptutorials.com/wpf/zoom-image-wpf-app/
 - AvalonEdit (Syntax Highlighting) - https://github.com/icsharpcode/AvalonEdit
 - Extended.Wpf.Toolkit (ColorPicker) - https://github.com/xceedsoftware/wpftoolkit
-- PlantUML - 
+- PlantUML (Generate Diagrams)- https://github.com/plantuml
 
-## Usage Example
-![](https://user-images.githubusercontent.com/42064794/106755003-4b264b00-6636-11eb-98f5-1bc6d4722001.gif)
 
 ## Creating Github API Token
 https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token
